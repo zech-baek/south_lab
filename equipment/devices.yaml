@@ -1,0 +1,13 @@
+power_supply:
+  keysight_e36232a : "USB0::0x2A8D::0x3002::MY61002049::INSTR"
+digital_multimeter:
+  keithley_dmm6500: "USB0::0x05E6::0x6500::04589868::INSTR"
+  rohde_hmc8012 : "USB0::0x0AAD::0x0135::031642082::INSTR"
+oscilloscope:
+  tektronix_dpo4034 : "USB0::0x0699::0x0401::C021376::INSTR"
+source_meter:
+  keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"
+e-loader:
+  sdl1030x: "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR"
+function_generator:
+  dg2052: "USB0::0x1AB1::0x0644::DG2P230200035::INSTR"

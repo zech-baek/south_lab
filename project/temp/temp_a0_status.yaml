@@ -1,0 +1,470 @@
+0:
+- DEVICE_ID
+- DEV_ID
+- DEV_ID
+- DEV_ID
+- DEV_ID
+- DEV_REV
+- DEV_REV
+- DEV_REV
+- DEV_REV
+1:
+- INT_0
+- TSD_I
+- RCP_I
+- SCP_I
+- OC_I
+- VIN_POK_I
+- RSVD
+- RSVD
+- SW_I
+2:
+- INT_1
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- VOUT_OV_I
+3:
+- INT_0_MSK
+- TSD_M
+- RCP_M
+- SCP_M
+- OC_M
+- VIN_POK_M
+- RSVD
+- RSVD
+- SW_M
+4:
+- INT_1_MSK
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- VOUT_OV_M
+5:
+- STATUS_0
+- TSD_STS
+- RCP_STS
+- SCP_STS
+- OC_STS
+- VIN_POK_STS
+- VIN_POK_STS
+- SW_STS
+- SW_STS
+6:
+- STATUS_1
+- VOUT_POK_STS
+- SSDN_STS
+- RSVD
+- RSVD
+- RRG_STS
+- RSVD
+- RSVD
+- VOUT_OV_STS
+7:
+- SW_OFF_RECORD
+- OFF_BY_TSD
+- OFF_BY_RCP
+- OFF_BY_SCP
+- OFF_BY_ILIM
+- OFF_BY_VIN_OV
+- OFF_BY_VIN_UVLO
+- OFF_BY_VOUT_OV
+- OFF_BY_EN
+8:
+- CTRL_0
+- RSVD
+- RSVD
+- RSVD
+- ILIM_TH_EX
+- RSVD
+- OC_FAULT_PIN_EN
+- CONV_VIN_EN
+- CONV_VOUT_EN
+9:
+- CTRL_1
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- SOFT_RESET
+10:
+- VIN_CTRL
+- RSVD
+- RSVD
+- RSVD
+- VIN_OVP_TH
+- VIN_OVP_TH
+- VIN_OVP_TH
+- VIN_OVP_EN
+- VIN_DIS_R_EN
+11:
+- VOUT_CTRL
+- RSVD
+- RSVD
+- RSVD
+- VOUT_OVP_TH
+- VOUT_OVP_TH
+- VOUT_OVP_TH
+- VOUT_OVP_EN
+- VOUT_DIS_R_EN
+12:
+- SW_CTRL_0
+- ILIM_HYS
+- SS_TIME
+- SCP_TH
+- ILIM_TH
+- ILIM_TH
+- ILIM_TH
+- ILIM_TH
+- ILIM_TH
+13:
+- SW_CTRL_1
+- RSVD
+- RSVD
+- RSVD
+- ACTIVE_ILIM_EN
+- ILIM_BLANK_TIME
+- ILIM_BLANK_TIME
+- ILIM_BLANK_TIME
+- DIODE_MODE_EN
+14:
+- AUTO_RETRY_CTRL
+- RSVD
+- RSVD
+- RSVD
+- TSD_AUTO_ON_EN
+- RCP_AUTO_ON_EN
+- SCP_AUTO_ON_EN
+- VIN_OV_AUTO_ON_EN
+- VOUT_OV_AUTO_ON_EN
+15:
+- PROTECTION_CTRL
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RCP_EN
+160:
+- PASSWORD
+- tm_active
+- tm_active
+- tm_active
+- tm_active
+- tm_active
+- tm_active
+- tm_active
+- tm_active
+161:
+- TESTREG1
+- tst_tsd
+- atb_sel
+- atb_sel
+- atb_sel
+- RSVD
+- atb_en
+- atb_en
+- atb_en
+162:
+- TESTREG2
+- RSVD
+- dtb_sel
+- dtb_sel
+- dtb_sel
+- RSVD
+- dtb_en
+- dtb_en
+- dtb_en
+163:
+- TESTREG3
+- tst_scan
+- tst_hvsen
+- tst_hvsmr
+- tst_nochp
+- tst_bgpol
+- tst_vrpol
+- tst_fen
+- tst_xclk
+164:
+- TESTREG4
+- RSVD
+- RSVD
+- dig_dtb1_sel
+- dig_dtb1_sel
+- dig_dtb1_sel
+- dig_dtb1_sel
+- dig_dtb1_sel
+- dig_dtb1_sel
+165:
+- TESTREG5
+- RSVD
+- RSVD
+- dig_dtb0_sel
+- dig_dtb0_sel
+- dig_dtb0_sel
+- dig_dtb0_sel
+- dig_dtb0_sel
+- dig_dtb0_sel
+166:
+- TESTREG6
+- msk_pgvin
+- msk_tsd
+- msk_scp_cmp
+- msk_ocp_cmp
+- msk_rcp_pre
+- msk_pvqp
+- msk_anyFault_latchOff
+- msk_anyFault_autoRec20ms
+167:
+- TESTREG7
+- fon_enbias
+- fon_pvref
+- fon_prercp_en
+- fon_sw_on
+- fon_enmqp
+- fon_ocfault
+- RSVD
+- msk_anyFault_autoRec100ms
+169:
+- TESTREG9
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- qp_fault
+- qp_fault
+- hvs_fail
+- hvs_fail
+186:
+- FUSE_CTRL0
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- fuse_read1_trg
+187:
+- FUSE_CTRL1
+- fuse_wsel
+- fuse_wsel
+- fuse_wsel
+- fuse_wsel
+- fuse_rd
+- fuse_rd
+- fuse_prog1bit_trg
+- fuse_readAll_trg
+188:
+- FUSE_CTRL2
+- fuse_bit_prog
+- fuse_bit_prog
+- fuse_bit_prog
+- RSVD
+- fuse_addr
+- fuse_addr
+- fuse_addr
+- fuse_addr
+189:
+- FUSE_CTRL3
+- fon_access
+- foff_peb
+- fon_wren
+- fon_re
+- foff_resetb
+- clk_req
+- prog_access_width
+- prog_access_width
+190:
+- FUSE_DOUT
+- fuse_dout
+- fuse_dout
+- fuse_dout
+- fuse_dout
+- fuse_dout
+- fuse_dout
+- fuse_dout
+- fuse_dout
+191:
+- FUSE_DIN
+- fuse_din
+- fuse_din
+- fuse_din
+- fuse_din
+- fuse_din
+- fuse_din
+- fuse_din
+- fuse_din
+192:
+- FUSExC0
+- ILIM_BLANK_TIME_def
+- ILIM_BLANK_TIME_def
+- ILIM_BLANK_TIME_def
+- ILIM_TH_def
+- ILIM_TH_def
+- ILIM_TH_def
+- ILIM_TH_def
+- ILIM_TH_def
+193:
+- FUSExC1
+- RCP_EN_def
+- TSD_AUTO_ON_EN_def
+- RCP_AUTO_ON_EN_def
+- SCP_AUTO_ON_EN_def
+- VIN_AUTO_ON_EN_def
+- VOUT_AUTO_ON_EN_def
+- VOUT_OVP_EN_def
+- VIN_OVP_EN_def
+194:
+- FUSExC2
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- RSVD
+- ACTIVE_ILIM_def
+195:
+- FUSExC3
+- test_id
+- test_id
+- test_id
+- test_id
+- test_id
+- test_id
+- test_id
+- test_id
+196:
+- FUSExC4
+- otp_pgp_en
+- otp_pgp_od
+- otp_pgp_pol
+- otp_no_vout_dchg
+- otp_no_vout_dchg
+- otp_ishys
+- otp_ishys
+- otp_ssilim
+197:
+- FUSExC5
+- otp_scpdis
+- otp_scpth
+- otp_scpth
+- otp_gdchg
+- otp_gdchg
+- otp_ixtc
+- otp_ixtc
+- otp_ixtc
+198:
+- FUSExC6
+- trm_isofs
+- trm_isofs
+- trm_isofs
+- trm_mosc
+- trm_mosc
+- trm_mosc
+- trm_mosc
+- trm_mosc
+199:
+- FUSExC7
+- trm_vref
+- trm_vref
+- trm_vref
+- trm_vref
+- trm_pbg
+- trm_pbg
+- trm_pbg
+- trm_pbg
+200:
+- FUSExC8
+- trm_bgofs
+- trm_bgofs
+- trm_bgofs
+- trm_mbg
+- trm_mbg
+- trm_mbg
+- trm_mbg
+- trm_mbg
+201:
+- FUSExC9
+- trm_mosc_fine
+- trm_rp
+- trm_rp
+- trm_rp
+- trm_ix
+- trm_ix
+- trm_ix
+- trm_ix
+202:
+- FUSExCA
+- otp_lorng
+- otp_noitc
+- trm_isgn
+- trm_isgn
+- trm_isgn
+- trm_isgn
+- trm_isgn
+- trm_isgn
+203:
+- FUSExCB
+- trm_rrg
+- trm_rrg
+- trm_rrg
+- trm_rrg
+- trm_rcp
+- trm_rcp
+- trm_rcp
+- trm_rcp
+204:
+- FUSExCC
+- otp_enrrg
+- trm_chosc
+- trm_chosc
+- trm_chosc
+- trm_tsst
+- trm_tsst
+- trm_tsst
+- trm_tsst
+205:
+- FUSExCD
+- otp_vpaclm
+- RSVD
+- RSVD
+- RSVD
+- trm_prcpofs
+- trm_prcpofs
+- trm_prcpofs
+- trm_prcpofs
+206:
+- FUSExCE
+- otp_fen_vinf
+- RSVD
+- trm_ovpvin
+- trm_ovpvin
+- trm_ovpvin
+- trm_ovpvout
+- trm_ovpvout
+- trm_ovpvout
+207:
+- FUSExCF
+- i2c_addr
+- i2c_addr
+- trm_vin_info
+- trm_vin_info
+- trm_vin_info
+- trm_vout_info
+- trm_vout_info
+- trm_vout_info

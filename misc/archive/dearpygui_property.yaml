@@ -1,0 +1,349 @@
+############################################################
+#  dpg.add_text  ---->  without parent function
+############################################################
+#  label : null
+#  callback : null
+#  user_data : null
+############################################################
+
+add_text:
+  bullet: false
+  callback: null
+  color:
+  - -1.0
+  - 0.0
+  - 0.0
+  - 1.0
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  label: ''
+  payload_type: $$DPG_PAYLOAD
+  show: true
+  show_label: false
+  source: 0
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: null
+  width: 0
+  wrap: -1
+
+
+
+############################################################
+#  dpg.add_button  ---->  single button
+############################################################
+#  label : button
+#  callback : handler_button
+#  user_data : null
+############################################################
+
+add_button:
+  arrow: false
+  callback: !!python/name:__main__.handler_button ''
+  direction: 0
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  label: button
+  payload_type: $$DPG_PAYLOAD
+  repeat: false
+  show: true
+  small: false
+  source: 0
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: null
+  width: 0
+
+
+
+############################################################
+#  dpg.add_input_text  ---->  console box
+############################################################
+#  label : Log output
+#  callback : null
+#  user_data : null
+############################################################
+
+add_input_text:
+  always_overwrite: false
+  auto_select_all: false
+  callback: null
+  ctrl_enter_for_new_line: false
+  decimal: false
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  escape_clears_all: false
+  filter_key: ''
+  height: 200
+  hexadecimal: false
+  hint: ''
+  indent: -1
+  label: Log output
+  multiline: true
+  no_horizontal_scroll: false
+  no_spaces: false
+  no_undo_redo: false
+  on_enter: false
+  password: false
+  payload_type: $$DPG_PAYLOAD
+  readonly: true
+  scientific: false
+  show: true
+  source: 0
+  tab_input: false
+  track_offset: 0.5
+  tracked: false
+  uppercase: false
+  use_internal_label: true
+  user_data: null
+  width: 500
+
+
+
+############################################################
+#  dpg.add_table_column  ---->  in dpg.table
+############################################################
+#  label : address
+#  callback : null
+#  user_data : null
+############################################################
+
+address:
+  angled_header: false
+  callback: null
+  default_hide: false
+  default_sort: false
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  indent_disable: false
+  indent_enable: false
+  init_width_or_weight: 0.0
+  label: address
+  no_clip: false
+  no_header_label: false
+  no_header_width: false
+  no_hide: false
+  no_reorder: false
+  no_resize: false
+  no_sort: false
+  no_sort_ascending: false
+  no_sort_descending: false
+  payload_type: $$DPG_PAYLOAD
+  prefer_sort_ascending: true
+  prefer_sort_descending: false
+  show: true
+  source: 0
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: null
+  width: 0
+  width_fixed: false
+  width_stretch: false
+
+bit0:
+  angled_header: false
+  callback: null
+  default_hide: false
+  default_sort: false
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  indent_disable: false
+  indent_enable: false
+  init_width_or_weight: 0.0
+  label: bit0
+  no_clip: false
+  no_header_label: false
+  no_header_width: false
+  no_hide: false
+  no_reorder: false
+  no_resize: false
+  no_sort: false
+  no_sort_ascending: false
+  no_sort_descending: false
+  payload_type: $$DPG_PAYLOAD
+  prefer_sort_ascending: true
+  prefer_sort_descending: false
+  show: true
+  source: 0
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: null
+  width: 0
+  width_fixed: false
+  width_stretch: false
+
+
+############################################################
+#  dpg.add_add_text  ---->  in dpg.table_row // in dpg.table
+############################################################
+#  label : null
+#  callback : null
+#  user_data : null
+############################################################
+
+row0x00:
+  bullet: false
+  callback: null
+  color:
+  - -1.0
+  - 0.0
+  - 0.0
+  - 1.0
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  label: ''
+  payload_type: $$DPG_PAYLOAD
+  show: true
+  show_label: false
+  source: 0
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: null
+  width: 0
+  wrap: -1
+
+
+
+############################################################
+#  dpg.add_selectable  ---->  in dpg.table_row // in dpg.table
+############################################################
+#  cell label : 00h_bit0
+#  cell callback : handler_common
+#  user_data : user_data_bit0
+############################################################
+
+00h_bit0:
+  callback: &id001 !!python/name:__main__.handler_common ''
+  disable_popup_close: false
+  drag_callback: null
+  drop_callback: null
+  enabled: true
+  filter_key: ''
+  height: 0
+  indent: -1
+  label: 00h_bit0
+  payload_type: $$DPG_PAYLOAD
+  show: true
+  source: 0
+  span_columns: false
+  track_offset: 0.5
+  tracked: false
+  use_internal_label: true
+  user_data: user_data_bit0
+  width: 0
+
+
+
+############################################################
+#  dpg.add_radio_button
+############################################################
+#  cell label : 00h_bit0
+#  cell callback : handler_common
+#  user_data : user_data_bit0
+############################################################
+
+add_radio_button:
+  filter_key: ''
+  payload_type: $$DPG_PAYLOAD,
+  label: '',
+  use_internal_label: True,
+  source: 0,
+  show: True,
+  enabled: True,
+  tracked: False,
+  width: 0,
+  track_offset: 0.5,
+  height: 0,
+  indent: -1,
+  callback: <function radio_callback at 0x1038a0cc0>,
+  drop_callback: null,
+  drag_callback: null,
+  user_data: 23,
+  items: ['Red', 'Green', 'Blue'],
+  horizontal: False
+
+
+
+############################################################
+#  dpg.add_slider_float
+############################################################
+#  cell label : Brightness
+#  cell callback : null
+#  user_data : null
+############################################################
+slider:
+  filter_key: '',
+  payload_type: $$DPG_PAYLOAD,
+  label: 'Brightness',
+  use_internal_label: True,
+  source: 0,
+  show: True,
+  enabled: True,
+  tracked: False,
+  width: 0,
+  track_offset: 0.5,
+  height: 0,
+  indent: -1,
+  callback: None,
+  drop_callback: None,
+  drag_callback: None,
+  user_data: None,
+  format: '%.3f',
+  vertical: False,
+  min_value: 0.0,
+  max_value: 100.0,
+  clamped: False,
+  no_input: False
+
+
+
+############################################################
+#  dpg.add_checkbox
+############################################################
+#  cell label : Enable Feature X
+#  cell callback : null
+#  user_data : null
+############################################################
+check_box:
+  filter_key: '',
+  payload_type: $$DPG_PAYLOAD,
+  label: 'Enable Feature X',
+  use_internal_label: True,
+  source: 0,
+  show: True,
+  enabled: True,
+  tracked: False,
+  width: 0,
+  track_offset: 0.5,
+  height: 0,
+  indent: -1,
+  callback: None,
+  drop_callback: None,
+  drag_callback: None,
+  user_data: None

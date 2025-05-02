@@ -1,1 +1,2 @@
-# south_git
+# devrepo
+repository for python development
