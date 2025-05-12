@@ -273,7 +273,7 @@ class cui_frame:
             )
             log_wrapping(
                 self.__class__.__name__,
-                f"manually update i2c address is required at self.update_i2c_address()",
+                f"manually update i2c address is required at self.update_i2c_address() (current i2c address : {cache.i2c_a}, {cache.i2c_a:#04x})",
                 cache.is_gui
             )
             return ret

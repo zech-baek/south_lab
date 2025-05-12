@@ -15,7 +15,7 @@ except NameError:
     else:
         bridge_dir = os.getcwd()
 
-root_dir = pathlib.Path(bridge_dir).parent.parent/"log"
+root_dir = pathlib.Path(bridge_dir).parent.parent
 log_dir = pathlib.Path(bridge_dir).parent.parent/"log"
 
 if not log_dir.exists():
@@ -82,7 +82,7 @@ class ch341(object):
         self.index    = 0
         self.readback = readback
         self.value    = ctypes.c_int(0)
-        self.logging  = False
+        self.logging  = logging
         self.OpenDev(0)
         self.i2c_speed(value=2)
         

@@ -34,10 +34,10 @@ class extract_regmap():
     
     '''
     e.g. :
-        file = "./misc/regmap/hl9800_aa_regmap.xlsx"
+        file = "./misc/regmap/sc8583_1p1_regmap.xlsx"
         
         from misc.extract_regmap_v2 import extract_regmap
-        target_object = extract_regmap(filename=file, project="hl9800", revision="aa")
+        target_object = extract_regmap(filename=file, project="sc8583", revision="1p1")
         target_object.extract()
     '''
 
@@ -75,121 +75,122 @@ class extract_regmap():
             
             # log.forcedLog(f"row_0={row[0].value}, reg={row[1].value}, perm={row[2].value}, rw={row[3].value}, por={row[4].value}")
             
-            address    = int(row[0].value, 0) # auto detect
-            register   = self._trim_string(string=row[1].value)
-            permission = row[2].value
-            rw         = row[3].value
-            por        = int(row[4].value, 16)
-            
-            # form for list_register : [register, name_bit7, name_bit6, ... name_bit0]
-            list_register  = list()
-            list_register.append(register)
-            
-            # enumerate bit7 ~ bit0
-
-            for col_idx in range(5, 13):
+            if row[0].value is not None:
+                address    = int(row[0].value, 0) # auto detect
+                register   = self._trim_string(string=row[1].value)
+                permission = row[2].value
+                rw         = row[3].value
+                por        = int(row[4].value, 16)
                 
-                cell = row[col_idx]
-
-                # return the cell coordinate only : e.g. F5
-                cell_address = cell.coordinate
-
-                # return merged cell range : e.g. F2:M2 or None
-                merged_range = next((r for r in self.merged_ranges if cell_address in r), None)
-
-                # splited or multi position register
-                if merged_range:
-
-                    # return the tuple : e.g. (6, 2, 13, 2)
-                    min_col, min_row, max_col, max_row = range_boundaries(str(merged_range))
-                    
-                    name_raw   = self.sheet.cell(row=min_row, column=min_col).value
-                    if "RSVD" not in name_raw:
-                        
-                        # split the name to list : e.g. id[13:6] -> id$13$6 -> ["id", "13", "6"]
-                        text_split = name_raw.replace("[", "$").replace("]", "").replace(":", "$")
-                        split_list = text_split.split("$")
-                        name       = self._trim_string(string=split_list[0])
-                        bit_end    = int(split_list[1])
-                        bit_start  = int(split_list[2])
-                    
-                        if name not in self.regmap:
-
-                            self.regmap[name] = {
-                                "name"       : name,
-                                "rw"         : rw,
-                                "permission" : permission,
-                                "reset"      : por,
-                                "singular"   : True
-                            }
-                        
-                        entry = self.regmap[name]
-
-                        # if not exist in the self.regmap[name], return set())
-                        # if exist, return : e.g. (3, 13, 6) for address 3 and [13:6]
-                        existing_combinations = {
-                            (entry[f"address{i}"], entry[f"bith{i}"], entry[f"bitl{i}"])
-                            for i in range(1, len([k for k in entry.keys() if k.startswith("address")]) + 1)
-                            }
-                        new_combination = (address, bit_end, bit_start)
-                        
-                        if new_combination not in existing_combinations:
-
-                            # obtaion the length for splited name block 
-                            index = len([k for k in entry.keys() if k.startswith("address")]) +1
-                            entry[f"address{index}"]  = address
-                            entry[f"register{index}"] = register
-                            entry[f"lsb{index}"]      = 13-max_col # actual position on the byte
-                            entry[f"msb{index}"]      = 13-min_col # actual position on the byte
-                            entry[f"bith{index}"]     = bit_end    # logical position
-                            entry[f"bitl{index}"]     = bit_start  # logical position
-                        
-                        if  index > 1:
-                            font_color = color.blue
-                        else:
-                            font_color = color.cyan
-                        log.forcedLog(f"{font_color}addr{index} {address:#04x} {name}[{bit_end}:{bit_start}]{color.end} : msb {13-min_col}, lsb {13-max_col}")
-                        
-                        if (bit_end - bit_start) != 0:
-                            entry[f"singular"] = False
-                    
-                    list_register.append(name)
+                # form for list_register : [register, name_bit7, name_bit6, ... name_bit0]
+                list_register  = list()
+                list_register.append(register)
                 
-                # singular register
-                else:
+                # enumerate bit7 ~ bit0
 
-                    if cell.value:
-                        bit_position = 7 - (col_idx-5)
+                for col_idx in range(5, 13):
+                    
+                    cell = row[col_idx]
 
-                        if "[" in cell.value:
-                            raise Exception(f"format error : {cell.value}")
+                    # return the cell coordinate only : e.g. F5
+                    cell_address = cell.coordinate
+
+                    # return merged cell range : e.g. F2:M2 or None
+                    merged_range = next((r for r in self.merged_ranges if cell_address in r), None)
+
+                    # splited or multi position register
+                    if merged_range:
+
+                        # return the tuple : e.g. (6, 2, 13, 2)
+                        min_col, min_row, max_col, max_row = range_boundaries(str(merged_range))
                         
-                        name = self._trim_string(string=cell.value)
-
-                        if "RSVD" not in name:
-
+                        name_raw   = self.sheet.cell(row=min_row, column=min_col).value
+                        if "RSVD" not in name_raw:
+                            
+                            # split the name to list : e.g. id[13:6] -> id$13$6 -> ["id", "13", "6"]
+                            text_split = name_raw.replace("[", "$").replace("]", "").replace(":", "$")
+                            split_list = text_split.split("$")
+                            name       = self._trim_string(string=split_list[0])
+                            bit_end    = int(split_list[1])
+                            bit_start  = int(split_list[2])
+                        
                             if name not in self.regmap:
 
                                 self.regmap[name] = {
-                                    "name"       : cell.value,
+                                    "name"       : name,
                                     "rw"         : rw,
                                     "permission" : permission,
                                     "reset"      : por,
                                     "singular"   : True
                                 }
+                            
+                            entry = self.regmap[name]
 
-                                entry = self.regmap[name]
-                                index = len([k for k in entry.keys() if k.startswith("address")]) + 1
+                            # if not exist in the self.regmap[name], return set())
+                            # if exist, return : e.g. (3, 13, 6) for address 3 and [13:6]
+                            existing_combinations = {
+                                (entry[f"address{i}"], entry[f"bith{i}"], entry[f"bitl{i}"])
+                                for i in range(1, len([k for k in entry.keys() if k.startswith("address")]) + 1)
+                                }
+                            new_combination = (address, bit_end, bit_start)
+                            
+                            if new_combination not in existing_combinations:
+
+                                # obtaion the length for splited name block 
+                                index = len([k for k in entry.keys() if k.startswith("address")]) +1
                                 entry[f"address{index}"]  = address
                                 entry[f"register{index}"] = register
-                                entry[f"msb{index}"]      = bit_position # actual position on the byte
-                                entry[f"lsb{index}"]      = bit_position # actual position on the byte
-                                entry[f"bith{index}"]     = 0 # logical position
-                                entry[f"bitl{index}"]     = 0 # logical position
-
-                            log.forcedLog(f"{color.yellow}addr{index} {address:#04x} {name}{color.end} : msb {bit_position}, lsb {bit_position}")
+                                entry[f"lsb{index}"]      = 13-max_col # actual position on the byte
+                                entry[f"msb{index}"]      = 13-min_col # actual position on the byte
+                                entry[f"bith{index}"]     = bit_end    # logical position
+                                entry[f"bitl{index}"]     = bit_start  # logical position
+                            
+                            if  index > 1:
+                                font_color = color.blue
+                            else:
+                                font_color = color.cyan
+                            log.forcedLog(f"{font_color}addr{index} {address:#04x} {name}[{bit_end}:{bit_start}]{color.end} : msb {13-min_col}, lsb {13-max_col}")
+                            
+                            if (bit_end - bit_start) != 0:
+                                entry[f"singular"] = False
                         
                         list_register.append(name)
+                    
+                    # singular register
+                    else:
+
+                        if cell.value:
+                            bit_position = 7 - (col_idx-5)
+
+                            if "[" in cell.value:
+                                raise Exception(f"format error : {cell.value}")
+                            
+                            name = self._trim_string(string=cell.value)
+
+                            if "RSVD" not in name:
+
+                                if name not in self.regmap:
+
+                                    self.regmap[name] = {
+                                        "name"       : cell.value,
+                                        "rw"         : rw,
+                                        "permission" : permission,
+                                        "reset"      : por,
+                                        "singular"   : True
+                                    }
+
+                                    entry = self.regmap[name]
+                                    index = len([k for k in entry.keys() if k.startswith("address")]) + 1
+                                    entry[f"address{index}"]  = address
+                                    entry[f"register{index}"] = register
+                                    entry[f"msb{index}"]      = bit_position # actual position on the byte
+                                    entry[f"lsb{index}"]      = bit_position # actual position on the byte
+                                    entry[f"bith{index}"]     = 0 # logical position
+                                    entry[f"bitl{index}"]     = 0 # logical position
+
+                                log.forcedLog(f"{color.yellow}addr{index} {address:#04x} {name}{color.end} : msb {bit_position}, lsb {bit_position}")
+                            
+                            list_register.append(name)
 
             self.stsmap[address] = list_register
 

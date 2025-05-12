@@ -1,8 +1,7 @@
-power_supply:
-  keysight_e36232a : "USB0::0x2A8D::0x3002::MY61002049::INSTR"
 digital_multimeter:
-  keithley_dmm6500: "USB0::0x05E6::0x6500::04589868::INSTR"
-  rohde_hmc8012 : "USB0::0x0AAD::0x0135::031642082::INSTR"
+  keithley_dmm6500: "USB0::0x05E6::0x6500::04651237::INSTR"
+power_supply:
+  rigol_dp821a : "USB0::0x1AB1::0x0E11::DP8E253900073::INSTR"
 oscilloscope:
   tektronix_dpo4034 : "USB0::0x0699::0x0401::C021376::INSTR"
 source_meter:
