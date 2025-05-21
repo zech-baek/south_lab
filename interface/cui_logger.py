@@ -247,7 +247,7 @@ class logger:
     
     
     @classmethod
-    def visa_scan(cls):
+    def scan_visa(cls):
         
         rm = visa.ResourceManager()
         ret = list(rm.list_resources())
@@ -256,3 +256,17 @@ class logger:
             write_log(f"### device {n+1} : {ret[n]}")
             
         return ret
+    
+
+    @classmethod
+    def scan_uart(cls):
+        
+        import serial
+
+        for i in range(256):  # Check COM0 to COM255
+            try:
+                s = serial.Serial(f"COM{i}")
+                s.close()
+                print(f"found UART port : COM{i}")
+            except (OSError, serial.SerialException):
+                pass

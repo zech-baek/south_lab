@@ -120,6 +120,8 @@ class cui_frame:
         
         self.regmap_gen(cache.reg_map)
         cache.initialized = True
+
+        log_wrapping(f"{cache.device}", f"initialized with i2c address {cache.i2c_a:#04x} by default", True)
     
     
     def close(self):

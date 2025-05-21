@@ -289,7 +289,8 @@ class common_function:
     def init_default(self):
         
         for ch in [1, 2, 3, 4]:
-            self.send(f"CH{ch}:POSition -{ch}")
+            position = ch-1
+            self.send(f"CH{ch}:POSition -{position}")
             self.send(f"CH{ch}:SCALE 1")
             self.send(f"SELECT:CH{ch} ON")
         
@@ -416,7 +417,7 @@ class common_function:
     
     @property
     def save_waveform(self):
-        pass
+        log.infoLog(f"filename is required")
     
 
     @save_waveform.setter
@@ -449,11 +450,11 @@ class common_function:
         log.infoLog(f"save the waveform into the log directory with {self.filename}")
 
 
-class tektronix_dp_series_usb(channel_function, common_function):
+class tektronix_mdo34(channel_function, common_function):
     
     '''
     Tektronix
-    - Model : DPO4104B
+    - Model : MDO34
     - 4 channel
     - usb protocol
     '''
@@ -480,7 +481,7 @@ class tektronix_dp_series_usb(channel_function, common_function):
                 with open(equipment_dir/"devices.yaml") as yaml_dev:
                     digital_scope = yaml.safe_load(yaml_dev)
                 
-                ds_id = digital_scope["oscilloscope"]["tektronix_dpo4034"]
+                ds_id = digital_scope["oscilloscope"]["tektronix_mdo34"]
                 self.dev = self.rm.open_resource(ds_id)
                 
                 for ch in [1, 2, 3,4]:

@@ -3,7 +3,7 @@ digital_multimeter:
 power_supply:
   rigol_dp821a : "USB0::0x1AB1::0x0E11::DP8E253900073::INSTR"
 oscilloscope:
-  tektronix_dpo4034 : "USB0::0x0699::0x0401::C021376::INSTR"
+  tektronix_mdo34 : "USB0::0x0699::0x052C::SGVJ0003244::INSTR"
 source_meter:
   keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"
 e-loader:

@@ -105,7 +105,7 @@ class extract_regmap():
                         min_col, min_row, max_col, max_row = range_boundaries(str(merged_range))
                         
                         name_raw   = self.sheet.cell(row=min_row, column=min_col).value
-                        if "RSVD" not in name_raw:
+                        if "RSVD" not in name_raw and "RESERVED" not in name_raw:
                             
                             # split the name to list : e.g. id[13:6] -> id$13$6 -> ["id", "13", "6"]
                             text_split = name_raw.replace("[", "$").replace("]", "").replace(":", "$")
@@ -167,7 +167,7 @@ class extract_regmap():
                             
                             name = self._trim_string(string=cell.value)
 
-                            if "RSVD" not in name:
+                            if "RSVD" not in name and "RESERVED" not in name:
 
                                 if name not in self.regmap:
 

@@ -415,6 +415,21 @@ class rigol_dp811a:
         # log.infoLog(f"set the voltage to {volt}")
     '''
 
+
+    @property
+    def voltage(self):
+
+        ret = self.query(":MEASURE:VOLTAGE:DC?")
+        return float(ret)
+
+
+    @property
+    def current(self):
+
+        ret = self.query(":MEASURE:CURRENT:DC?")
+        return float(ret)
+
+
     @property
     def iset(self):
 

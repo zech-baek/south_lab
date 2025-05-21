@@ -51,7 +51,7 @@ class function:
     def __init__(self, obj):
 
         self.obj = obj
-
+    
 
     @property
     def status(self):
@@ -63,7 +63,7 @@ class function:
     @property
     def status_ctrl(self):
         
-        status_register = [0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29]
+        status_register = [0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A]
         print_byte_status(reg=status_register, obj=self.obj)
     
 
@@ -73,29 +73,29 @@ class function:
         # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
         # print_byte_status(reg=status_register, obj=self.obj)
 
-        lsb_iin  = 0.001875
-        lsb_vin  = 0.00625
-        lsb_wpc  = 0.00625
-        lsb_vext = 0.00625
-        lsb_vout = 0.00125
-        lsb_vbat = 0.00125
-        lsb_tdie = 0.5
-        lsb_c1p  = 0.00625
-        lsb_ibat = 0.00375
-        lsb_ntc  = 0.01465
+        lsb_iin   = 0.001875
+        lsb_vin   = 0.005
+        lsb_vext1 = 0.005
+        lsb_vext2 = 0.005
+        lsb_vout  = 0.00125
+        lsb_vbat  = 0.00125
+        lsb_tdie  = 0.5
+        lsb_c1p   = 0.005
+        lsb_ibat  = 0.003125
+        lsb_ntc   = 0.01465
 
         sts_map = dict()
         header = ["ADC", "Hex", "Value"]
 
         sts_reg = {
             "IIN_ADC"    : 0.001875,
-            "VIN_ADC"    : 0.00625,
-            "WPC_IN_ADC" : 0.00625,
-            "VEXT_ADC"   : 0.00625,
+            "VIN_ADC"    : 0.005,
+            "VEXT1_ADC"   : 0.005,
+            "VEXT2_ADC"   : 0.005,
             "VOUT_ADC"   : 0.00125,
             "VBAT_ADC"   : 0.00125,
-            "IBAT_ADC"   : 0.00375,
-            "C1P_ADC"    : 0.00625,
+            "IBAT_ADC"   : 0.003125,
+            "C1P_ADC"    : 0.005,
             "NTC_ADC"    : 0.01465,
             "TDIE_ADC"   : 0.5
         }

@@ -1,0 +1,16 @@
+emulator :
+  microchip :
+    device : "mcp2221"
+    vid    : 0x04D8
+    pid    : 0x00DD
+  silabs :
+    device : "cp2112"
+    vid    : 0x10c4
+    pid    : 0xea90
+  rpi :
+    device : "raspberry pi"
+    channel : 1
+i2c_address :
+  default : 0x6e # default address
+  alternative :
+    0 : 0x6f

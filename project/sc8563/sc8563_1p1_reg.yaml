@@ -1,0 +1,3030 @@
+ADC_DONE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: ADC_DONE_FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+ADC_DONE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: ADC_DONE_MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+ADC_DONE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: ADC_DONE_STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+ADC_EN:
+  address1: 41
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: ADC_EN
+  permission: User
+  register1: ADC_EN
+  reset: 0
+  rw: RW
+  singular: true
+ADC_FREEZE:
+  address1: 41
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: ADC_FREEZE
+  permission: User
+  register1: ADC_EN
+  reset: 0
+  rw: RW
+  singular: true
+ADC_RATE:
+  address1: 41
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: ADC_RATE
+  permission: User
+  register1: ADC_EN
+  reset: 0
+  rw: RW
+  singular: true
+BST_FAIL_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: BST_FAIL_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+BST_FAIL_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: BST_FAIL_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+BST_FAIL_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: BST_FAIL_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+BST_FAIL_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: BST_FAIL_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+C1P2OUT_OVP:
+  address1: 35
+  bith1: 2
+  bitl1: 0
+  lsb1: 0
+  msb1: 2
+  name: C1P2OUT_OVP
+  permission: User
+  register1: C1P2OUT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_OVP_BLK:
+  address1: 35
+  bith1: 1
+  bitl1: 0
+  lsb1: 5
+  msb1: 6
+  name: C1P2OUT_OVP_BLK
+  permission: User
+  register1: C1P2OUT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_OVP_DG:
+  address1: 35
+  bith1: 1
+  bitl1: 0
+  lsb1: 3
+  msb1: 4
+  name: C1P2OUT_OVP_DG
+  permission: User
+  register1: C1P2OUT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_OVP_DIS:
+  address1: 35
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: C1P2OUT_OVP_DIS
+  permission: User
+  register1: C1P2OUT_OVP
+  reset: 0
+  rw: RW
+  singular: true
+C1P2OUT_OVP_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: C1P2OUT_OVP_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+C1P2OUT_OVP_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: C1P2OUT_OVP_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+C1P2OUT_OVP_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: C1P2OUT_OVP_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+C1P2OUT_UVP:
+  address1: 36
+  bith1: 2
+  bitl1: 0
+  lsb1: 0
+  msb1: 2
+  name: C1P2OUT_UVP
+  permission: User
+  register1: C1P2OUT_UVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_UVP_BLK:
+  address1: 36
+  bith1: 1
+  bitl1: 0
+  lsb1: 5
+  msb1: 6
+  name: C1P2OUT_UVP_BLK
+  permission: User
+  register1: C1P2OUT_UVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_UVP_DG:
+  address1: 36
+  bith1: 1
+  bitl1: 0
+  lsb1: 3
+  msb1: 4
+  name: C1P2OUT_UVP_DG
+  permission: User
+  register1: C1P2OUT_UVP
+  reset: 0
+  rw: RW
+  singular: false
+C1P2OUT_UVP_DIS:
+  address1: 36
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: C1P2OUT_UVP_DIS
+  permission: User
+  register1: C1P2OUT_UVP
+  reset: 0
+  rw: RW
+  singular: true
+C1P2OUT_UVP_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: C1P2OUT_UVP_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+C1P2OUT_UVP_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: C1P2OUT_UVP_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+C1P2OUT_UVP_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: C1P2OUT_UVP_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+C1P_ADC:
+  address1: 57
+  address2: 58
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: C1P_ADC
+  permission: User
+  register1: C1P_ADC1
+  register2: C1P_ADC0
+  reset: 0
+  rw: R
+  singular: false
+C1P_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: C1P_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+CFLY_OPEN_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: CFLY_OPEN_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+CFLY_OPEN_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CFLY_OPEN_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+CFLY_OPEN_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CFLY_OPEN_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+CFLY_OPEN_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CFLY_OPEN_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+CFLY_SHORT_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: CFLY_SHORT_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+CFLY_SHORT_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: CFLY_SHORT_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+CFLY_SHORT_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: CFLY_SHORT_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+CFLY_SHORT_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: CFLY_SHORT_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+CONV_OCP_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: CONV_OCP_FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+CONV_OCP_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: CONV_OCP_MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+CONV_OCP_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: CONV_OCP_STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+CP_EN:
+  address1: 19
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: CP_EN
+  permission: User
+  register1: CTRL0
+  reset: 0
+  rw: RW
+  singular: true
+CP_SWITCHING_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CP_SWITCHING_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+CP_SWITCHING_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CP_SWITCHING_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+CP_SWITCHING_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: CP_SWITCHING_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+DRV_SHORT_DET_DIS:
+  address1: 26
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: DRV_SHORT_DET_DIS
+  permission: User
+  register1: VEXT_PROTECT_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_DISCHG_CTRL1:
+  address1: 24
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: EXT1_DISCHG_CTRL1
+  permission: User
+  register1: VEXT1_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_DISCHG_CTRL2:
+  address1: 24
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: EXT1_DISCHG_CTRL2
+  permission: User
+  register1: VEXT1_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_DRV_SHORT_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: EXT1_DRV_SHORT_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT1_DRV_SHORT_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: EXT1_DRV_SHORT_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_DRV_SHORT_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: EXT1_DRV_SHORT_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT1_FET_OPEN_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: EXT1_FET_OPEN_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT1_FET_OPEN_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: EXT1_FET_OPEN_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_FET_OPEN_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: EXT1_FET_OPEN_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT1_OVP:
+  address1: 24
+  bith1: 2
+  bitl1: 0
+  lsb1: 0
+  msb1: 2
+  name: EXT1_OVP
+  permission: User
+  register1: VEXT1_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+EXT1_OVP_DIS:
+  address1: 26
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: EXT1_OVP_DIS
+  permission: User
+  register1: VEXT_PROTECT_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_SW_CTRL1:
+  address1: 24
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: EXT1_SW_CTRL1
+  permission: User
+  register1: VEXT1_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT1_SW_CTRL2:
+  address1: 24
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: EXT1_SW_CTRL2
+  permission: User
+  register1: VEXT1_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_DISCHG_CTRL1:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: EXT2_DISCHG_CTRL1
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_DISCHG_CTRL2:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: EXT2_DISCHG_CTRL2
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_DRV_SHORT_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: EXT2_DRV_SHORT_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT2_DRV_SHORT_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: EXT2_DRV_SHORT_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_DRV_SHORT_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: EXT2_DRV_SHORT_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT2_FET_OPEN_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: EXT2_FET_OPEN_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT2_FET_OPEN_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: EXT2_FET_OPEN_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_FET_OPEN_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: EXT2_FET_OPEN_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+EXT2_GATE_CTRL:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: EXT2_GATE_CTRL
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_OVP:
+  address1: 25
+  bith1: 2
+  bitl1: 0
+  lsb1: 0
+  msb1: 2
+  name: EXT2_OVP
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+EXT2_OVP_DIS:
+  address1: 26
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: EXT2_OVP_DIS
+  permission: User
+  register1: VEXT_PROTECT_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_SW_CTRL1:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: EXT2_SW_CTRL1
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+EXT2_SW_CTRL2:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: EXT2_SW_CTRL2
+  permission: User
+  register1: VEXT2_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+FET_OPEN:
+  address1: 26
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: FET_OPEN
+  permission: User
+  register1: VEXT_PROTECT_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+FET_OPEN_DET_DIS:
+  address1: 26
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: FET_OPEN_DET_DIS
+  permission: User
+  register1: VEXT_PROTECT_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+FREQ_SHIFT:
+  address1: 21
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: FREQ_SHIFT
+  permission: User
+  register1: CTRL2
+  reset: 0
+  rw: RW
+  singular: false
+FSW_SET:
+  address1: 21
+  bith1: 3
+  bitl1: 0
+  lsb1: 0
+  msb1: 3
+  name: FSW_SET
+  permission: User
+  register1: CTRL2
+  reset: 0
+  rw: RW
+  singular: false
+IBAT_ADC:
+  address1: 59
+  address2: 60
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: IBAT_ADC
+  permission: User
+  register1: IBAT_ADC1
+  register2: IBAT_ADC0
+  reset: 0
+  rw: R
+  singular: false
+IBAT_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: IBAT_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+IBAT_OCP_DG_SET:
+  address1: 39
+  bith1: 1
+  bitl1: 0
+  lsb1: 6
+  msb1: 7
+  name: IBAT_OCP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL0
+  reset: 0
+  rw: RW
+  singular: false
+IBAT_OCP_DIS:
+  address1: 32
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IBAT_OCP_DIS
+  permission: User
+  register1: IBAT_OCP
+  reset: 0
+  rw: RW
+  singular: true
+IBAT_OCP_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: IBAT_OCP_ FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IBAT_OCP_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: IBAT_OCP_ MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+IBAT_OCP_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: IBAT_OCP_ STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IBAT_REG:
+  address1: 29
+  address2: 32
+  bith1: 6
+  bith2: 6
+  bitl1: 0
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 6
+  msb2: 6
+  name: IBAT_REG
+  permission: User
+  register1: IBAT_REG
+  register2: IBAT_OCP
+  reset: 0
+  rw: RW
+  singular: false
+IBAT_REG_ACTIVE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: IBAT_REG_ACTIVE_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+IBAT_REG_ACTIVE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: IBAT_REG_ACTIVE_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+IBAT_REG_ACTIVE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: IBAT_REG_ACTIVE_ STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+IBAT_REG_DIS:
+  address1: 29
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IBAT_REG_DIS
+  permission: User
+  register1: IBAT_REG
+  reset: 0
+  rw: RW
+  singular: true
+IIN_ADC:
+  address1: 43
+  address2: 44
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: IIN_ADC
+  permission: User
+  register1: IIN_ADC1
+  register2: IIN_ADC0
+  reset: 0
+  rw: R
+  singular: false
+IIN_ADC_DIS:
+  address1: 41
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: IIN_ADC_DIS
+  permission: User
+  register1: ADC_EN
+  reset: 0
+  rw: RW
+  singular: true
+IIN_OCP:
+  address1: 34
+  bith1: 7
+  bitl1: 0
+  lsb1: 0
+  msb1: 7
+  name: IIN_OCP
+  permission: User
+  register1: IIN_OCP
+  reset: 0
+  rw: RW
+  singular: false
+IIN_OCP_DG_SET:
+  address1: 39
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: IIN_OCP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL0
+  reset: 0
+  rw: RW
+  singular: false
+IIN_OCP_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IIN_OCP_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+IIN_OCP_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IIN_OCP_FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IIN_OCP_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IIN_OCP_MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+IIN_OCP_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IIN_OCP_STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IIN_REG:
+  address1: 27
+  bith1: 7
+  bitl1: 0
+  lsb1: 0
+  msb1: 7
+  name: IIN_REG
+  permission: User
+  register1: IIN_REG
+  reset: 0
+  rw: RW
+  singular: false
+IIN_REG_ACTIVE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: IIN_REG_ACTIVE_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+IIN_REG_ACTIVE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: IIN_REG_ACTIVE_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+IIN_REG_ACTIVE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: IIN_REG_ACTIVE_ STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+IIN_REG_DIS:
+  address1: 30
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: IIN_REG_DIS
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+IIN_TDIE_REG_INTERVAL:
+  address1: 30
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: IIN_TDIE_REG_INTERVAL
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_CFG:
+  address1: 30
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: IIN_UCP_CFG
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: IIN_UCP_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_EN_METHOD_SEL:
+  address1: 20
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: IIN_UCP_EN_METHOD_SEL
+  permission: User
+  register1: CTRL1
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_FALL_BLANKING_SET:
+  address1: 20
+  bith1: 1
+  bitl1: 0
+  lsb1: 1
+  msb1: 2
+  name: IIN_UCP_FALL_BLANKING_SET
+  permission: User
+  register1: CTRL1
+  reset: 0
+  rw: RW
+  singular: false
+IIN_UCP_FALL_DG_SET:
+  address1: 40
+  bith1: 1
+  bitl1: 0
+  lsb1: 2
+  msb1: 3
+  name: IIN_UCP_FALL_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL1
+  reset: 0
+  rw: RW
+  singular: false
+IIN_UCP_FALL_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_FALL_ FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IIN_UCP_FALL_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_FALL_ MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_FALL_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_FALL_ STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+IIN_UCP_RISE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_RISE_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+IIN_UCP_RISE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_RISE_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+IIN_UCP_RISE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: IIN_UCP_RISE_ STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+MODE:
+  address1: 19
+  bith1: 2
+  bitl1: 0
+  lsb1: 0
+  msb1: 2
+  name: MODE
+  permission: User
+  register1: CTRL0
+  reset: 0
+  rw: RW
+  singular: false
+NTC_ADC:
+  address1: 61
+  address2: 62
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: NTC_ADC
+  permission: User
+  register1: NTC_ADC1
+  register2: NTC_ADC0
+  reset: 0
+  rw: R
+  singular: false
+NTC_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: NTC_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+NTC_FLT:
+  address1: 37
+  bith1: 5
+  bitl1: 0
+  lsb1: 0
+  msb1: 5
+  name: NTC_FLT
+  permission: User
+  register1: NTC_FLT
+  reset: 0
+  rw: RW
+  singular: false
+NTC_FLT_DIS:
+  address1: 37
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: NTC_FLT_DIS
+  permission: User
+  register1: NTC_FLT
+  reset: 0
+  rw: RW
+  singular: true
+NTC_FLT_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: NTC_FLT_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+NTC_FLT_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: NTC_FLT_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+NTC_FLT_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: NTC_FLT_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+PIN_DIAG_FAIL_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: PIN_DIAG_FAIL_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+PIN_DIAG_FAIL_FLAG:
+  address1: 5
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: PIN_DIAG_FAIL_FLAG
+  permission: User
+  register1: INT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+PIN_DIAG_FAIL_MASK:
+  address1: 11
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: PIN_DIAG_FAIL_MASK
+  permission: User
+  register1: MASK_FAULT1
+  reset: 0
+  rw: RW
+  singular: true
+PIN_DIAG_FAIL_STAT:
+  address1: 17
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: PIN_DIAG_FAIL_STAT
+  permission: User
+  register1: STAT_FAULT1
+  reset: 0
+  rw: R
+  singular: true
+PMID_ERRORHI_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: PMID_ERRORHI_FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+PMID_ERRORHI_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: PMID_ERRORHI_MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+PMID_ERRORHI_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: PMID_ERRORHI_STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+PMID_ERRORLO_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: PMID_ERRORLO_FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+PMID_ERRORLO_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: PMID_ERRORLO_MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+PMID_ERRORLO_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: PMID_ERRORLO_STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+PMID_IN_RANGE_DIS:
+  address1: 20
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: PMID_IN_RANGE_DIS
+  permission: User
+  register1: CTRL1
+  reset: 0
+  rw: RW
+  singular: true
+PMID_PD_EN:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: PMID_PD_EN
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+POR_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: POR_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+POR_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: POR_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+QB_EN:
+  address1: 19
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: QB_EN
+  permission: User
+  register1: CTRL0
+  reset: 0
+  rw: RW
+  singular: true
+QB_ON_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: QB_ON_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+QB_ON_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: QB_ON_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+QB_ON_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: QB_ON_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+REG_RST:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: REG_RST
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
+SET_IBAT_SNS_HS:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: SET_IBAT_SNS_HS
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+SET_IBAT_SNS_RES:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: SET_IBAT_SNS_RES
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+SS_FAIL_DIS:
+  address1: 20
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: SS_FAIL_DIS
+  permission: User
+  register1: CTRL1
+  reset: 0
+  rw: RW
+  singular: true
+SS_FAIL_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: SS_FAIL_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+SS_FAIL_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: SS_FAIL_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+SS_FAIL_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: SS_FAIL_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+SS_TIMEOUT:
+  address1: 20
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: SS_TIMEOUT
+  permission: User
+  register1: CTRL1
+  reset: 0
+  rw: RW
+  singular: false
+SS_TIMEOUT_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: SS_TIMEOUT_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+SS_TIMEOUT_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: SS_TIMEOUT_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+SS_TIMEOUT_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: SS_TIMEOUT_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+STANDBY_MODE_SET:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: STANDBY_MODE_SET
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
+SYNC_EN:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: SYNC_EN
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+SYNC_OUT:
+  address1: 22
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: SYNC_OUT
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: false
+SYNC_ROLE:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: SYNC_ROLE
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+TDIE_ADC:
+  address1: 55
+  address2: 56
+  bith1: 9
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 1
+  msb2: 7
+  name: TDIE_ADC
+  permission: User
+  register1: TDIE_ADC1
+  register2: TDIE_ADC0
+  reset: 0
+  rw: R
+  singular: false
+TDIE_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: TDIE_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+TDIE_REG:
+  address1: 30
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: TDIE_REG
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+TDIE_REG_ACTIVE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TDIE_REG_ACTIVE_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+TDIE_REG_ACTIVE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TDIE_REG_ACTIVE_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+TDIE_REG_ACTIVE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TDIE_REG_ACTIVE_ STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+TDIE_REG_DIS:
+  address1: 30
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TDIE_REG_DIS
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+TDIE_REG_EXIT_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: TDIE_REG_EXIT_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+TDIE_REG_EXIT_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: TDIE_REG_EXIT_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+TSHUT_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: TSHUT_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+TSHUT_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TSHUT_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+TSHUT_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TSHUT_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+TSHUT_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: TSHUT_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+VBAT_ADC:
+  address1: 53
+  address2: 54
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: VBAT_ADC
+  permission: User
+  register1: VBAT_ADC1
+  register2: VBAT_ADC0
+  reset: 0
+  rw: R
+  singular: false
+VBAT_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VBAT_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+VBAT_OVP:
+  address1: 31
+  bith1: 7
+  bitl1: 0
+  lsb1: 0
+  msb1: 7
+  name: VBAT_OVP
+  permission: User
+  register1: VBAT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+VBAT_OVP_DG_SET:
+  address1: 39
+  bith1: 1
+  bitl1: 0
+  lsb1: 2
+  msb1: 3
+  name: VBAT_OVP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL0
+  reset: 0
+  rw: RW
+  singular: false
+VBAT_OVP_DIS:
+  address1: 38
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VBAT_OVP_DIS
+  permission: User
+  register1: PROTECT_DIS
+  reset: 0
+  rw: RW
+  singular: true
+VBAT_OVP_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VBAT_OVP_ FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VBAT_OVP_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VBAT_OVP_ MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+VBAT_OVP_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VBAT_OVP_ STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VBAT_REG:
+  address1: 28
+  bith1: 7
+  bitl1: 0
+  lsb1: 0
+  msb1: 7
+  name: VBAT_REG
+  permission: User
+  register1: VBAT_REG
+  reset: 0
+  rw: RW
+  singular: false
+VBAT_REG_ACTIVE_FLAG:
+  address1: 3
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VBAT_REG_ACTIVE_ FLAG
+  permission: User
+  register1: INT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+VBAT_REG_ACTIVE_MASK:
+  address1: 9
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VBAT_REG_ACTIVE_ MASK
+  permission: User
+  register1: MASK_DEVICE2
+  reset: 0
+  rw: RW
+  singular: true
+VBAT_REG_ACTIVE_STAT:
+  address1: 15
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VBAT_REG_ACTIVE_ STAT
+  permission: User
+  register1: STAT_DEVICE2
+  reset: 0
+  rw: R
+  singular: true
+VBAT_REG_DIS:
+  address1: 30
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VBAT_REG_DIS
+  permission: User
+  register1: REG_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+VB_EN_STAT:
+  address1: 19
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: VB_EN_STAT
+  permission: User
+  register1: CTRL0
+  reset: 0
+  rw: RW
+  singular: false
+VEXT1_ADC:
+  address1: 47
+  address2: 48
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: VEXT1_ADC
+  permission: User
+  register1: VEXT1_ADC1
+  register2: VEXT1_ADC0
+  reset: 0
+  rw: R
+  singular: false
+VEXT1_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VEXT1_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+VEXT1_DRV_ON_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VEXT1_DRV_ON_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_DRV_ON_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VEXT1_DRV_ON_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT1_DRV_ON_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VEXT1_DRV_ON_STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_INSERT_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: VEXT1_INSERT_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_INSERT_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: VEXT1_INSERT_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT1_INSERT_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: VEXT1_INSERT_STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_OVP_DG_SET:
+  address1: 40
+  bith1: 1
+  bitl1: 0
+  lsb1: 6
+  msb1: 7
+  name: VEXT1_OVP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL1
+  reset: 0
+  rw: RW
+  singular: false
+VEXT1_OVP_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VEXT1_OVP_ FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_OVP_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VEXT1_OVP_ MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT1_OVP_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VEXT1_OVP_ STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_REMOVE_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VEXT1_REMOVE_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT1_REMOVE_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VEXT1_REMOVE_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT2_ADC:
+  address1: 49
+  address2: 50
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: VEXT2_ADC
+  permission: User
+  register1: VEXT2_ADC1
+  register2: VEXT2_ADC0
+  reset: 0
+  rw: R
+  singular: false
+VEXT2_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VEXT2_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+VEXT2_DRV_ON_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VEXT2_DRV_ON_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_DRV_ON_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VEXT2_DRV_ON_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT2_DRV_ON_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VEXT2_DRV_ON_STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_INSERT_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VEXT2_INSERT_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_INSERT_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VEXT2_INSERT_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT2_INSERT_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VEXT2_INSERT_STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_OVP_DG_SET:
+  address1: 40
+  bith1: 1
+  bitl1: 0
+  lsb1: 4
+  msb1: 5
+  name: VEXT2_OVP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL1
+  reset: 0
+  rw: RW
+  singular: false
+VEXT2_OVP_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VEXT2_OVP_ FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_OVP_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VEXT2_OVP_ MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT2_OVP_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VEXT2_OVP_ STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_REMOVE_FLAG:
+  address1: 2
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VEXT2_REMOVE_FLAG
+  permission: User
+  register1: INT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+VEXT2_REMOVE_MASK:
+  address1: 8
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VEXT2_REMOVE_MASK
+  permission: User
+  register1: MASK_DEVICE1
+  reset: 0
+  rw: RW
+  singular: true
+VEXT_SHUT_DOWN_SET:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VEXT_SHUT_DOWN_SET
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
+VIN_ADC:
+  address1: 45
+  address2: 46
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: VIN_ADC
+  permission: User
+  register1: VIN_ADC1
+  register2: VIN_ADC0
+  reset: 0
+  rw: R
+  singular: false
+VIN_ADC_DIS:
+  address1: 41
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VIN_ADC_DIS
+  permission: User
+  register1: ADC_EN
+  reset: 0
+  rw: RW
+  singular: true
+VIN_OVP:
+  address1: 33
+  bith1: 2
+  bitl1: 0
+  lsb1: 4
+  msb1: 6
+  name: VIN_OVP
+  permission: User
+  register1: VIN_VOUT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+VIN_OVP_DG_SET:
+  address1: 39
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VIN_OVP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL0
+  reset: 0
+  rw: RW
+  singular: true
+VIN_OVP_DIS:
+  address1: 33
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VIN_OVP_DIS
+  permission: User
+  register1: VIN_VOUT_OVP
+  reset: 0
+  rw: RW
+  singular: true
+VIN_OVP_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VIN_OVP_ FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VIN_OVP_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VIN_OVP_ MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+VIN_OVP_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VIN_OVP_ STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VIN_PD_EN:
+  address1: 22
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VIN_PD_EN
+  permission: User
+  register1: CTRL3
+  reset: 0
+  rw: RW
+  singular: true
+VIN_PRESENT_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VIN_PRESENT_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VIN_PRESENT_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VIN_PRESENT_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+VIN_PRESENT_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: VIN_PRESENT_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VIN_TH_CHG_EN_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VIN_TH_CHG_EN_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VIN_TH_CHG_EN_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VIN_TH_CHG_EN_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+VIN_TH_CHG_EN_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VIN_TH_CHG_EN_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_ADC:
+  address1: 51
+  address2: 52
+  bith1: 11
+  bith2: 7
+  bitl1: 8
+  bitl2: 0
+  lsb1: 0
+  lsb2: 0
+  msb1: 3
+  msb2: 7
+  name: VOUT_ADC
+  permission: User
+  register1: VOUT_ADC1
+  register2: VOUT_ADC0
+  reset: 0
+  rw: R
+  singular: false
+VOUT_ADC_DIS:
+  address1: 42
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: VOUT_ADC_DIS
+  permission: User
+  register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_INSERT_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VOUT_INSERT_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_INSERT_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VOUT_INSERT_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_OVP:
+  address1: 33
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: VOUT_OVP
+  permission: User
+  register1: VIN_VOUT_OVP
+  reset: 0
+  rw: RW
+  singular: false
+VOUT_OVP_DG_SET:
+  address1: 39
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VOUT_OVP_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL0
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_OVP_DIS:
+  address1: 33
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VOUT_OVP_DIS
+  permission: User
+  register1: VIN_VOUT_OVP
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_OVP_FLAG:
+  address1: 4
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_OVP_FLAG
+  permission: User
+  register1: INT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_OVP_MASK:
+  address1: 10
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_OVP_MASK
+  permission: User
+  register1: MASK_FAULT0
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_OVP_STAT:
+  address1: 16
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_OVP_STAT
+  permission: User
+  register1: STAT_FAULT0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_PRESENT_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VOUT_PRESENT_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_TH_CHG_EN_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_TH_CHG_EN_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_TH_CHG_EN_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_TH_CHG_EN_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_TH_CHG_EN_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_TH_CHG_EN_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_TH_CHG_FALL_DG_SET:
+  address1: 40
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: VOUT_TH_CHG_FALL_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL1
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_TH_REV_EN_FLAG:
+  address1: 1
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VOUT_TH_REV_EN_FLAG
+  permission: User
+  register1: INT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_TH_REV_EN_MASK:
+  address1: 7
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VOUT_TH_REV_EN_MASK
+  permission: User
+  register1: MASK_DEVICE0
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_TH_REV_EN_STAT:
+  address1: 13
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VOUT_TH_REV_EN_STAT
+  permission: User
+  register1: STAT_DEVICE0
+  reset: 0
+  rw: R
+  singular: true
+VOUT_TH_REV_FALL_DG_SET:
+  address1: 40
+  bith1: 0
+  bitl1: 0
+  lsb1: 1
+  msb1: 1
+  name: VOUT_TH_REV_FALL_DG_SET
+  permission: User
+  register1: DEGLITCH_CTRL1
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_TH_SW_AVDD_STAT:
+  address1: 14
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VOUT_TH_SW_AVDD_STAT
+  permission: User
+  register1: STAT_DEVICE1
+  reset: 0
+  rw: R
+  singular: true
+WD_STANDBY_EN:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: WD_STANDBY _EN
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
+WD_TIMEOUT:
+  address1: 23
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: WD_TIMEOUT
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: false
+WD_TIMEOUT_DIS:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: WD_TIMEOUT_DIS
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
+WD_TIMEOUT_FLAG:
+  address1: 6
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: WD_TIMEOUT_ FLAG
+  permission: User
+  register1: INT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+WD_TIMEOUT_MASK:
+  address1: 12
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: WD_TIMEOUT_ MASK
+  permission: User
+  register1: MASK_FAULT2
+  reset: 0
+  rw: RW
+  singular: true
+WD_TIMEOUT_STAT:
+  address1: 18
+  bith1: 0
+  bitl1: 0
+  lsb1: 0
+  msb1: 0
+  name: WD_TIMEOUT_ STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
+WD_VEXT_SHUTDOWN_EN:
+  address1: 23
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: WD_VEXT_SHUTDOWN_EN
+  permission: User
+  register1: CTRL4
+  reset: 0
+  rw: RW
+  singular: true
