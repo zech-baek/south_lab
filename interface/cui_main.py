@@ -348,7 +348,7 @@ class cui_frame:
             log.output_csv(temp)
         
         xl.close
-
+    
     
     def _read(self, name):
         

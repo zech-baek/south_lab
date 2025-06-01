@@ -2824,13 +2824,13 @@ VOUT_OVP_STAT:
   reset: 0
   rw: R
   singular: true
-VOUT_PRESENT_FLAG:
+VOUT_INSERT_FLAG:
   address1: 1
   bith1: 0
   bitl1: 0
   lsb1: 3
   msb1: 3
-  name: VOUT_PRESENT_FLAG
+  name: VOUT_INSERT_FLAG
   permission: User
   register1: INT_DEVICE0
   reset: 0

@@ -1,6 +1,7 @@
 from tabulate import tabulate as tb
 from interface.cui_colors import color
 from interface.cui_logger import logger as log
+from interface.docs.output_excel import excel_frame
 import yaml, sys
 
 
@@ -51,6 +52,46 @@ class function:
     def __init__(self, obj):
 
         self.obj = obj
+        adc_table = {
+            "iin"   : ["IIN_ADC"   , 0.001875],
+            "vin"   : ["VIN_ADC"   , 0.00625],
+            "wpcin" : ["WPC_IN_ADC", 0.00625],
+            "vext"  : ["VEXT_ADC"  , 0.00625],
+            "vout"  : ["VOUT_ADC"  , 0.00125],
+            "vbat"  : ["VBAT_ADC"  , 0.00125],
+            "ibat"  : ["IBAT_ADC"  , 0.00375],
+            "c1p"   : ["C1P_ADC"   , 0.00625],
+            "ntc"   : ["NTC_ADC"   , 0.01465],
+            "tdie"  : ["TDIE_ADC"  , 0.5]
+        }
+
+        self.lsb_iin  = 0.001875
+        self.lsb_vin  = 0.00625
+        self.lsb_wpc  = 0.00625
+        self.lsb_vext = 0.00625
+        self.lsb_vout = 0.00125
+        self.lsb_vbat = 0.00125
+        self.lsb_tdie = 0.5
+        self.lsb_c1p  = 0.00625
+        self.lsb_ibat = 0.00375
+        self.lsb_ntc  = 0.01465
+
+        self.create_property("adc", adc_table)
+    
+
+    def create_property(self, suffix, config_list):
+
+        for prefix, cfg in config_list.items():
+            setattr(self.__class__, f"{prefix}_{suffix}", property(lambda self, cfg=cfg: getattr(self, suffix)(cfg)))
+
+
+    def adc(self, cfg):
+
+        reg = cfg[0]
+        lsb = cfg[1]
+
+        raw = getattr(self.obj, reg)
+        return raw * lsb
 
 
     @property
@@ -72,6 +113,8 @@ class function:
         
         # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
         # print_byte_status(reg=status_register, obj=self.obj)
+
+        self.obj.ADC_EN = 1
 
         lsb_iin  = 0.001875
         lsb_vin  = 0.00625
@@ -115,3 +158,113 @@ class function:
             ret_map.append(item_list)
 
         print(tb(ret_map, headers="firstrow", numalign="right"))
+
+        self.obj.ADC_EN = 0
+    
+
+    @property
+    def enable_vin_charging(self):
+
+        self.obj.QB_USB_EN = 1
+        self.obj.QB_WPC_EN = 0
+        self.obj.CP_EN = 1
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
+        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
+        print(f"CP_EN     = {self.obj.CP_EN}")
+    
+
+    @property
+    def enable_wpc_charging(self):
+
+        self.obj.QB_USB_EN = 0
+        self.obj.QB_WPC_EN = 1
+        self.obj.CP_EN = 1
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
+        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
+        print(f"CP_EN     = {self.obj.CP_EN}")
+    
+
+    @property
+    def disable_charging(self):
+
+        self.obj.QB_USB_EN = 0
+        self.obj.QB_WPC_EN = 0
+        self.obj.CP_EN = 0
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
+        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
+        print(f"CP_EN     = {self.obj.CP_EN}")
+    
+
+    @property
+    def register_byte_dump(self):
+
+        filename = log.time_stamp(display=False, ret=True) + f"_sc8583_dump"
+        xl = excel_frame(file=filename)
+        xl.worksheet_title = "sc8583"
+
+        start_row = 2
+        header = ["register", "value (dec)", "value (hex)"]
+        xl.insert_header = start_row, 2, header
+
+        log.output_set_filename(filename)
+        log.output_csv(header)
+        
+        for reg_addr in range(0x0, 0x3f):
+
+            readback = self.obj.read_byte(reg_addr)
+            start_row += 1
+            temp = [f"{reg_addr:#04x}", readback, f"{readback:#04x}"]
+            xl.insert_list = start_row, 2, temp
+            log.output_csv(temp)
+        
+        for reg_addr in [0x40, 0x41, 0x42, 0x43, 0x44, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x98]:
+
+            readback = self.obj.read_byte(reg_addr)
+            start_row += 1
+            temp = [f"{reg_addr:#04x}", readback, f"{readback:#04x}"]
+            xl.insert_list = start_row, 2, temp
+            log.output_csv(temp)
+        
+        xl.close
+    
+
+    def log_analyzer(self, log_value):
+
+        # log_value
+        # key : register address
+        # value : regiter value
+    
+        header = ["Addr", "Reg", "Value", "Bit7", "Bit6", "Bit5", "Bit4", "Bit3", "Bit2", "Bit1", "Bit0"]
+        
+        with open(f"{self.obj.device_path}/{self.obj.device}_{self.obj.revision}_status.yaml") as yaml_device:
+            status_map = yaml.safe_load(yaml_device)
+        
+        sts_map = dict()
+        for n in log_value.keys():
+            sts_map[n] = status_map[n]
+        
+        ret_map = []
+        ret_map.append(header)
+
+        for reg_addr, reg_value in log_value.items():
+
+            parsing_list = []
+
+            for shift in range(8):
+                parsing_list.append((reg_value>>shift) & 0x1)
+
+            parsing_list.reverse()
+            
+            item_list = []
+            item_list.append(f"{reg_addr:#04x}")
+            item_list.append(f"{sts_map[reg_addr][0]}")
+            item_list.append(f"{reg_value:#04x}")
+
+            for m in range(8):
+                if parsing_list[m] == 1:
+                    item_list.append(f"{color.blue}{color.bold}{sts_map[reg_addr][m+1]}{color.end}")
+                else:
+                    item_list.append(f"{sts_map[reg_addr][m+1]}")
+            ret_map.append(item_list)
+
+        print(tb(ret_map, headers="firstrow"))

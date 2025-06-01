@@ -51,6 +51,36 @@ class function:
     def __init__(self, obj):
 
         self.obj = obj
+
+        adc_table = {
+            "iin"   : ["IIN_ADC"  , 0.001875],
+            "vin"   : ["VIN_ADC"  , 0.005],
+            "vext1" : ["VEXT1_ADC", 0.005],
+            "vext2" : ["VEXT2_ADC", 0.005],
+            "vout"  : ["VOUT_ADC" , 0.00125],
+            "vbat"  : ["VBAT_ADC" , 0.00125],
+            "ibat"  : ["IBAT_ADC" , 0.003125],
+            "c1p"   : ["C1P_ADC"  , 0.005],
+            "ntc"   : ["NTC_ADC"  , 0.01465],
+            "tdie"  : ["TDIE_ADC" , 0.5]
+        }
+
+        self.create_property("adc", adc_table)
+    
+
+    def create_property(self, suffix, config_list):
+
+        for prefix, cfg in config_list.items():
+            setattr(self.__class__, f"{prefix}_{suffix}", property(lambda self, cfg=cfg: getattr(self, suffix)(cfg)))
+    
+
+    def adc(self, cfg):
+
+        reg = cfg[0]
+        lsb = cfg[1]
+
+        raw = getattr(self.obj, reg)
+        return raw * lsb
     
 
     @property
@@ -69,6 +99,8 @@ class function:
 
     @property
     def status_adc(self):
+
+        self.obj.ADC_EN = 1
         
         # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
         # print_byte_status(reg=status_register, obj=self.obj)
@@ -115,3 +147,39 @@ class function:
             ret_map.append(item_list)
 
         print(tb(ret_map, headers="firstrow", numalign="right"))
+        
+        self.obj.ADC_EN = 0
+    
+
+    @property
+    def enable_charging(self):
+
+        self.obj.write_byte(0x13, 0xd0)
+        print(f"CP_EN = {self.obj.CP_EN}")
+        print(f"QB_EN = {self.obj.QB_EN}")
+    
+
+    @property
+    def preparing_charging(self):
+
+        self.obj.IIN_REG_DIS = 1
+        self.obj.IBAT_REG_DIS = 1
+        self.obj.VBAT_REG_DIS = 1
+        self.obj.IBAT_OCP_DIS = 1
+        self.obj.IIN_UCP_DIS = 1
+        self.obj.NTC_FLT_DIS = 1
+        self.obj.VBAT_OVP_DIS = 1
+        self.obj.STANDBY_MODE_SET = 1
+        self.obj.VEXT_SHUT_DOWN_SET = 0
+        self.obj.SS_TIMEOUT = 0
+
+        print(f"IIN_REG_DIS = {self.obj.IIN_REG_DIS}")
+        print(f"IBAT_REG_DIS = {self.obj.IBAT_REG_DIS}")
+        print(f"VBAT_REG_DIS = {self.obj.VBAT_REG_DIS}")
+        print(f"IBAT_OCP_DIS = {self.obj.IBAT_OCP_DIS}")
+        print(f"IIN_UCP_DIS = {self.obj.IIN_UCP_DIS}")
+        print(f"NTC_FLT_DIS = {self.obj.NTC_FLT_DIS}")
+        print(f"VBAT_OVP_DIS = {self.obj.VBAT_OVP_DIS}")
+        print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
+        print(f"VEXT_SHUT_DOWN_SET = {self.obj.VEXT_SHUT_DOWN_SET}")
+        print(f"SS_TIMEOUT = {self.obj.SS_TIMEOUT}")

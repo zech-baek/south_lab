@@ -2,11 +2,12 @@ digital_multimeter:
   keithley_dmm6500: "USB0::0x05E6::0x6500::04651237::INSTR"
 power_supply:
   rigol_dp821a : "USB0::0x1AB1::0x0E11::DP8E253900073::INSTR"
+  rigol_dp811 : "USB0::0x1AB1::0x0E11::DP8H242600269::INSTR"
+power_analyzer:
+  keysight_n6705 : "USB0::0x0957::0x0F07::MY47000200::INSTR"
 oscilloscope:
   tektronix_mdo34 : "USB0::0x0699::0x052C::SGVJ0003244::INSTR"
 source_meter:
   keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"
 e-loader:
   sdl1030x: "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR"
-function_generator:
-  dg2052: "USB0::0x1AB1::0x0644::DG2P230200035::INSTR"

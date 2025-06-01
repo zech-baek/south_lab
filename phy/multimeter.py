@@ -28,7 +28,7 @@ from interface.cui_colors import color
 from time import sleep as delay
 import serial
 import pyvisa as visa
-import yaml, sys
+import yaml
 
 
 

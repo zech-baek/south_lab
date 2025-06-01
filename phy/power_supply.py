@@ -375,16 +375,27 @@ class rigol_dp821a:
 
 class rigol_dp811a:
     
-    def __init__(self, resource_name):
+    def __init__(self, resource_name=None):
         
-        rm = visa.ResourceManager()
+        log.initLogger(log.info)
+        self.rm = visa.ResourceManager()
+
+        if resource_name == None:
+
+            with open(equipment_dir/"devices.yaml") as yaml_dev:
+                power_supply_list = yaml.safe_load(yaml_dev)
+            ps_id = power_supply_list["power_supply"]["rigol_dp811"]
+
+            try:
+                self.device = self.rm.open_resource(ps_id)
+                log.forcedLog(f"initialized the rigol dp811 connection")
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize dp811{color.end}")
         
-        try:
-            self.device = rm.open_resource(resource_name)
-            # self.device = usbtmc.Instrument(resource_name)
-            self._offset = 0
-        except:
-            log.errorLog(f"{color.bgred}failed to initialize spd1168x{color.end}")
+        else:
+            self.device = self.rm.open_resource(resource_name)
+        
+        self._offset = 0
     
     
     def send(self, command):

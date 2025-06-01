@@ -314,7 +314,7 @@ def tab_i2c():
                     dpg.add_spacer(height=5)
 
                     id_dongles = dpg.add_radio_button(
-                        items=["CP2112", "MCP2221", "FT200X"],
+                        items=["CP2112", "MCP2221", "FT200X", "CH341"],
                         callback=handler_interface_connection,
                         tag="radio_dongle"
                         )
