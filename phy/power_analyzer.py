@@ -117,6 +117,15 @@ class function:
     @property
     def clear_protection(self):
         self._protocol.send(f"OUTP:PROT:CLE (@{self._channel})")
+    
+
+    @property
+    def power_recycle(self):
+
+        self.disable
+        delay(2)
+        self.enable
+        delay(1)
 
 
 

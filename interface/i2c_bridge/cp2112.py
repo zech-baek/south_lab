@@ -196,7 +196,7 @@ class cp2112:
         self.hid_send([0x01, 0x01])
 
     
-    def i2c_speed(self, clk=100):
+    def i2c_speed(self, clk=400):
 
         # configurable range : 20kHz to 400kHz
         # report id : 0x06
