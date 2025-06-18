@@ -293,6 +293,7 @@ class common_function:
             self.send(f"CH{ch}:POSition -{position}")
             self.send(f"CH{ch}:SCALE 1")
             self.send(f"SELECT:CH{ch} ON")
+            self.send(f"CH{ch}:LABEL ''")
         
         self.horizontal_position = 0
         self.horizontal_scale = 1e-3

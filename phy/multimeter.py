@@ -79,6 +79,7 @@ class function:
     def current(self, cfg):
         
         self.mode = "current"
+        self.read_delay = 0.3
         
         if cfg == "auto":
             if (self.mode != "current") or (self.rang != "auto") or (self.cparm != "auto"):
@@ -113,6 +114,7 @@ class function:
     def voltage(self, cfg):
         
         self.mode = "voltage"
+        self.read_delay = 0
         
         if cfg == "auto":
             if (self.rang != "auto") or (self.vparm != None):
@@ -504,6 +506,7 @@ class function_keithley:
         
         self.mode = "current"
         self.vparm = None
+        self.read_delay = 0.5
         
         if cfg == "auto":
             
@@ -542,6 +545,7 @@ class function_keithley:
         
         self.mode = "voltage"
         self.cparm = None
+        self.read_delay = 0
         
         if cfg == "auto":
             
@@ -656,6 +660,7 @@ class keithley_dm6500(function_keithley):
         self.nplc = 1
         self.sampling = 10
         self.connection = False
+        self.read_delay = 0
 
         if resource_name is not None:
             
@@ -693,9 +698,11 @@ class keithley_dm6500(function_keithley):
     def read(self, command):
         
         try:
+            delay(self.read_delay)
             ret = self.device.query(command)
         except:
             log.infoLog(f"[dmm] read error, retry reading")
+            delay(self.read_delay)
             ret = self.device.query(command)
         return ret
     

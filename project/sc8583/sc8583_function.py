@@ -168,9 +168,7 @@ class function:
         self.obj.QB_USB_EN = 1
         self.obj.QB_WPC_EN = 0
         self.obj.CP_EN = 1
-        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
-        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
-        print(f"CP_EN     = {self.obj.CP_EN}")
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}, QB_WPC_EN = {self.obj.QB_WPC_EN}, CP_EN = {self.obj.CP_EN}")
     
 
     @property
@@ -179,9 +177,7 @@ class function:
         self.obj.QB_USB_EN = 0
         self.obj.QB_WPC_EN = 1
         self.obj.CP_EN = 1
-        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
-        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
-        print(f"CP_EN     = {self.obj.CP_EN}")
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}, QB_WPC_EN = {self.obj.QB_WPC_EN}, CP_EN = {self.obj.CP_EN}")
     
 
     @property
@@ -190,9 +186,7 @@ class function:
         self.obj.QB_USB_EN = 0
         self.obj.QB_WPC_EN = 0
         self.obj.CP_EN = 0
-        print(f"QB_USB_EN = {self.obj.QB_USB_EN}")
-        print(f"QB_WPC_EN = {self.obj.QB_WPC_EN}")
-        print(f"CP_EN     = {self.obj.CP_EN}")
+        print(f"QB_USB_EN = {self.obj.QB_USB_EN}, QB_WPC_EN = {self.obj.QB_WPC_EN}, CP_EN = {self.obj.CP_EN}")
     
 
     @property
