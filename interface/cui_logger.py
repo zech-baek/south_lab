@@ -251,9 +251,9 @@ class logger:
         
         rm = visa.ResourceManager()
         ret = list(rm.list_resources())
-        for n in range(len(ret)):
-            print(f"### device {n+1} : {ret[n]}")
-            write_log(f"### device {n+1} : {ret[n]}")
+        # for n in range(len(ret)):
+        #     print(f"### device {n+1} : {ret[n]}")
+        #     write_log(f"### device {n+1} : {ret[n]}")
             
         return ret
     

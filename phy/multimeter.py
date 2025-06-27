@@ -277,40 +277,6 @@ class multi_dmm(function):
         self.device.write(command)
 
 
-class siglent_sdm3055_auto(multi_dmm):
-    
-    '''
-    Siglent SDM3055
-    - assign the device after searching the USB resources
-    - USB interface
-    '''
-    
-    def __init__(self):
-        
-        log.initLogger(log.info)
-        
-        with open(equipment_dir/"devices.yaml") as yaml_dev:
-            dmm_list = yaml.safe_load(yaml_dev)
-        
-        usb_id = dict(dmm_list["digital_multimeter"]["siglent_sdm3055"].items())
-        
-        rm = visa.ResourceManager()
-        ret_devices = list(rm.list_resources())
-        
-        # ret_devices = usbtmc.list_devices()
-        # log.infoLog("[info] SDM3055 Current range : 200uA, 2mA, 20mA, 200mA, 2A, 10A, AUTO")
-        # log.infoLog("[info] SMD3055 Voltage range : 200mA, 2V, 20V, 200V, 1000V, AUTO")
-        
-        for device in ret_devices:
-            for k, v in usb_id.items():
-                if v in device:
-                    try:
-                        super().__dict__[k] = multi_dmm(rm, device)
-                        log.forcedLog(f"initialized the dmm connection and assign channel {k}")
-                    except:
-                        log.errorLog(f"{color.bgred}failed to initialize the dmm {device}{color.end}")
-    
-
 class siglent_sdm3055_usb_single(function):
     
     '''
@@ -640,8 +606,6 @@ class function_keithley:
             setattr(self.__class__, f"{prefix}_{suffix_cfg}", property(lambda self, cfg=cfg: getattr(self, prefix)(cfg)))
 
 
-
-
 class keithley_dm6500(function_keithley):
 
     def __init__(self, resource_name=None, rm=None):
@@ -673,14 +637,7 @@ class keithley_dm6500(function_keithley):
                 log.errorLog(f"{color.bgred}failed to initialize the dm6500{color.end}")
                 
         else:
-            with open(equipment_dir/"devices.yaml") as yaml_dev:
-                dmm_id = yaml.safe_load(yaml_dev)
-                
-            usb_id = dmm_id["digital_multimeter"]["keithley_dmm6500"]
-            self.device = self.rm.open_resource(usb_id, write_termination="\n", read_termination="\n")
-            log.forcedLog(f"initialized the dm6500 connection")
-            
-            self.connection = True
+            log.errorLog(f"{color.bgred}resource_name is None{color.end}")
         
         if self.connection:
             
@@ -915,5 +872,3 @@ class dmm(keithley_dm6500, rohde_hmc8012):
             super().__dict__["ch2"] = rohde_hmc8012(hmc8012, self.rm)
         except:
             log.errorLog(f"{color.bgred}failed to initialize dmm hmc8012 to ch2{color.end}")
-        
-

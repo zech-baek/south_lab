@@ -172,3 +172,12 @@ class asd_906b(serial.Serial):
         module_info.extend(ret_crc)
 
         self.send_packet(module_info)
+    
+
+    @property
+    def power_recycle(self):
+
+        self.disable
+        delay(2)
+        self.enable
+        delay(1)

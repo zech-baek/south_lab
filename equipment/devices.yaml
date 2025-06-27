@@ -1,5 +1,7 @@
 digital_multimeter:
-  keithley_dmm6500: "USB0::0x05E6::0x6500::04651237::INSTR"
+  keithley_dmm6500: 
+    ch1 : "USB0::0x05E6::0x6500::04651237::INSTR"
+    ch2 : "USB0::0x05E6::0x6500::04651251::INSTR"
 power_supply:
   rigol_dp821a : "USB0::0x1AB1::0x0E11::DP8E253900073::INSTR"
   rigol_dp811 : "USB0::0x1AB1::0x0E11::DP8H242600269::INSTR"
@@ -10,4 +12,4 @@ oscilloscope:
 source_meter:
   keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"
 e-loader:
-  sdl1030x: "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR"
+  sdl1030x: "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR" 
