@@ -2,7 +2,6 @@ __*/
 .*.*
 .*/
 phy/__pycache__
-*.txt
 *.log
 *.db
 .DS_store
