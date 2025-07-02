@@ -325,8 +325,34 @@ class common_function:
         for tup in args:
             for i in tup:
                 self.send(f"SELECT:CH{i} ON")
-                
     
+
+    @property
+    def get_meas1(self):
+
+        ret = self.query(f"MEASU:MEAS1:VAL?")
+        return float(ret)
+    
+
+    @property
+    def get_meas2(self):
+
+        ret = self.query(f"MEASU:MEAS2:VAL?")
+        return float(ret)
+    
+    @property
+    def get_meas3(self):
+
+        ret = self.query(f"MEASU:MEAS3:VAL?")
+        return float(ret)
+    
+    @property
+    def get_meas4(self):
+
+        ret = self.query(f"MEASU:MEAS4:VAL?")
+        return float(ret)
+    
+
     @property
     def horizontal_center(self):
         self.horizontal_position = 0

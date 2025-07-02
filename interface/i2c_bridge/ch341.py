@@ -84,7 +84,7 @@ class ch341(object):
         self.value    = ctypes.c_int(0)
         self.logging  = logging
         self.OpenDev(0)
-        self.i2c_speed(value=3)
+        self.i2c_speed(value=1)
         
         
     def OpenDevice(self):

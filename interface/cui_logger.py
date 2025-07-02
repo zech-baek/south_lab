@@ -46,9 +46,9 @@ function description
 	* style == "message" : remove all color pattern, then save into the log file
     * style == "csv"     : save the message into the csv file
 - usage
-	log.initLogger(hmi_logging.info)
-	log.initLogger(hmi_logging.error)
-- if hmi_logging.output is true, write_log will add the message into the log file
+	log.initLogger(logging.info)
+	log.initLogger(logging.error)
+- if logging.output is true, write_log will add the message into the log file
 - output_set_file(title)
 	* assigne the output file name
 - output_file(message)

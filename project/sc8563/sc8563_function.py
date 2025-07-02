@@ -285,3 +285,23 @@ class function:
             log.output_csv(temp)
         
         xl.close
+    
+
+    @property
+    def status_reg(self):
+        
+        control_reg = [
+            "MODE", "SS_TIMEOUT", "FREQ_SHIFT", "FSW_SET", "SYNC_EN", "SET_IBAT_SNS_HS", "SET_IBAT_SNS_RES", 
+            "VEXT_SHUT_DOWN_SET", "STANDBY_MODE_SET", "WD_VEXT_SHUTDOWN_EN", "WD_STANDBY_EN", "WD_TIMEOUT", 
+            "WD_TIMEOUT_DIS", "EXT1_OVP", "EXT1_SW_CTRL1", "EXT1_SW_CTRL2", "EXT2_SW_CTRL1", "EXT2_SW_CTRL2", 
+            "EXT2_GATE_CTRL", "EXT2_OVP", "IIN_REG", "VBAT_REG", "VBAT_OVP", "IBAT_REG", "VIN_OVP", "VOUT_OVP", 
+            "IIN_OCP", "C1P2OUT_OVP", "C1P2OUT_UVP", "NTC_FLT_DIS", "VBAT_REG_DIS", "IIN_REG_DIS", "IIN_UCP_DIS", 
+            "TDIE_REG_DIS", "TDIE_REG", "VBAT_OVP_DIS", "IIN_UCP_DIS", "IIN_OCP_DG_SET", "VBAT_OVP_DG_SET", 
+            "VIN_OVP_DG_SET", "VOUT_OVP_DG_SET", "VEXT1_OVP_DG_SET", "VEXT2_OVP_DG_SET", "IIN_UCP_FALL_DG_SET"
+            ]
+        
+        for reg in control_reg:
+            
+            ret = getattr(self.obj, reg)
+            print(f"{reg} = {ret:#x} ({ret})")     
+

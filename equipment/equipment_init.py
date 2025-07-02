@@ -3,6 +3,7 @@ from phy.power_supply import rigol_dp821a, rigol_dp811a
 from phy.power_analyzer import keysight_N6705
 from phy.scope import tektronix_mdo34
 from phy.battery_simulator import asd_906b
+from phy.eloader import it8511a
 
 # from phy.eloader import sdl1030x
 # from phy.relay_16ch import relay_box
@@ -34,7 +35,7 @@ ps = keysight_N6705()
 ds = tektronix_mdo34()
 bs = asd_906b(port=7)
 # sm = keithley_2470()
-# ld = sdl1030x()
+ld = it8511a("COM12")
 
 # relay = relay_box(i2c_h=ic)
 # tc = chamber(port=3)

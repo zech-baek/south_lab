@@ -311,3 +311,180 @@ class gwinstek_pel3021(serial.Serial):
         sleep(2)
         self.enable
         sleep(1)
+
+
+class it8511a(serial.Serial):
+    
+    def __init__(self, resource=None):
+        
+        log.initLogger(log.info)
+        
+        if resource is None:
+            comport_list = [comport.device for comport in serial.tools.list_ports.comports()]
+            resource = comport_list[0]
+            log.infoLog(f"returned list of the com ports {comport_list}")
+        else:
+            serial.Serial.__init__(self, port=resource, baudrate=9600, timeout=5)
+            log.forcedLog(f"initialized the asd-906b connection to {resource}")
+        
+        self.send("SYSTEM:REMOTE")
+        # # clean the buffer
+        # if "No error" not in self.query(":SYST:ERR?"):
+        #     self.send("*CLS")
+
+        # self.send(":MODE:CRAN HIGH")
+        # self.send(":MODE:VRAN HIGH")
+        # self.reset_input_buffer()
+        # self.reset_output_buffer()
+        
+        self.disable
+        
+
+
+    def send(self, command):
+        self.write((command + "\n").encode("ascii"))
+    
+    
+    def query(self, command):
+        
+        self.send(command)
+        try:
+            ret = self.readline().decode("utf-8")
+        except:
+            log.infoLog(f"[it8511a] read error, retry reading")
+            ret = self.readline().decode("utf-8")
+        return ret
+    
+    
+    @property
+    def disable(self):
+        self.send("SOURCE:INPUT OFF")
+    
+    
+    @property
+    def enable(self):
+        self.send("SOURCE:INPUT ON")
+    
+    
+    @property
+    def power_recycle(self):
+        
+        self.disable
+        sleep(1)
+        self.enable
+        sleep(0.5)
+    
+
+    @property
+    def short_on(self):
+        self.send("INPUT:SHORT ON")
+    
+
+    @property
+    def short_on(self):
+        self.send("INPUT:SHORT OFF")
+    
+
+    @property
+    def set_current_slew_rise(self):
+
+        '''
+        slew rate : A/us
+        '''
+        
+        ret = self.query(f"SOURCE:CURRENT:SLEW:RISE?")
+        return ret
+
+
+    @set_current_slew_rise.setter
+    def set_current_slew_rise(self, slew):
+        self.send(f"SOURCE:CURRENT:SLEW:RISE {slew}")
+
+
+    @property
+    def set_current_slew_fall(self):
+
+        '''
+        slew rate : A/us
+        '''
+        
+        ret = self.query(f"SOURCE:CURRENT:SLEW:FALL?")
+        return ret
+
+
+    @set_current_slew_fall.setter
+    def set_current_slew_fall(self, slew):
+        self.send(f"SOURCE:CURRENT:SLEW:FALL {slew}")
+    
+
+    @property
+    def set_current_protection(self):
+
+        '''
+        protection level unit : A
+        '''
+        
+        ret = self.query(f"SOURCE:CURRENT:PROTECTION?")
+        return ret
+
+
+    @set_current_protection.setter
+    def set_current_protection(self, slew):
+        self.send(f"SOURCE:CURRENT:PROTECTION {slew}")
+    
+
+    @property
+    def cc_mode(self):
+        self.send(":MODE CC")
+    
+    
+    @property
+    def cv_mode(self):
+        self.send(":MODE CV")
+    
+    
+    @property
+    def cr_mode(self):
+        
+        self.send(":MODE CR")
+        self.send(":CRU OHM")
+    
+    
+    @property
+    def iset(self):
+        
+        ret = self.query(f":CURR:VA?")
+        return ret
+
+
+    @iset.setter
+    def iset(self, current):
+        self.send(f"SOURce:CURRent:LEVel:IMMediate:AMPLitude {current}")
+    
+    
+    @property
+    def vset(self):
+
+        ret = self.query(f":VOLT:VA?")
+        return ret
+
+
+    @vset.setter
+    def vset(self, voltage):
+
+        self.send(f":VOLT:VA {voltage}")
+    
+    
+    @property
+    def voltage(self):
+        
+        ret = self.query("MEAS:VOLT:DC?")
+        return float(ret)
+    
+    
+    @property
+    def current(self):
+        ret = self.query("MEASURE:CURRENT:DC?")
+        return float(ret)
+
+    
