@@ -324,10 +324,14 @@ class it8511a(serial.Serial):
             resource = comport_list[0]
             log.infoLog(f"returned list of the com ports {comport_list}")
         else:
-            serial.Serial.__init__(self, port=resource, baudrate=9600, timeout=5)
-            log.forcedLog(f"initialized the asd-906b connection to {resource}")
+            try:
+                serial.Serial.__init__(self, port=resource, baudrate=9600, timeout=5)
+                log.forcedLog(f"initialized the asd-906b connection to {resource}")
+                self.send("SYSTEM:REMOTE")
+                self.disable
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize it8511a{color.end}")
         
-        self.send("SYSTEM:REMOTE")
         # # clean the buffer
         # if "No error" not in self.query(":SYST:ERR?"):
         #     self.send("*CLS")
@@ -336,9 +340,6 @@ class it8511a(serial.Serial):
         # self.send(":MODE:VRAN HIGH")
         # self.reset_input_buffer()
         # self.reset_output_buffer()
-        
-        self.disable
-        
 
 
     def send(self, command):
