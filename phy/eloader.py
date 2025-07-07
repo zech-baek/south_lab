@@ -313,7 +313,166 @@ class gwinstek_pel3021(serial.Serial):
         sleep(1)
 
 
-class it8511a(serial.Serial):
+
+class it8511a_cc:
+
+    def __init__(self, handler):
+        
+        self.handler = handler
+    
+
+    @property
+    def set_cc(self):
+        self.handler.send("SOUR:MODE CURR")
+
+    
+    @property
+    def mode_check(self):
+
+        if self.handler.mode != "CURRent":
+            self.set_cc
+        self.handler.mode = self.handler.query("SOUR:MODE?")
+    
+
+    @property
+    def iset(self):
+        
+        ret = float(self.handler.query("SOUR:CURR:LEVEL?"))
+        return ret
+
+
+    @iset.setter
+    def iset(self, current):
+
+        self.mode_check
+        self.handler.send(f"SOUR:CURR:LEVEL {current}")
+        
+
+    @property
+    def set_islew_rise(self):
+
+        '''
+        slew rate : A/us
+        min : 0.001
+        max : 3
+        '''
+        
+        ret = float(self.handler.query(f"SOUR:CURR:SLEW:RISE?"))
+        return ret
+
+
+    @set_islew_rise.setter
+    def set_islew_rise(self, slew):
+
+        self.mode_check
+        self.handler.send(f"SOUR:CURR:SLEW:RISE {slew}")
+
+
+    @property
+    def set_islew_fall(self):
+
+        '''
+        slew rate : A/us
+        '''
+        
+        ret = float(self.handler.query(f"SOURCE:CURRENT:SLEW:FALL?"))
+        return ret
+
+
+    @set_islew_fall.setter
+    def set_islew_fall(self, slew):
+
+        self.mode_check
+        self.handler.send(f"SOURCE:CURRENT:SLEW:FALL {slew}")
+    
+
+    @property
+    def set_iprot(self):
+
+        '''
+        protection level unit : A
+        '''
+        
+        ret = float(self.handler.query(f"SOURCE:CURRENT:PROTECTION?"))
+        return ret
+
+
+    @set_iprot.setter
+    def set_iprot(self, slew):
+
+        self.mode_check
+        self.handler.send(f"SOURCE:CURRENT:PROTECTION {slew}")
+
+
+class it8511a_cr:
+
+    def __init__(self, handler):
+        
+        self.handler = handler
+    
+
+    @property
+    def set_cr(self):
+        self.handler.send("SOUR:MODE RES")
+
+    
+    @property
+    def mode_check(self):
+
+        if self.handler.mode != "RESistance":
+            self.set_cr
+        self.handler.mode = self.handler.query("SOUR:MODE?")
+    
+
+    @property
+    def rset(self):
+        
+        ret = float(self.handler.query("SOUR:RES:LEVEL?"))
+        return ret
+
+
+    @rset.setter
+    def rset(self, voltage):
+
+        self.mode_check
+        self.handler.send(f"SOUR:RES:LEVEL {voltage}")
+
+
+class it8511a_cv:
+
+    def __init__(self, handler):
+        
+        self.handler = handler
+    
+
+    @property
+    def set_cv(self):
+        self.handler.send("SOUR:MODE VOLT")
+
+    
+    @property
+    def mode_check(self):
+
+        if self.handler.mode != "VOLTage":
+            self.set_cv
+        self.handler.mode = self.handler.query("SOUR:MODE?")
+    
+
+    @property
+    def vset(self):
+        
+        ret = float(self.handler.query("SOUR:VOLT:LEVEL?"))
+        return ret
+
+
+    @vset.setter
+    def vset(self, voltage):
+
+        self.mode_check
+        self.handler.send(f"SOUR:VOLT:LEVEL {voltage}")
+
+
+class it8511a(serial.Serial, it8511a_cc, it8511a_cv, it8511a_cr):
     
     def __init__(self, resource=None):
         
@@ -326,20 +485,19 @@ class it8511a(serial.Serial):
         else:
             try:
                 serial.Serial.__init__(self, port=resource, baudrate=9600, timeout=5)
-                log.forcedLog(f"initialized the asd-906b connection to {resource}")
-                self.send("SYSTEM:REMOTE")
+                super().__dict__["cc"] = it8511a_cc(self)
+                super().__dict__["cv"] = it8511a_cv(self)
+                super().__dict__["cr"] = it8511a_cr(self)
+
+                log.forcedLog(f"initialized the it8511a connection to {resource}")
+                self.remote_mode
+                self.send("*CLS")
                 self.disable
+
+                # CURRent, VOLTage, RESistance
+                self.mode = self.query("SOUR:MODE?").strip()
             except:
                 log.errorLog(f"{color.bgred}failed to initialize it8511a{color.end}")
-        
-        # # clean the buffer
-        # if "No error" not in self.query(":SYST:ERR?"):
-        #     self.send("*CLS")
-
-        # self.send(":MODE:CRAN HIGH")
-        # self.send(":MODE:VRAN HIGH")
-        # self.reset_input_buffer()
-        # self.reset_output_buffer()
 
 
     def send(self, command):
@@ -356,6 +514,16 @@ class it8511a(serial.Serial):
             ret = self.readline().decode("utf-8")
         return ret
     
+
+    @property
+    def remote_mode(self):
+        self.send("SYSTEM:REMOTE")
+    
+
+    @property
+    def local_mode(self):
+        self.send("SYSTEM:LOCAL")
+
     
     @property
     def disable(self):
@@ -378,104 +546,18 @@ class it8511a(serial.Serial):
 
     @property
     def short_on(self):
-        self.send("INPUT:SHORT ON")
+
+        self.send("INP:SHORT 1")
+        self.enable
     
 
     @property
-    def short_on(self):
-        self.send("INPUT:SHORT OFF")
-    
+    def short_off(self):
 
-    @property
-    def set_current_slew_rise(self):
-
-        '''
-        slew rate : A/us
-        '''
-        
-        ret = self.query(f"SOURCE:CURRENT:SLEW:RISE?")
-        return ret
+        self.send("INP:SHORT 0")
+        self.disable
 
 
-    @set_current_slew_rise.setter
-    def set_current_slew_rise(self, slew):
-        self.send(f"SOURCE:CURRENT:SLEW:RISE {slew}")
-
-
-    @property
-    def set_current_slew_fall(self):
-
-        '''
-        slew rate : A/us
-        '''
-        
-        ret = self.query(f"SOURCE:CURRENT:SLEW:FALL?")
-        return ret
-
-
-    @set_current_slew_fall.setter
-    def set_current_slew_fall(self, slew):
-        self.send(f"SOURCE:CURRENT:SLEW:FALL {slew}")
-    
-
-    @property
-    def set_current_protection(self):
-
-        '''
-        protection level unit : A
-        '''
-        
-        ret = self.query(f"SOURCE:CURRENT:PROTECTION?")
-        return ret
-
-
-    @set_current_protection.setter
-    def set_current_protection(self, slew):
-        self.send(f"SOURCE:CURRENT:PROTECTION {slew}")
-    
-
-    @property
-    def cc_mode(self):
-        self.send(":MODE CC")
-    
-    
-    @property
-    def cv_mode(self):
-        self.send(":MODE CV")
-    
-    
-    @property
-    def cr_mode(self):
-        
-        self.send(":MODE CR")
-        self.send(":CRU OHM")
-    
-    
-    @property
-    def iset(self):
-        
-        ret = self.query(f":CURR:VA?")
-        return ret
-
-
-    @iset.setter
-    def iset(self, current):
-        self.send(f"SOURce:CURRent:LEVel:IMMediate:AMPLitude {current}")
-    
-    
-    @property
-    def vset(self):
-
-        ret = self.query(f":VOLT:VA?")
-        return ret
-
-
-    @vset.setter
-    def vset(self, voltage):
-
-        self.send(f":VOLT:VA {voltage}")
-    
-    
     @property
     def voltage(self):
         
@@ -485,7 +567,6 @@ class it8511a(serial.Serial):
     
     @property
     def current(self):
+
         ret = self.query("MEASURE:CURRENT:DC?")
         return float(ret)
-
-    
