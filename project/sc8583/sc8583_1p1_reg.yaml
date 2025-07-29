@@ -686,8 +686,8 @@ IBAT_ADC_DIS:
   address1: 43
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 1
+  msb1: 1
   name: IBAT_ADC_DIS
   permission: User
   register1: ADC_FN_DISABLE
@@ -1700,8 +1700,8 @@ TDIE_ADC_DIS:
   address1: 43
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 3
+  msb1: 3
   name: TDIE_ADC_DIS
   permission: User
   register1: ADC_FN_DISABLE
