@@ -35,3 +35,55 @@ module_info.extend(ret_crc16)
 
 for c in module_info:
     dev.write(bytes.fromhex(c))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from phy.multimeter import keithley_dm6500 as dmm
+from interface.cui_logger import logger as log
+from time import sleep as delay
+import time
+
+dm1 = dmm(id1)
+dm2 = dmm(id2)
+dm3 = dmm(id3)
+
+def func_iin():
+    iin = dm3.voltage_1E_1 / 0.002
+    return iin
+
+def func_vbus_sub():
+    vbus_sub  = dm2.voltage_100
+    return vbus_sub
+
+def func_vbus_main():
+    vbus_main = dm1.voltage_100
+    return vbus_main
+
+start = time.time()
+
+while True:
+    lap = time.time() - start
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        t_iin  = executor.submit(func_iin)
+        t_sub  = executor.submit(func_vbus_sub)
+        t_main = executor.submit(func_vbus_main)
+        ret_iin  = t_iin.result()
+        ret_sub  = t_sub.result()
+        ret_main = t_main.result()
+    print(f"{lap:.02f} {ret_iin:.06f} {ret_sub:.06f} {ret_main:.06f}")
+    delay(0.2)

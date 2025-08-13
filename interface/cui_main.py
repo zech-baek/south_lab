@@ -262,7 +262,7 @@ class cui_frame:
             )
     
     
-    def i2c_scan(self):
+    def i2c_scan(self, update=True):
 
         ret = cache.i2c_h.smbus_scan()
         len_ret = len(ret)
@@ -273,11 +273,17 @@ class cui_frame:
                 f"acked address list : {color.bgyel}{color.blue}{ret}{color.end}",
                 cache.is_gui
             )
-            log_wrapping(
-                self.__class__.__name__,
-                f"manually update i2c address is required at self.update_i2c_address() (current i2c address : {cache.i2c_a}, {cache.i2c_a:#04x})",
-                cache.is_gui
-            )
+
+            if update:
+                if isinstance(ret[0], int):
+                    self.update_i2c_address(address_7bit=ret[0])
+            else:
+                log_wrapping(
+                    self.__class__.__name__,
+                    f"manually update i2c address is required at self.update_i2c_address() (current i2c address : {cache.i2c_a}, {cache.i2c_a:#04x})",
+                    cache.is_gui
+                )
+                
             return ret
         
         else:
@@ -293,6 +299,7 @@ class cui_frame:
         
         pre_addr    = cache.i2c_a
         cache.i2c_a = address_7bit
+        
         log_wrapping(
             self.__class__.__name__,
             f"update i2c address : {pre_addr:#04x} --> {color.bold}{color.blue}{cache.i2c_a:#04x}{color.end}",

@@ -336,19 +336,34 @@ class rigol_dp821a:
         
         log.initLogger(log.info)
         self.rm = visa.ResourceManager()
-        
-        try:
-            with open(equipment_dir/"devices.yaml") as yaml_dev:
-                power_supply_list = yaml.safe_load(yaml_dev)
-                    
-            ps_id = power_supply_list["power_supply"]["rigol_dp821a"]
-            self.device = self.rm.open_resource(ps_id)
-            for ch in [1, 2]:
-                self.__dict__[f"ch{ch}"] = function_rigol(self.device, ch)
-                log.forcedLog(f"initialized the rigol dp821a connection and assign channel {ch}")
+
+        if resource_name is not None:
+
+            try:
+                self.device = self.rm.open_resource(resource_name)
+
+                for ch in [1, 2]:
+                    self.__dict__[f"ch{ch}"] = function_rigol(self.device, ch)
+                    log.forcedLog(f"initialized the rigol dp821a connection and assign channel {ch}")
                 
-        except:
-            log.errorLog(f"{color.bgred}failed to initialize rigol dp821a{color.end}")
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize rigol dp821a{color.end}")
+        
+        else:
+
+            try:
+                with open(equipment_dir/"devices.yaml") as yaml_dev:
+                    power_supply_list = yaml.safe_load(yaml_dev)
+                        
+                ps_id = power_supply_list["power_supply"]["rigol_dp821a"]
+                self.device = self.rm.open_resource(ps_id)
+
+                for ch in [1, 2]:
+                    self.__dict__[f"ch{ch}"] = function_rigol(self.device, ch)
+                    log.forcedLog(f"initialized the rigol dp821a connection and assign channel {ch}")
+                    
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize rigol dp821a{color.end}")
         
     
     def send(self, command):
@@ -380,20 +395,25 @@ class rigol_dp811a:
         log.initLogger(log.info)
         self.rm = visa.ResourceManager()
 
-        if resource_name == None:
-
-            with open(equipment_dir/"devices.yaml") as yaml_dev:
-                power_supply_list = yaml.safe_load(yaml_dev)
-            ps_id = power_supply_list["power_supply"]["rigol_dp811"]
+        if resource_name is not None:
 
             try:
+                self.device = self.rm.open_resource(resource_name)
+                log.forcedLog(f"initialized the rigol dp811 connection")
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize dp811{color.end}")
+
+        else:
+            
+            try:
+                with open(equipment_dir/"devices.yaml") as yaml_dev:
+                    power_supply_list = yaml.safe_load(yaml_dev)
+
+                ps_id = power_supply_list["power_supply"]["rigol_dp811"]
                 self.device = self.rm.open_resource(ps_id)
                 log.forcedLog(f"initialized the rigol dp811 connection")
             except:
                 log.errorLog(f"{color.bgred}failed to initialize dp811{color.end}")
-        
-        else:
-            self.device = self.rm.open_resource(resource_name)
         
         self._offset = 0
     

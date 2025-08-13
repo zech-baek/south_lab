@@ -27,13 +27,15 @@ import numpy as np
 
 chart = plot()
 
-dm1 = keithley_dm6500("USB0::0x05E6::0x6500::04651237::INSTR")
-dm2 = keithley_dm6500("USB0::0x05E6::0x6500::04651251::INSTR")
-# ps1 = rigol_dp821a()
-# ps2 = rigol_dp811a()
-ps = keysight_N6705()
+dm = keithley_dm6500("USB0::0x05E6::0x6500::04651237::INSTR")
+# dm2 = keithley_dm6500("USB0::0x05E6::0x6500::04651251::INSTR")
+
+ps811 = rigol_dp811a(resource_name="USB0::0x1AB1::0x0E11::DP8H245000515::INSTR")
+ps821 = rigol_dp821a(resource_name="USB0::0x1AB1::0x0E11::DP8E261000023::INSTR")
+
+# ps = keysight_N6705()
 ds = tektronix_mdo34()
-bs = asd_906b(port=7)
+bs = asd_906b(port=4)
 # sm = keithley_2470()
 ld = it8511a("COM12")
 

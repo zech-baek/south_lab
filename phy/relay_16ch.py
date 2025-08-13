@@ -39,6 +39,7 @@ class function:
         self._handler.low_state  = low
         self._handler.high_state = high
     
+    
     @property
     def enable(self):
         
@@ -52,7 +53,11 @@ class function:
         self._handler.i2c_write = low_ch, high_ch
         self.state_update(low_ch, high_ch)
         # log.forcedLog(f"low {low_ch:#x} high {high_ch:#x}")
-        log.forcedLog(f"relay channel {self._channel} on : low {low_ch:#04x}, high {high_ch:#04x}")
+
+        if self._handler.logging:
+            log.time_stamp(display=1, ret=0)
+            log.forcedLog(f"enable channel {self._channel} (i2c command set : low channel={low_ch:#04x}, high channel={high_ch:#04x})")
+
         delay(1)
     
     
@@ -69,7 +74,11 @@ class function:
         self._handler.i2c_write = low_ch, high_ch
         self.state_update(low_ch, high_ch)
         # log.forcedLog(f"low {low_ch:#x} high {high_ch:#x}")
-        log.forcedLog(f"relay channel {self._channel} off : low {low_ch:#04x}, high {high_ch:#04x}")
+
+        if self._handler.logging:
+            log.time_stamp(display=1, ret=0)
+            log.forcedLog(f"disable channel {self._channel} (i2c command set : low channel={low_ch:#04x}, high channel={high_ch:#04x})")
+            
         delay(1)
 
 
@@ -131,13 +140,15 @@ class relay_box:
         self.low_state  = 0xff
         self.high_state = 0xff
         self.i2c_write = self.low_state, self.high_state
-        self.status
+
+        if self.logging:
+            self.status
         
-        log_wrapping(
-            self.__class__.__name__,
-            f"disable all channels",
-            self.logging
-            )
+            log_wrapping(
+                self.__class__.__name__,
+                f"disable all channels",
+                self.logging
+                )
         
         
     @property

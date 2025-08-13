@@ -608,14 +608,10 @@ class function_keithley:
 
 class keithley_dm6500(function_keithley):
 
-    def __init__(self, resource_name=None, rm=None):
+    def __init__(self, resource_name=None):
         
         log.initLogger(log.info)
-        
-        if rm == None:
-            self.rm = visa.ResourceManager()
-        else:
-            self.rm = rm
+        self.rm = visa.ResourceManager()
         
         self.mode = "voltage"
         self.rang = "fixed"
@@ -630,6 +626,7 @@ class keithley_dm6500(function_keithley):
             
             try:
                 self.device = self.rm.open_resource(resource_name, write_termination="\n", read_termination="\n")
+
                 self.connection = True
                 log.forcedLog(f"initialized the dm6500 connection")
                 
@@ -637,7 +634,17 @@ class keithley_dm6500(function_keithley):
                 log.errorLog(f"{color.bgred}failed to initialize the dm6500{color.end}")
                 
         else:
-            log.errorLog(f"{color.bgred}resource_name is None{color.end}")
+
+            try:
+                with open(equipment_dir/"devices.yaml") as yaml_dev:
+                    digital_scope = yaml.safe_load(yaml_dev)
+                
+                ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500"]
+                self.dev = self.rm.open_resource(ds_id)
+                log.forcedLog(f"initialized the dm6500 connection")
+
+            except:
+                log.errorLog(f"{color.bgred}resource_name is None{color.end}")
         
         if self.connection:
             
