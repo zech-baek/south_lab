@@ -104,7 +104,8 @@ class asd_906b(serial.Serial):
                 f"send packet={bytes.fromhex(byte16)}",
                 self.logging
             )
-    
+        
+        delay(2)
 
     def conv_voltage(self, voltage):
 
@@ -178,6 +179,6 @@ class asd_906b(serial.Serial):
     def power_recycle(self):
 
         self.disable
-        delay(2)
+        delay(1)
         self.enable
         delay(1)
