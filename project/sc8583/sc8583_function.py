@@ -296,128 +296,35 @@ class function:
             return index, value
         else:
             return 0
-
-
-    def save_strings_to_file(self, file_path, strings, sts_map, mode="a"):
-        
-        try:
-            split_str = strings[0].split(" ")
-        except:
-            split_str = ""
-        
-        suffix = ""
-        filtered = False
-        
-        reg_dict = {
-            0x22 : {
-                "offset" : [37.5, 75, 150, 300, 600, 1200, 2400, 4800],
-                "index"  : 8,
-                "suffix" : f"IIN_OCP"
-                },
-            0x1a : {
-                "offset" : [37.5, 75, 150, 300, 600, 1200, 2400, 4800],
-                "index"  : 8,
-                "suffix" : f"IIN_REG"
-                },
-            0x1e : {
-                "offset" : [5, 10, 20, 40, 80, 160, 320, 640],
-                "index"  : 8,
-                "suffix" : f"VBAT_OVP"
-                },
-            0x1b : {
-                "offset" : [5, 10, 20, 40, 80, 160, 320, 640],
-                "index"  : 8,
-                "suffix" : f"VBAT_REG"
-                },
-            0x1c : {
-                "offset" : [125, 250, 500, 1000, 2000, 4000, 8000],
-                "index"  : 7,
-                "suffix" : f"IBAT_REG"
-                }
-        }
-
-        for reg, prop in reg_dict.items():
-                
-                keyword_ret = self._get_index(split_str, reg) # splited list, reg (int)
-                if isinstance(keyword_ret, tuple):
-
-                    reg_index = keyword_ret[0]
-                    # reg_addr  = keyword_ret[1]
-                    val_index = reg_index + 2
-                    value     = int(split_str[val_index].strip(), 16)
-                    offset    = prop["offset"]
-                    msb       = prop["index"]
-                    suffix    = prop["suffix"]
-
-                    ret = 0
-                    for shift in range(msb):
-                        bits = (value>>shift) & 0x01
-                        ret += bits * offset[shift]
-                    
-                    suffix = f"{suffix}={round(ret, 1)}"
-                    filtered = True
-        
-        list_status = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12]
-
-        for sts_addr in list_status:
-
-            keyword_ret = self._get_index(split_str, sts_addr)
-            if isinstance(keyword_ret, tuple):
-                reg_index = keyword_ret[0]
-                # reg_addr  = keyword_ret[1]
-                val_index = reg_index + 2
-                reg_value = int(split_str[val_index].strip(), 16)
-            
-                parsing_list = []
-                for shift in range(8):
-                    parsing_list.append((reg_value>>shift) & 0x1)
-                parsing_list.reverse()
-                
-                for m in range(8):
-                    suffix += f"{sts_map[sts_addr][m+1]}={parsing_list[m]}"
-                    if m<7:
-                        suffix += ", "
-                filtered = True
-        
-        try:
-            with open(file_path, mode, encoding="utf-8") as file:
-                basic_string = f"{strings[0].strip()}"
-
-                if filtered:
-                    string_suffix = basic_string + f" --> {suffix}\n"
-                else:
-                    string_suffix = basic_string + f"\n"
-                file.write(string_suffix)
-        except:
-            pass
-
-
-    def log_sorting(self, file_path, keyword):
-        
-        dir_name, base_name = os.path.split(file_path)
-        name, ext = os.path.splitext(base_name)
-        stamp = log.time_stamp(display=False, ret=True)
-
-        if ext == ".txt":
-            new_base = f"{stamp} - {name}_sorting{ext}"
-        else:
-            new_base = f"{stamp} - {name}_sorting.txt"
-
-        sorting_file = os.path.join(dir_name, new_base)
-
-        # log.forcedLog(dir_name, base_name, new_base, sorting_file)
-
-        with open(f"{self.device_path}/{self.device}_{self.revision}_status.yaml") as yaml_device:
-            status_map = yaml.safe_load(yaml_device)
     
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                for line in file:
-                    if keyword in line:
-                        # log.forcedLog(f"{keyword}, {[line]}")
-                        self.save_strings_to_file(sorting_file, [line], status_map)
-            return "done"
-        except FileNotFoundError:
-            return f"error: file not found at {file_path}"
-        # except Exception as e:
-        #     return f"an error occurred: {str(e)}"
+
+    @property
+    def mode_rvs_1to1(self):
+
+        self.obj.write_byte(0x13, 0b0000_0111)
+        self.obj.write_byte(0x14, 0x30)
+        self.obj.write_byte(0x15, 0x08)
+        self.obj.write_byte(0x16, 0x00)
+        self.obj.write_byte(0x17, 0x24)
+        self.obj.write_byte(0x18, 0x80)
+        self.obj.write_byte(0x19, 0x00)
+        self.obj.write_byte(0x1a, 0x48)
+        self.obj.write_byte(0x1b, 0xc8)
+        self.obj.write_byte(0x1c, 0xe4)
+        self.obj.write_byte(0x1d, 0x59)
+        self.obj.write_byte(0x1e, 0xdc)
+        self.obj.write_byte(0x1f, 0xec)
+        self.obj.write_byte(0x20, 0x28) # VIN_OVP[6:3] : 6 (4.95) -> 5 (4.75V)
+        self.obj.write_byte(0x21, 0x00) # WPC_IN_OVP[6:3] : 6 (4.95) -> 0x00 (3.75V)
+        self.obj.write_byte(0x22, 0x1a)
+        self.obj.write_byte(0x23, 0x40)
+        self.obj.write_byte(0x24, 0x60)
+        self.obj.write_byte(0x25, 0x01)
+        self.obj.write_byte(0x26, 0xa0)
+        self.obj.write_byte(0x27, 0x00)
+        self.obj.write_byte(0x28, 0x10)
+        self.obj.write_byte(0x29, 0x08)
+        self.obj.write_byte(0x2a, 0x40)
+        self.obj.write_byte(0x2b, 0x03)
+        print(f"reverse 1to1 register setup done")
+        print(f"QB_USB_EN=0, QB_WPC_EN=0, CP_EN=0")

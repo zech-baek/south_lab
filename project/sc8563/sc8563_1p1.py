@@ -30,11 +30,12 @@ from project.get_device_info import get_map, get_i2c_info
 
 # customizing module
 from project.sc8563.sc8563_function import function
+from project.sc8563.sc8563_parsing import parsing
 
 log.initLogger(log.error)
 
 
-class project(cui_frame, function):
+class project(cui_frame, function, parsing):
 
     def __init__(self, **kwargs):
 
@@ -70,6 +71,7 @@ class project(cui_frame, function):
             
             super().__init__(regmap=reg_map, i2c_info=i2c_info, i2c_h=i2c, device=self.device, logging=is_logging, is_gui=is_logging)
             function.__init__(self, obj=self)
+            parsing.__init__(self, obj=self)
     
     
     def close(self):

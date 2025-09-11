@@ -1,1 +1,0 @@
-pyinstaller --onefile --windowed main.py --add-data "sc_approval;sc_approval"
