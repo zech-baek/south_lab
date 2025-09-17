@@ -114,7 +114,7 @@ class function:
         # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
         # print_byte_status(reg=status_register, obj=self.obj)
 
-        self.obj.ADC_EN = 1
+        # self.obj.ADC_EN = 1
 
         lsb_iin  = 0.001875
         lsb_vin  = 0.00625
@@ -159,8 +159,15 @@ class function:
 
         print(tb(ret_map, headers="firstrow", numalign="right"))
 
-        self.obj.ADC_EN = 0
+        # self.obj.ADC_EN = 0
     
+
+    @property
+    def enable_adc(self):
+
+        self.obj.ADC_EN = 1
+        self.obj.ADC_RATE = 0
+
 
     @property
     def enable_vin_charging(self):
