@@ -357,7 +357,7 @@ class it8511a_cc:
         max : 3
         '''
         
-        ret = float(self.handler.query(f"SOUR:CURR:SLEW:RISE?"))
+        ret = float(self.handler.query(f"CURR:SLEW?"))
         return ret
 
 
@@ -365,7 +365,7 @@ class it8511a_cc:
     def set_islew_rise(self, slew):
 
         self.mode_check
-        self.handler.send(f"SOUR:CURR:SLEW:RISE {slew}")
+        self.handler.send(f"CURR:SLEW {slew}")
 
 
     @property
