@@ -32,6 +32,7 @@ from datetime import datetime
 import pyvisa as visa
 import cv2 as cv
 import yaml
+import PIL as pil
 
 
 class constant:
@@ -468,6 +469,12 @@ class common_function:
         imgFile = open(file_path, "wb")
         imgFile.write(imgData)
         imgFile.close()
+
+        pre_img = pil.Image.open(file_path)
+        width, height = pre_img.size
+        crop_box = (0, 27, width-214, height)
+        crop = pre_img.crop(crop_box)
+        crop.save(waveform_dir/f"crop_{self.filename}")
 
         # raw_image = cv.imread("./log/" + self.filename)
         png_raw = cv.imread(file_path)
