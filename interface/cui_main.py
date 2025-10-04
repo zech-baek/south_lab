@@ -217,7 +217,7 @@ class cui_frame:
     
     
     def get_regmap(self):
-        return cache.reg_map    
+        return cache.reg_map
 
 
     def get_regpage(self):

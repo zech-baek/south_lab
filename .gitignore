@@ -1,9 +1,15 @@
 __*/
 .*.*
 .*/
-phy/__pycache__
-*.log
+
+# log & windows
+log/
 *.db
 .DS_store
-env_vs
-venv
+
+# react
+start*.ipynb
+*.jpg
+**/__pycache__
+env_vs/
+venv/
