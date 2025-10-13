@@ -465,23 +465,40 @@ class common_function:
         else:
             self.filename = file + ".png"
         
+        # raw file
         file_path = waveform_dir/self.filename
         imgFile = open(file_path, "wb")
         imgFile.write(imgData)
         imgFile.close()
 
+        # cropped file
         pre_img = pil.Image.open(file_path)
         width, height = pre_img.size
         crop_box = (0, 27, width-214, height)
         crop = pre_img.crop(crop_box)
         crop.save(waveform_dir/f"crop_{self.filename}")
 
+        # remove the time table
+        color_change_img = pil.Image.open(file_path)
+        x_color, y_color = width-2, height-2
+        pixels = color_change_img.load()
+        captured_color = pixels[x_color, y_color]
+        x1, y1 = 1704, 972     # top-left
+        x2, y2 = 1918, 1077     # bottom-right
+        for x in range(x1, x2):
+            for y in range(y1, y2):
+                pixels[x, y] = captured_color
+        color_change_img.save(waveform_dir/f"recolor_{self.filename}")
+
+        # interting image
+
         # raw_image = cv.imread("./log/" + self.filename)
-        png_raw = cv.imread(file_path)
+        # png_raw = cv.imread(file_path)
+        png_raw = cv.imread(waveform_dir/f"recolor_{self.filename}")
         inverted_image = cv.bitwise_not(png_raw)
-        
         cv.imwrite(waveform_dir/f"invert_{self.filename}", inverted_image)
-        log.infoLog(f"save the waveform into the log directory with {self.filename}")
+        
+        log.infoLog(f"save the waveform into the log directory")
 
 
 class tektronix_mdo34(channel_function, common_function):

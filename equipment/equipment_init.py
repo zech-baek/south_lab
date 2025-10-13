@@ -36,6 +36,7 @@ ps821 = rigol_dp821a(resource_name="USB0::0x1AB1::0x0E11::DP8E261000023::INSTR")
 # ps = keysight_N6705()
 ds = tektronix_mdo34()
 bs = asd_906b(port=4)
+ps = keysight_N6705(resource_name="USB0::0x0957::0x0F07::MY47000200::INSTR")
 # sm = keithley_2470()
 ld = it8511a("COM12")
 
