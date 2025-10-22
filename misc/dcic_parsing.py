@@ -35,8 +35,8 @@ class parsing:
             "sc_charger",
             "sc8583-charger",
             "sec_bat_set_property",
-            "sc8583_dump_registers", 
-            "sc8563_dump_registers", 
+            "sc8583_dump_registers ", 
+            "sc8563_dump_registers ", 
             "sec_wireless_set_property", 
             "sec_direct_chg_set_property"
         ]
@@ -47,6 +47,8 @@ class parsing:
             "cps4059",
             "sec_bat_show_attrs",
             "mfc_set_pps_vout",
+            "mfc_wpc_irq_thread",
+            "@PPS",
             "sm5446"
         ]
 
@@ -164,13 +166,14 @@ class parsing:
                         ret_reglog = self.step_2_matching(dump_code=dump_code+" ", data=decoded_line)
                         reg_log = ""
 
-                        for value in ret_reglog:
-                            reg_log += (value+"\n")
-                            
-                        if reg_log != None:
-                            with open(parsing_file, "a") as parsing:
-                                parsing.write(reg_log)
-                                parsing.write("\n")
+                        if ret_reglog is not None:
+                            for value in ret_reglog:
+                                reg_log += (value+"\n")
+                                
+                            if reg_log != None:
+                                with open(parsing_file, "a") as parsing:
+                                    parsing.write(reg_log)
+                                    parsing.write("\n")
                     
                     elif "sc_charger_set_property" in decoded_line:
                         reg_log = self.step_3_matching(data=decoded_line)
@@ -205,7 +208,8 @@ class parsing:
                             "sec-battery samsung_mobile_device:battery: usb_typec_handle_id_power_status: " : "usb_typec_handle_id_power_status",
                             "sb_set_dc_ta_op_max_mode: " : "sb_set_dc_ta_op_max_mode",
                             "sc_charger_set_new_iin: " : "set_new_iin",
-                            "sc_charger_set_new_voltage_and_current: sc_chg->" : "set_new_voltage_and_current"
+                            "sc_charger_set_new_voltage_and_current: sc_chg->" : "set_new_voltage_and_current",
+                            "mfc_set_pps_vout" : "mfc_set_pps_vout (WPC PPS request)"
                         }
                         
                         for scan_item, log_text in scan_list.items():
@@ -240,70 +244,75 @@ class parsing:
         # store the register name into temp list
         # store "register[msb:lsb]=value" to ret dictionary
 
-        splited_data = data.split(dump_code)[1]
-        pairs = splited_data.split(", ")
+        try:
+            splited_data = data.split(dump_code)[1]
+            pairs = splited_data.split(", ")
 
-        datas = {} # key=register, value=value
-        ret = list()
+            datas = {} # key=register, value=value
+            ret = list()
 
-        for pair in pairs:
-            clean_pair = pair.replace("[", "").replace("]", ",")
-            addr, value = clean_pair.split(",")
-            datas[int(addr,16)] = int(value,16)
+            for pair in pairs:
+                clean_pair = pair.replace("[", "").replace("]", ",")
+                addr, value = clean_pair.split(",")
+                datas[int(addr,16)] = int(value,16)
 
-        for addr in self.addr_range:
+            for addr in self.addr_range:
 
-            temp = [0 for _ in range(8)]
+                temp = [0 for _ in range(8)]
 
-            for dump_addr in datas.keys():
+                for dump_addr in datas.keys():
 
-                if addr == dump_addr:
+                    if addr == dump_addr:
 
-                    for register, info_list in self.regpage.items():
+                        for register, info_list in self.regpage.items():
+                            
+                            if addr in info_list[2]:
+
+                                # print(f"{addr:#04x} : {register}[{info_list[5][0]}:{info_list[6][0]}]")
+
+                                if info_list[0] == 1:
+
+                                    temp[info_list[3][0]] = info_list[1] # store the regiser name to the list in the msb index
+
+                for index in reversed(range(8)):
+
+                    reg_name = temp[index]
+                    dump_value = datas.get(addr)
+
+                    if reg_name != 0:
+
+                        msb = self.regpage.get(reg_name)[3][0]
+                        lsb = self.regpage.get(reg_name)[4][0]
+                        real_msb = self.regpage.get(reg_name)[5][0]
+                        real_lsb = self.regpage.get(reg_name)[6][0]
+
+                        bit_length = msb - lsb
+                        raw_value = datas.get(addr)
+
+                        # 1. bit shift down >> lsb
+                        # 2. masking high side with [7:msb+1]
+
+                        shifted_dump_value = dump_value >> lsb
+
+                        masking_b = 0
+                        for mask in range(0, bit_length+1):
+                            masking_b += (1<<mask)
                         
-                        if addr in info_list[2]:
+                        masked_value = shifted_dump_value & masking_b
 
-                            # print(f"{addr:#04x} : {register}[{info_list[5][0]}:{info_list[6][0]}]")
+                        if reg_name == "CP_SWITCHING_STAT" or reg_name == "MODE":
+                            suffix = "        ***"
+                        else:
+                            suffix = ""
 
-                            if info_list[0] == 1:
-
-                                temp[info_list[3][0]] = info_list[1] # store the regiser name to the list in the msb index
-
-            for index in reversed(range(8)):
-
-                reg_name = temp[index]
-                dump_value = datas.get(addr)
-
-                if reg_name != 0:
-
-                    msb = self.regpage.get(reg_name)[3][0]
-                    lsb = self.regpage.get(reg_name)[4][0]
-                    real_msb = self.regpage.get(reg_name)[5][0]
-                    real_lsb = self.regpage.get(reg_name)[6][0]
-
-                    bit_length = msb - lsb
-                    raw_value = datas.get(addr)
-
-                    # 1. bit shift down >> lsb
-                    # 2. masking high side with [7:msb+1]
-
-                    shifted_dump_value = dump_value >> lsb
-
-                    masking_b = 0
-                    for mask in range(0, bit_length+1):
-                        masking_b += (1<<mask)
-                    
-                    masked_value = shifted_dump_value & masking_b
-
-                    if reg_name == "CP_SWITCHING_STAT" or reg_name == "MODE":
-                        suffix = "        ***"
-                    else:
-                        suffix = ""
-
-                    ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
-                    # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
+                        ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
+                        # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
+            
+            return ret
         
-        return ret
+        except:
+            print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
+            return None
     
 
     def step_3_matching(self, data):

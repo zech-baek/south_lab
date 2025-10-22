@@ -327,7 +327,7 @@ class common_function:
             for i in tup:
                 self.send(f"SELECT:CH{i} ON")
     
-
+    """
     @property
     def get_meas1(self):
 
@@ -352,6 +352,7 @@ class common_function:
 
         ret = self.query(f"MEASU:MEAS4:VAL?")
         return float(ret)
+    """
     
 
     @property
@@ -441,6 +442,12 @@ class common_function:
         elif level == "5M"  : self.send(f"HORIZONTAL:RECORDLENGTH {constant.RECORD_5M}")
         elif level == "10M" : self.send(f"HORIZONTAL:RECORDLENGTH {constant.RECORD_10M}")
         # log.infoLog(f"Horizontal record length is set to {self.query('HORizontal:RECOrdlength?')}")
+    
+
+    def get_meas(self, channel):
+
+        ret = self.query(f"MEASU:MEAS{channel}:VAL?")
+        return float(ret)
     
     
     @property
@@ -543,7 +550,9 @@ class tektronix_mdo34(channel_function, common_function):
                 log.errorLog(f"{color.bgred}failed to initialize tektronix dp series{color.end}")
 
         resolution = ["1K", "10K", "100K", "1M", "5M", "10M"]
+        measurement_channel = list(range(1, 9))
         self.create_property("record_length", resolution)
+        self.create_property("get_meas", measurement_channel)
         self.filename = None
     
     
