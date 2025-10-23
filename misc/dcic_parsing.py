@@ -38,7 +38,9 @@ class parsing:
             "sc8583_dump_registers ", 
             "sc8563_dump_registers ", 
             "sec_wireless_set_property", 
-            "sec_direct_chg_set_property"
+            "sec_direct_chg_set_property",
+            "UIWirelessFastCharge",
+            "UIDirectChargeTest"
         ]
 
         self.vendor_keyword = [
@@ -443,7 +445,7 @@ class parsing:
 
             vbat_diff = vbat_value - vbat_dcic_value
 
-            ret = f"{timeline}, iin={iin_value:.03f}mA, iin_target={iin_target_value:.03f}A, vbat={vbat_value:.03f}V, vbat_target={vbat_target_value:.03f}V, power={power_value:.03f}W, vbus={vbus_value:.03f}V, vwpc={vwpc_value:.03f}V, vbat_dcic={vbat_dcic_value:.03f}V, vbat_diff={vbat_diff:.03f}V"
+            ret = f"{timeline}, iin={iin_value:.03f}A, iin_target={iin_target_value:.03f}A, vbat={vbat_value:.03f}V, vbat_target={vbat_target_value:.03f}V, power={power_value:.03f}W, vbus={vbus_value:.03f}V, vwpc={vwpc_value:.03f}V, vbat_dcic={vbat_dcic_value:.03f}V, vbat_diff={vbat_diff:.03f}V"
 
             if self.logging:
                 print(f"iin_value : {iin_value}")
