@@ -51,7 +51,8 @@ class parsing:
             "mfc_set_pps_vout",
             "mfc_wpc_irq_thread",
             "@PPS",
-            "sm5446"
+            "sm5446",
+            "detach"
         ]
 
         self.merged_keyword = self.basic_keyword + self.vendor_keyword
@@ -144,7 +145,9 @@ class parsing:
             for line in dump:
                 decoded_line = line.decode("utf-8", errors="ignore")
 
-                if "SC_REL" in decoded_line:
+                # if "SC_REL" in decoded_line:
+                if re.search(r"SC_REL", decoded_line, re.IGNORECASE):
+
                     driver_version = r"SC_REL\((.*?)\)"
                     is_sc_rel = re.search(driver_version, decoded_line)
 
@@ -162,10 +165,10 @@ class parsing:
                     except:
                         pass
                     
-                    dump_code = self.device + "_dump_registers"
+                    dump_code = self.device + "_dump_registers "
 
                     if dump_code in decoded_line:
-                        ret_reglog = self.step_2_matching(dump_code=dump_code+" ", data=decoded_line)
+                        ret_reglog = self.step_2_matching(dump_code=dump_code, data=decoded_line)
                         reg_log = ""
 
                         if ret_reglog is not None:
@@ -217,8 +220,20 @@ class parsing:
                         for scan_item, log_text in scan_list.items():
                             if scan_item in decoded_line:
                                 reg_log = decoded_line.split(scan_item)[1]
+
+                                if scan_item == "mfc_set_pps_vout":
+                                    pps_match = re.search(r'\((\d+)mv,', decoded_line)
+                                    pps = int(pps_match.group(1)) if pps_match else None
+                                    rx_out_match = re.search(r'=\s*(\d+)\s*mV', decoded_line)
+                                    rx_out = int(rx_out_match.group(1)) if rx_out_match else None
+                                    if pps != None and rx_out != None:
+                                        diff = (pps-rx_out)/1000 # mV to V scale
+                                        suffix = f"diff={diff:.03f}"
+                                else:
+                                    suffix = ""
+                                
                                 with open(parsing_file, "a") as parsing:
-                                    parsing.write(f"        // {log_text} : {reg_log}")
+                                    parsing.write(f"        // {log_text} : {suffix} {reg_log}\n")
 
 
     def step_2_matching(self, dump_code, data):
@@ -302,10 +317,21 @@ class parsing:
                         
                         masked_value = shifted_dump_value & masking_b
 
-                        if reg_name == "CP_SWITCHING_STAT" or reg_name == "MODE":
-                            suffix = "        ***"
-                        else:
-                            suffix = ""
+                        star_suffix = [
+                            "CP_SWITCHING_STAT",
+                            "MODE",
+                            "VIN_PRESENT_STAT",
+                            "VEXT_INSERT_STAT",
+                            "VEXT1_INSERT_STAT",
+                            "VEXT2_INSERT_STAT",
+                            "WPC_INSERT_STAT",
+                            "CP_EN"
+                            ]
+                        
+                        suffix = ""
+                        for reg_check in star_suffix:
+                            if re.search(reg_check, reg_name, re.IGNORECASE):
+                                suffix = "        ***"
 
                         ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
                         # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
@@ -445,7 +471,10 @@ class parsing:
 
             vbat_diff = vbat_value - vbat_dcic_value
 
-            ret = f"{timeline}, iin={iin_value:.03f}A, iin_target={iin_target_value:.03f}A, vbat={vbat_value:.03f}V, vbat_target={vbat_target_value:.03f}V, power={power_value:.03f}W, vbus={vbus_value:.03f}V, vwpc={vwpc_value:.03f}V, vbat_dcic={vbat_dcic_value:.03f}V, vbat_diff={vbat_diff:.03f}V"
+            try:
+                ret = f"{timeline}, iin={iin_value:.03f}A, iin_target={iin_target_value:.03f}A, vbat={vbat_value:.03f}V, vbat_target={vbat_target_value:.03f}V, power={power_value:.03f}W, vbus={vbus_value:.03f}V, vwpc={vwpc_value:.03f}V, vbat_dcic={vbat_dcic_value:.03f}V, vbat_diff={vbat_diff:.03f}V"
+            except:
+                return None
 
             if self.logging:
                 print(f"iin_value : {iin_value}")
