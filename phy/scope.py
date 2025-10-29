@@ -472,8 +472,18 @@ class common_function:
         else:
             self.filename = file + ".png"
         
+        # generate new directory
+        dir_suffix = ["raw_image", "crop_image", "recolor_image", "invert_image"]
+
+        for new_dir in dir_suffix:
+            new_path = os.path.join(waveform_dir, new_dir)
+
+            if not os.path.exists(new_path):
+                os.makedirs(new_path)
+                print(f"directory {new_path} created.")
+
         # raw file
-        file_path = waveform_dir/self.filename
+        file_path = waveform_dir/"raw_image"/self.filename
         imgFile = open(file_path, "wb")
         imgFile.write(imgData)
         imgFile.close()
@@ -483,7 +493,7 @@ class common_function:
         width, height = pre_img.size
         crop_box = (0, 27, width-214, height)
         crop = pre_img.crop(crop_box)
-        crop.save(waveform_dir/f"crop_{self.filename}")
+        crop.save(waveform_dir/"crop_image"/self.filename)
 
         # remove the time table
         color_change_img = pil.Image.open(file_path)
@@ -495,15 +505,15 @@ class common_function:
         for x in range(x1, x2):
             for y in range(y1, y2):
                 pixels[x, y] = captured_color
-        color_change_img.save(waveform_dir/f"recolor_{self.filename}")
+        color_change_img.save(waveform_dir/"recolor_image"/self.filename)
 
         # interting image
 
         # raw_image = cv.imread("./log/" + self.filename)
         # png_raw = cv.imread(file_path)
-        png_raw = cv.imread(waveform_dir/f"recolor_{self.filename}")
+        png_raw = cv.imread(waveform_dir/"recolor_image"/self.filename)
         inverted_image = cv.bitwise_not(png_raw)
-        cv.imwrite(waveform_dir/f"invert_{self.filename}", inverted_image)
+        cv.imwrite(waveform_dir/"invert_image"/self.filename, inverted_image)
         
         log.infoLog(f"save the waveform into the log directory")
 

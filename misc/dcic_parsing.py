@@ -103,6 +103,9 @@ class parsing:
         self.init_parameter(source_file=dump, device=device, revision=revision, vendor_keyword=vendor_keyword)
         self.step_1_matching()
 
+        file_path, file_name = os.path.split(self.source_file)
+        parsing_file = os.path.join(file_path, "process done")
+
         # clear the parameters before exit the method
         self.source_file = None
         self.device      = None
@@ -113,6 +116,9 @@ class parsing:
         self.addr_range  = None
 
         print(f"[{log.time_stamp(display=False, ret=True)}] finish dump and adcparsing, clear the parameters")
+        
+        with open(parsing_file, "a") as parsing:
+            parsing.write(f" ")
 
 
     def step_1_matching(self) -> None:
@@ -214,7 +220,8 @@ class parsing:
                             "sb_set_dc_ta_op_max_mode: " : "sb_set_dc_ta_op_max_mode",
                             "sc_charger_set_new_iin: " : "set_new_iin",
                             "sc_charger_set_new_voltage_and_current: sc_chg->" : "set_new_voltage_and_current",
-                            "mfc_set_pps_vout" : "mfc_set_pps_vout (WPC PPS request)"
+                            "mfc_set_pps_vout" : "mfc_set_pps_vout (wpc pps request)",
+                            "sc_charger_request_power" : "pps request"
                         }
                         
                         for scan_item, log_text in scan_list.items():
@@ -229,11 +236,17 @@ class parsing:
                                     if pps != None and rx_out != None:
                                         diff = (pps-rx_out)/1000 # mV to V scale
                                         suffix = f"diff={diff:.03f}"
+                                        cleaned_decoded_line = decoded_line.strip("\n")
+                                        for_excel = f"        // {cleaned_decoded_line} -- wpc pps request, {pps/1000}, {rx_out/1000}, {diff}\n"
                                 else:
                                     suffix = ""
+                                    for_excel = None
                                 
                                 with open(parsing_file, "a") as parsing:
-                                    parsing.write(f"        // {log_text} : {suffix} {reg_log}\n")
+                                    parsing.write(f"        // {log_text} : {suffix} {reg_log}")
+                                    if for_excel != None:
+                                        parsing.write(for_excel)
+                                    parsing.write("\n")
 
 
     def step_2_matching(self, dump_code, data):
@@ -375,7 +388,11 @@ class parsing:
             match = re.search(r'sc_charger_set_property: (.*)', data)
             if match:
                 res = match.group(1)
-                ret = f"        // {res}"
+
+                if "POWER_SUPPLY_EXT_PROP_PWR_CTRL_UPDATE" in res:
+                    ret = f"        // {res}, reached to target power, sync rx vout to pps ta_vol\n"
+                else:
+                    ret = f"        // {res}\n"
         
         else:
             ret = None
