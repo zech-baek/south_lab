@@ -52,7 +52,8 @@ class parsing:
             "mfc_wpc_irq_thread",
             "@PPS",
             "sm5446",
-            "detach"
+            "detach",
+            "DETACH"
         ]
 
         self.merged_keyword = self.basic_keyword + self.vendor_keyword
