@@ -1,3 +1,39 @@
+'''
+structure
+
+1. __init__
+- define keyword
+
+2. init_parameter
+- initialize the source file, device and revision
+- merge the basic keyword and vendor's keyword
+- get the regmap and regpage
+- define the address range regarding the device
+
+3. start_parsing
+- parameters
+	- dump : file name
+	- device : device name
+	- revision : revision number
+	- ventor_keyword (bool) : option for adding vendor's keyword
+- method call
+	--> init_parameter()
+	--> step_1_mathcing()
+		- make "_parsing.txt" and "_parsing_adc.txt"
+		- open the source file in binary mode
+			- check "SC_REL"
+			- check "LAST KMSG"
+			- check any keyword defined in init_parameter()
+			- "dump_register" : call step_2_matching()
+			- "sc_charger_set_property" : call step_3_mathcing()
+			- "sc_charger_timer_work" : call step_4_mathcing()
+			- "sc_charger_check_dcmode_status" : call step_5_matching()
+			- other cases : check the words in scan_list
+- make "process done" file
+- clear the parameters before exit the method
+'''
+
+
 from interface.cui_colors import color
 from interface.cui_logger import logger as log
 from project.get_device_info import get_map, get_regpage
@@ -8,9 +44,9 @@ import yaml, sys, os, re
 
 class parsing:
 
-    def __init__(self):
+    def __init__(self, logging=False):
 
-        self.logging = False
+        self.logging = logging
 
         self.basic_keyword = [
             "usb_typec_handle_id_power_status", # for PDO list
@@ -40,7 +76,8 @@ class parsing:
             "sec_wireless_set_property", 
             "sec_direct_chg_set_property",
             "UIWirelessFastCharge",
-            "UIDirectChargeTest"
+            "UIDirectChargeTest",
+            "LAST KMSG"
         ]
 
         self.vendor_keyword = [
@@ -53,7 +90,8 @@ class parsing:
             "@PPS",
             "sm5446",
             "detach",
-            "DETACH"
+            "DETACH",
+            "DETACHED"
         ]
 
         self.merged_keyword = self.basic_keyword + self.vendor_keyword
@@ -164,6 +202,11 @@ class parsing:
                     if count_sc_rel == 1:
                         print(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}")
                 
+                # if "LAST KMSG" in decoded_line:
+                if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
+
+                    print(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}")
+
                 if any(keyword in decoded_line for keyword in self.keyword):
 
                     try:
@@ -217,12 +260,14 @@ class parsing:
                     
                     else:
                         scan_list = {
-                            "sec-battery samsung_mobile_device:battery: usb_typec_handle_id_power_status: " : "usb_typec_handle_id_power_status",
-                            "sb_set_dc_ta_op_max_mode: " : "sb_set_dc_ta_op_max_mode",
-                            "sc_charger_set_new_iin: " : "set_new_iin",
-                            "sc_charger_set_new_voltage_and_current: sc_chg->" : "set_new_voltage_and_current",
-                            "mfc_set_pps_vout" : "mfc_set_pps_vout (wpc pps request)",
-                            "sc_charger_request_power" : "pps request"
+                            "usb_typec_handle_id_power_status: "     : "usb_typec_handle_id_power_status",
+                            "sb_set_dc_ta_op_max_mode: "             : "sb_set_dc_ta_op_max_mode",
+                            "sc_charger_set_new_iin: "               : "set_new_iin",
+                            "sc_charger_set_new_voltage_and_current" : "set_new_voltage_and_current",
+                            "mfc_set_pps_vout"                       : "mfc_set_pps_vout (wpc pps request)",
+                            "sc_charger_request_power"               : "pps request",
+                            "sc_charger_prob"                        : "load the charger driver",
+                            "dc Start fail"                          : "retry fail"
                         }
                         
                         for scan_item, log_text in scan_list.items():
@@ -244,7 +289,7 @@ class parsing:
                                     for_excel = None
                                 
                                 with open(parsing_file, "a") as parsing:
-                                    parsing.write(f"        // {log_text} : {suffix} {reg_log}")
+                                    parsing.write(f"        // {suffix} : {log_text} {reg_log}")
                                     if for_excel != None:
                                         parsing.write(for_excel)
                                     parsing.write("\n")
@@ -391,7 +436,7 @@ class parsing:
                 res = match.group(1)
 
                 if "POWER_SUPPLY_EXT_PROP_PWR_CTRL_UPDATE" in res:
-                    ret = f"        // {res}, reached to target power, sync rx vout to pps ta_vol\n"
+                    ret = f"        // reached to target power, sync rx vout to pps ta_vol, {res}\n"
                 else:
                     ret = f"        // {res}\n"
         
