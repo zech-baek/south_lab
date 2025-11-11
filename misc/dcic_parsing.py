@@ -112,6 +112,7 @@ class parsing:
         self.regpage = get_regpage(device=self.device, revision=self.revision)
 
         if "sc8583" in self.device:
+
             self.addr_range = [
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
             0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 
@@ -119,12 +120,35 @@ class parsing:
             0x2b
             ]
 
+            self.adc_range = {
+                "IIN_ADC"    : [0x2c, 0x2d, 0.001875, 6],
+                "VIN_ADC"    : [0x2e, 0x2f, 0.00625, 5],
+                "WPC_IN_ADC" : [0x30, 0x31, 0.00625, 5],
+                "VEXT_ADC"   : [0x32, 0x33, 0.00625, 5],
+                "VOUT_ADC"   : [0x34, 0x35, 0.00125, 5],
+                "VBAT_ADC"   : [0x36, 0x37, 0.00125, 5],
+                "C1P_ADC"    : [0x3a, 0x3b, 0.00625, 5],
+                "TDIE_ADC"   : [0x3e, 0x3f, 0.5, 1]
+            }
+
         elif "sc8563" in self.device:
+
             self.addr_range = [
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
             0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a
             ]
+
+            self.adc_range = {
+                "IIN_ADC"   : [0x2b, 0x2c, 0.001875],
+                "VIN_ADC"   : [0x2d, 0x2e, 0.005],
+                "VEXT1_ADC" : [0x2f, 0x30, 0.005],
+                "VEXT2_ADC" : [0x31, 0x32, 0.005],
+                "VOUT_ADC"  : [0x33, 0x34, 0.00125],
+                "VBAT_ADC"  : [0x35, 0x36, 0.00125],
+                "C1P_ADC"   : [0x39, 0x3a, 0.005],
+                "TDIE_ADC"  : [0x37, 0x38, 0.5]
+            }
 
         else:
             raise Exception("device number is not applicable")
@@ -324,13 +348,15 @@ class parsing:
             splited_data = data.split(dump_code)[1]
             pairs = splited_data.split(", ")
 
-            datas = {} # key=register, value=value
+            datas = {} # key=register (int), value=value (int)
             ret = list()
 
             for pair in pairs:
                 clean_pair = pair.replace("[", "").replace("]", ",")
                 addr, value = clean_pair.split(",")
                 datas[int(addr,16)] = int(value,16)
+
+            # print(datas)
 
             for addr in self.addr_range:
 
@@ -395,6 +421,30 @@ class parsing:
                         ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
                         # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
             
+            adc_ret = dict()
+
+            for adc_name, adc_reg in self.adc_range.items():
+                adc_ret[adc_name] = [0, 0]
+                
+                for dump_addr, dump_value in datas.items():
+
+                    for n in [0, 1]:
+                        if dump_addr == adc_reg[n]:
+                            if n == 0:
+                                adc_ret[adc_name][n] = dump_value << 8
+                            else:
+                                adc_ret[adc_name][n] = dump_value
+
+            for key_channel, value_adc in adc_ret.items():
+                for adc_name, adc_reg in self.adc_range.items():
+                    lsb = adc_reg[2]
+                    decimal_pooint = adc_reg[3]
+
+                    if key_channel == adc_name:
+                        adc = lsb * (value_adc[0] + value_adc[1])
+                        adc_final = round(adc, decimal_pooint+1)
+                ret.append(f"        // {key_channel} : {adc_final}")
+
             return ret
         
         except:
