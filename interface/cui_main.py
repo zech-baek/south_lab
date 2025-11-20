@@ -217,7 +217,7 @@ class cui_frame:
     
     
     def get_regmap(self):
-        return cache.reg_map    
+        return cache.reg_map
 
 
     def get_regpage(self):
@@ -496,7 +496,7 @@ class cui_frame:
     
     def read_byte(self, reg_8h):
         
-        ret   = cache.i2c_h.i2c_read(cache.i2c_a, reg_8h)
+        ret = cache.i2c_h.i2c_read(cache.i2c_a, reg_8h)
         
         log_wrapping(
             self.__class__.__name__,
@@ -510,6 +510,30 @@ class cui_frame:
     def write_byte(self, reg_8h, value):
         
         cache.i2c_h.i2c_write(cache.i2c_a, reg_8h, value)
+        
+        log_wrapping(
+            self.__class__.__name__,
+            f"byte write : {reg_8h:#04x}={value:#04x}",
+            cache.logging
+            )
+    
+
+    def i2c_read(self, i2c_a:int, reg_8h:int) -> int:
+        
+        ret = cache.i2c_h.i2c_read(i2c_a, reg_8h)
+        
+        log_wrapping(
+            self.__class__.__name__,
+            f"byte read : {reg_8h:#04x}={ret:#04x}",
+            cache.logging
+            )
+        
+        return ret
+    
+    
+    def i2c_write(self, i2c_a:int, reg_8h:int, value:int) -> None:
+        
+        cache.i2c_h.i2c_write(i2c_a, reg_8h, value)
         
         log_wrapping(
             self.__class__.__name__,

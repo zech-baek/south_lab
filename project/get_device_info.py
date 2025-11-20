@@ -51,6 +51,49 @@ def get_status(device, revision):
     return reg_status
 
 
+def get_regpage(device, revision):
+
+    reg_map = get_map(device=device, revision=revision)
+
+    reg_page = dict()
+
+    for key in reg_map.keys():
+
+        reg_name  = key
+
+        reg_addr = list()
+        reg_msb  = list()
+        reg_lsb  = list()
+        reg_bith = list()
+        reg_bitl = list()
+
+        reg_split = sum(1 for item in reg_map[key] if "address" in item)
+
+        for n in range(reg_split):
+            reg_addr.append(reg_map[key][f"address{n+1}"])
+            reg_lsb.append(reg_map[key][f"lsb{n+1}"])
+            reg_msb.append(reg_map[key][f"msb{n+1}"])
+            reg_bith.append(reg_map[key][f"bith{n+1}"])
+            reg_bitl.append(reg_map[key][f"bitl{n+1}"])
+
+        reg_auth  = reg_map[key]["permission"]
+        reg_rw    = reg_map[key]["rw"]
+        
+        reg_page[reg_name] = [
+            reg_split,
+            reg_name,
+            reg_addr,
+            reg_msb,
+            reg_lsb,
+            reg_bith,
+            reg_bitl,
+            reg_auth,
+            reg_rw
+            ]
+    
+    return reg_page
+
+
 def get_reg_table(device, revision):
     
     reg_map = get_map(device, revision)

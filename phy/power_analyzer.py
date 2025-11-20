@@ -151,10 +151,14 @@ class keysight_N6705:
                 log.errorLog(f"{color.bgred}failed to initialize n6705{color.end}")
         
         else:
-            self.device = self.rm.open_resource(resource_name)
-            self.__dict__["ch1"] = function(self, 1)
-            self.__dict__["ch2"] = function(self, 2)
-            log.forcedLog(f"initialized the keysight n6705 connection")
+
+            try:
+                self.device = self.rm.open_resource(resource_name)
+                self.__dict__["ch1"] = function(self, 1)
+                self.__dict__["ch2"] = function(self, 2)
+                log.forcedLog(f"initialized the keysight n6705 connection")
+            except:
+                log.errorLog(f"{color.bgred}failed to initialize n6705{color.end}")
         
         self._offset = 0
         

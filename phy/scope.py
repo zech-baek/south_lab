@@ -327,7 +327,7 @@ class common_function:
             for i in tup:
                 self.send(f"SELECT:CH{i} ON")
     
-
+    """
     @property
     def get_meas1(self):
 
@@ -352,6 +352,7 @@ class common_function:
 
         ret = self.query(f"MEASU:MEAS4:VAL?")
         return float(ret)
+    """
     
 
     @property
@@ -442,6 +443,12 @@ class common_function:
         elif level == "10M" : self.send(f"HORIZONTAL:RECORDLENGTH {constant.RECORD_10M}")
         # log.infoLog(f"Horizontal record length is set to {self.query('HORizontal:RECOrdlength?')}")
     
+
+    def get_meas(self, channel):
+
+        ret = self.query(f"MEASU:MEAS{channel}:VAL?")
+        return float(ret)
+    
     
     @property
     def save_waveform(self):
@@ -465,23 +472,50 @@ class common_function:
         else:
             self.filename = file + ".png"
         
-        file_path = waveform_dir/self.filename
+        # generate new directory
+        dir_suffix = ["raw_image", "crop_image", "recolor_image", "invert_image"]
+
+        for new_dir in dir_suffix:
+            new_path = os.path.join(waveform_dir, new_dir)
+
+            if not os.path.exists(new_path):
+                os.makedirs(new_path)
+                print(f"directory {new_path} created.")
+
+        # raw file
+        file_path = waveform_dir/"raw_image"/self.filename
         imgFile = open(file_path, "wb")
         imgFile.write(imgData)
         imgFile.close()
 
+        # cropped file
         pre_img = pil.Image.open(file_path)
         width, height = pre_img.size
         crop_box = (0, 27, width-214, height)
         crop = pre_img.crop(crop_box)
-        crop.save(waveform_dir/f"crop_{self.filename}")
+        crop.save(waveform_dir/"crop_image"/self.filename)
+
+        # remove the time table
+        color_change_img = pil.Image.open(file_path)
+        x_color, y_color = width-2, height-2
+        pixels = color_change_img.load()
+        captured_color = pixels[x_color, y_color]
+        x1, y1 = 1704, 972     # top-left
+        x2, y2 = 1918, 1077     # bottom-right
+        for x in range(x1, x2):
+            for y in range(y1, y2):
+                pixels[x, y] = captured_color
+        color_change_img.save(waveform_dir/"recolor_image"/self.filename)
+
+        # interting image
 
         # raw_image = cv.imread("./log/" + self.filename)
-        png_raw = cv.imread(file_path)
+        # png_raw = cv.imread(file_path)
+        png_raw = cv.imread(waveform_dir/"recolor_image"/self.filename)
         inverted_image = cv.bitwise_not(png_raw)
+        cv.imwrite(waveform_dir/"invert_image"/self.filename, inverted_image)
         
-        cv.imwrite(waveform_dir/f"invert_{self.filename}", inverted_image)
-        log.infoLog(f"save the waveform into the log directory with {self.filename}")
+        log.infoLog(f"save the waveform into the log directory")
 
 
 class tektronix_mdo34(channel_function, common_function):
@@ -526,7 +560,9 @@ class tektronix_mdo34(channel_function, common_function):
                 log.errorLog(f"{color.bgred}failed to initialize tektronix dp series{color.end}")
 
         resolution = ["1K", "10K", "100K", "1M", "5M", "10M"]
+        measurement_channel = list(range(1, 9))
         self.create_property("record_length", resolution)
+        self.create_property("get_meas", measurement_channel)
         self.filename = None
     
     
