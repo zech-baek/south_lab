@@ -70,6 +70,7 @@ class parsing:
             "sec_direct_charger",
             "sc_charger",
             "sc8583-charger",
+            "sc8563-charger",
             "sec_bat_set_property",
             "sc8583_dump_registers ", 
             "sc8563_dump_registers ", 
@@ -77,7 +78,10 @@ class parsing:
             "sec_direct_chg_set_property",
             "UIWirelessFastCharge",
             "UIDirectChargeTest",
-            "LAST KMSG"
+            "LAST KMSG",
+            "fsck.f2fs",
+            "batt_current_ua_now",
+            "sc8563_enable_charge enable DCIC"
         ]
 
         self.vendor_keyword = [
@@ -128,7 +132,7 @@ class parsing:
                 "VOUT_ADC"   : [0x34, 0x35, 0.00125, 5],
                 "VBAT_ADC"   : [0x36, 0x37, 0.00125, 5],
                 "C1P_ADC"    : [0x3a, 0x3b, 0.00625, 5],
-                "TDIE_ADC"   : [0x3e, 0x3f, 0.5, 1]
+                "TDIE_ADC"   : [0x3e, 0x3f, 0.5, 2]
             }
 
         elif "sc8563" in self.device:
@@ -140,14 +144,14 @@ class parsing:
             ]
 
             self.adc_range = {
-                "IIN_ADC"   : [0x2b, 0x2c, 0.001875],
-                "VIN_ADC"   : [0x2d, 0x2e, 0.005],
-                "VEXT1_ADC" : [0x2f, 0x30, 0.005],
-                "VEXT2_ADC" : [0x31, 0x32, 0.005],
-                "VOUT_ADC"  : [0x33, 0x34, 0.00125],
-                "VBAT_ADC"  : [0x35, 0x36, 0.00125],
-                "C1P_ADC"   : [0x39, 0x3a, 0.005],
-                "TDIE_ADC"  : [0x37, 0x38, 0.5]
+                "IIN_ADC"   : [0x2b, 0x2c, 0.001875, 6],
+                "VIN_ADC"   : [0x2d, 0x2e, 0.005, 3],
+                "VEXT1_ADC" : [0x2f, 0x30, 0.005, 3],
+                "VEXT2_ADC" : [0x31, 0x32, 0.005, 3],
+                "VOUT_ADC"  : [0x33, 0x34, 0.00125, 5],
+                "VBAT_ADC"  : [0x35, 0x36, 0.00125, 5],
+                "C1P_ADC"   : [0x39, 0x3a, 0.005, 3],
+                "TDIE_ADC"  : [0x37, 0x38, 0.5, 1]
             }
 
         else:
@@ -182,6 +186,16 @@ class parsing:
         
         with open(parsing_file, "a") as parsing:
             parsing.write(f" ")
+    
+
+    def print_store_comment(self, text:str, filename:str) -> None:
+
+        try:
+            print(text)
+            with open(filename, "a") as parsing:
+                parsing.write(text)
+        except:
+            pass
 
 
     def step_1_matching(self) -> None:
@@ -203,15 +217,20 @@ class parsing:
 
         parsing_file = os.path.join(file_path, new_base)
         adc_file = os.path.join(file_path, adc_base)
+        self.parsing_comment = os.path.join(file_path, f"{stamp} - {name}_comments.txt")
 
-        print(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing -> save to {parsing_file}")
-        print(f"[{log.time_stamp(display=False, ret=True)}] start adc log      -> save to {adc_file}")
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing    -> save to {parsing_file}", self.parsing_comment)
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start adc log         -> save to {adc_file}", self.parsing_comment)
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start parsing comment -> save to {self.parsing_comment}", self.parsing_comment)
+        # print(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing -> save to {parsing_file}")
+        # print(f"[{log.time_stamp(display=False, ret=True)}] start adc log      -> save to {adc_file}")
 
         count_sc_rel = 0
 
         with open(self.source_file, "rb") as dump: # binary mode
 
             for line in dump:
+                
                 decoded_line = line.decode("utf-8", errors="ignore")
 
                 # if "SC_REL" in decoded_line:
@@ -224,12 +243,49 @@ class parsing:
                         sc_rel = is_sc_rel.group(1)
                         count_sc_rel += 1
                     if count_sc_rel == 1:
-                        print(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}")
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}", self.parsing_comment)
+                        # print(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}")
                 
-                # if "LAST KMSG" in decoded_line:
+                # print out the line while proceed log parsing
+                # -----------------------------------------------------------------------------------------------
                 if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
 
-                    print(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}")
+                    print_line = re.sub(r"\n", "", decoded_line)
+                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}", self.parsing_comment)
+                    # print(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {print_line}")
+                
+                kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
+
+                for kernel_keyword in kernel_version:
+                    if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
+                        print_line = re.sub(r"\n", "", decoded_line)
+                        if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
+                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {decoded_line}", self.parsing_comment)
+                            # print(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {print_line}")
+                        elif "bootloader" in decoded_line or "name" in decoded_line:
+                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {decoded_line}", self.parsing_comment)
+                            # print(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {print_line}")
+
+                re_text = f"{self.device}-charger"
+                if re.search(re_text, decoded_line, re.IGNORECASE):
+                    flag_contain = "trigger" in decoded_line and "flag" in decoded_line
+                    flag_exclude = all(
+                        phrase not in decoded_line
+                        for phrase in [
+                            "vout th", "adc done", "insert", "present", "drv", "remove",
+                            "th rev", "th chg", "qb on", "active", "cp switching", "ucp"])
+                    if flag_contain and flag_exclude:
+                        print_line = re.sub(r"\n", "", decoded_line)
+
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {decoded_line}", self.parsing_comment)
+                        # print(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}")
+                
+                if re.search(r"sec_bat_show_attrs: batt_current_ua_now", decoded_line, re.IGNORECASE):
+                    print_line = re.sub(r"\n", "", decoded_line)
+
+                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment)
+                    # print(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {print_line}")
+                # -----------------------------------------------------------------------------------------------
 
                 if any(keyword in decoded_line for keyword in self.keyword):
 
@@ -291,7 +347,8 @@ class parsing:
                             "mfc_set_pps_vout"                       : "mfc_set_pps_vout (wpc pps request)",
                             "sc_charger_request_power"               : "pps request",
                             "sc_charger_prob"                        : "load the charger driver",
-                            "dc Start fail"                          : "retry fail"
+                            "dc Start fail"                          : "retry fail",
+                            "vbus/vout"                              : "initial vbus/vout ratio"
                         }
                         
                         for scan_item, log_text in scan_list.items():
@@ -448,7 +505,8 @@ class parsing:
             return ret
         
         except:
-            print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
+            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}", self.parsing_comment)
+            # print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
             return None
     
 
