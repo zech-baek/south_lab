@@ -589,6 +589,21 @@ class function_keithley:
         
         ret = self.read("READ?")
         return float(ret)
+
+
+    @property
+    def diode(self):
+        
+        self.send(':FUNCtion "DIODe"')
+        
+        if self.mode != "diode":
+            self.mode = "diode"
+            self.rang = None
+            self.set_nplc = 5
+            self.set_sampling = 10
+        
+        ret = self.read("READ?")
+        return float(ret)
     
     
     @property

@@ -182,7 +182,7 @@ class parsing:
         self.regpage     = None
         self.addr_range  = None
 
-        print(f"[{log.time_stamp(display=False, ret=True)}] finish dump and adcparsing, clear the parameters")
+        print(f"[{log.time_stamp(display=False, ret=True)}] finish dump and adc parsing, clear the parameters")
         
         with open(parsing_file, "a") as parsing:
             parsing.write(f" ")

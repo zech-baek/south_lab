@@ -40,7 +40,7 @@ class function:
         self._handler.i2c_write = low_ch, high_ch
         self.state_update(low_ch, high_ch)
 
-        delay(1)
+        delay(0.5)
     
     
     @property
@@ -56,7 +56,7 @@ class function:
         self._handler.i2c_write = low_ch, high_ch
         self.state_update(low_ch, high_ch)
 
-        delay(1)
+        delay(0.5)
 
 
 class relay_box:
