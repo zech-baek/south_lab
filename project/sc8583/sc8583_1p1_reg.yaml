@@ -2986,3 +2986,99 @@ WPC_REMOVE_MASK:
   reset: 0
   rw: RW
   singular: true
+ZVS_DLY_SEL:
+  address1: 64
+  bith1: 5
+  bitl1: 0
+  lsb1: 2
+  msb1: 7
+  name: ZVS_DLY_SEL
+  permission: Hidden
+  register1: ZVX_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_TH_RE_LOW:
+  address1: 65
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VOUT_TH_RE_LOW
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: true
+ACDRV_SS:
+  address1: 65
+  bith1: 1
+  bitl1: 0
+  lsb1: 5
+  msb1: 6
+  name: ACDRV_SS
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: true
+QB_FAST_SS:
+  address1: 65
+  bith1: 1
+  bitl1: 0
+  lsb1: 3
+  msb1: 4
+  name: QB_FAST_SS
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: true
+VO12OUT_UVP_DIS:
+  address1: 65
+  bith1: 0
+  bitl1: 0
+  lsb1: 2
+  msb1: 2
+  name: VO12OUT_UVP_DIS
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: true
+VO12OUT_UVP:
+  address1: 65
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: VO12OUT_UVP_DIS
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: true
+DIS_QB_RCP:
+  address1: 67
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: DIS_QB_RCP
+  permission: Hidden
+  register1: QB_RCP_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+QB_RCP:
+  address1: 67
+  bith1: 1
+  bitl1: 0
+  lsb1: 5
+  msb1: 6
+  name: QB_RCP
+  permission: Hidden
+  register1: QB_RCP_CTRL
+  reset: 0
+  rw: RW
+  singular: true

@@ -151,7 +151,7 @@ class parsing:
                 "VOUT_ADC"  : [0x33, 0x34, 0.00125, 5],
                 "VBAT_ADC"  : [0x35, 0x36, 0.00125, 5],
                 "C1P_ADC"   : [0x39, 0x3a, 0.005, 3],
-                "TDIE_ADC"  : [0x37, 0x38, 0.5, 1]
+                "TDIE_ADC"  : [0x37, 0x38, 0.5, 2]
             }
 
         else:
@@ -189,11 +189,15 @@ class parsing:
     
 
     def print_store_comment(self, text:str, filename:str) -> None:
-
+        
         try:
             print(text)
             with open(filename, "a") as parsing:
                 parsing.write(text)
+
+                if "\n" not in text:
+                    parsing.write("\n")
+
         except:
             pass
 
@@ -348,29 +352,34 @@ class parsing:
                             "sc_charger_request_power"               : "pps request",
                             "sc_charger_prob"                        : "load the charger driver",
                             "dc Start fail"                          : "retry fail",
-                            "vbus/vout"                              : "initial vbus/vout ratio"
+                            "vbus/vout"                              : "initial vbus/vout ratio",
+                            "detach"                                 : "detach log in the line"
                         }
                         
                         for scan_item, log_text in scan_list.items():
-                            if scan_item in decoded_line:
-                                reg_log = decoded_line.split(scan_item)[1]
+                            if scan_item.lower() in decoded_line.lower():
 
                                 if scan_item == "mfc_set_pps_vout":
                                     pps_match = re.search(r'\((\d+)mv,', decoded_line)
                                     pps = int(pps_match.group(1)) if pps_match else None
                                     rx_out_match = re.search(r'=\s*(\d+)\s*mV', decoded_line)
                                     rx_out = int(rx_out_match.group(1)) if rx_out_match else None
+
                                     if pps != None and rx_out != None:
                                         diff = (pps-rx_out)/1000 # mV to V scale
                                         suffix = f"diff={diff:.03f}"
                                         cleaned_decoded_line = decoded_line.strip("\n")
                                         for_excel = f"        // {cleaned_decoded_line} -- wpc pps request, {pps/1000}, {rx_out/1000}, {diff}\n"
+
+                                elif scan_item == "detach":
+                                    suffix = "detach keyword"
+                                    for_excel = None
                                 else:
                                     suffix = ""
                                     for_excel = None
                                 
                                 with open(parsing_file, "a") as parsing:
-                                    parsing.write(f"        // {suffix} : {log_text} {reg_log}")
+                                    parsing.write(f"        // {suffix} : {log_text} // {decoded_line}")
                                     if for_excel != None:
                                         parsing.write(for_excel)
                                     parsing.write("\n")
@@ -403,6 +412,8 @@ class parsing:
 
         try:
             splited_data = data.split(dump_code)[1]
+            if splited_data.endswith(",\n"):
+                splited_data = splited_data[:-2]
             pairs = splited_data.split(", ")
 
             datas = {} # key=register (int), value=value (int)
