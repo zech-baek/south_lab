@@ -281,7 +281,8 @@ class parsing:
                     if flag_contain and flag_exclude:
                         print_line = re.sub(r"\n", "", decoded_line)
 
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {decoded_line}", self.parsing_comment)
+                        # self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {decoded_line}", self.parsing_comment)
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment)
                         # print(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}")
                 
                 if re.search(r"sec_bat_show_attrs: batt_current_ua_now", decoded_line, re.IGNORECASE):
@@ -328,7 +329,7 @@ class parsing:
                         if reg_log != None:
                             with open(parsing_file, "a") as parsing:
                                 parsing.write(reg_log)
-                                parsing.write("\n")
+                                parsing.write("\n\n")
                     
                     elif "sc_charger_check_dcmode_status" in decoded_line:
                         reg_log = self.step_5_matching(data=decoded_line)
@@ -353,12 +354,14 @@ class parsing:
                             "sc_charger_prob"                        : "load the charger driver",
                             "dc Start fail"                          : "retry fail",
                             "vbus/vout"                              : "initial vbus/vout ratio",
-                            "detach"                                 : "detach log in the line"
+                            "detach"                                 : "detach log in the line",
+                            "health_status"                          : "health_status",
+                            "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"   : "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"
                         }
                         
                         for scan_item, log_text in scan_list.items():
                             if scan_item.lower() in decoded_line.lower():
-
+                                
                                 if scan_item == "mfc_set_pps_vout":
                                     pps_match = re.search(r'\((\d+)mv,', decoded_line)
                                     pps = int(pps_match.group(1)) if pps_match else None
@@ -366,20 +369,42 @@ class parsing:
                                     rx_out = int(rx_out_match.group(1)) if rx_out_match else None
 
                                     if pps != None and rx_out != None:
-                                        diff = (pps-rx_out)/1000 # mV to V scale
+                                        diff = (pps-rx_out) / 1000 # mV to V scale
                                         suffix = f"diff={diff:.03f}"
                                         cleaned_decoded_line = decoded_line.strip("\n")
-                                        for_excel = f"        // {cleaned_decoded_line} -- wpc pps request, {pps/1000}, {rx_out/1000}, {diff}\n"
+
+                                        to_dump_text = f"        // {suffix} : {log_text} // {decoded_line}"
+                                        for_excel    = f"        // {cleaned_decoded_line} -- wpc pps request, {pps/1000}, {rx_out/1000}, {diff}\n"
 
                                 elif scan_item == "detach":
                                     suffix = "detach keyword"
                                     for_excel = None
+                                    to_dump_text = f"        // {suffix} : {log_text} // {decoded_line}"
+                                
+                                elif scan_item == "sc_charger_request_power":
+                                    if "pps_vol" in decoded_line and "vbus_adc" in decoded_line:
+                                        for_excel = None
+
+                                        pps_vol_match = re.search(r'pps_vol=(\d+)', decoded_line)
+                                        if pps_vol_match:
+                                            pps_vol = float(pps_vol_match.group(1))/1000 # mV scale
+
+                                        vbus_adc_match = re.search(r'vbus_adc=(\d+)', decoded_line)
+                                        if vbus_adc_match:
+                                            vbus_adc = float(vbus_adc_match.group(1))/1000_000 # uV scale
+                                        
+                                        try:
+                                            diff_pps_vbus = pps_vol - vbus_adc
+                                            to_dump_text = f"        // pps request : pps_vol({pps_vol:.03f}V) - vbus_adc({vbus_adc:.06f}V) = {diff_pps_vbus:.06f}V\n"
+                                        except:
+                                            pass
+
                                 else:
-                                    suffix = ""
+                                    to_dump_text = f"        // {log_text} : {decoded_line}"
                                     for_excel = None
                                 
                                 with open(parsing_file, "a") as parsing:
-                                    parsing.write(f"        // {suffix} : {log_text} // {decoded_line}")
+                                    parsing.write(to_dump_text)
                                     if for_excel != None:
                                         parsing.write(for_excel)
                                     parsing.write("\n")
