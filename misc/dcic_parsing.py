@@ -39,7 +39,7 @@ from interface.cui_logger import logger as log
 from project.get_device_info import get_map, get_regpage
 
 from tabulate import tabulate as tb
-import yaml, sys, os, re
+import yaml, sys, os, re, mmap, time
 
 
 class parsing:
@@ -98,11 +98,75 @@ class parsing:
             "DETACHED"
         ]
 
+        self.error_code = {
+            0x400001 : "VIN_UVLO",
+            0x400002 : "VIN_OVP",
+            0x400003 : "VOUT OVP",
+            0x400004 : "VOUT UVLO",
+            0x400005 : "VBAT OVP",
+            0x400006 : "IBUS OCP",
+            0x400007 : "IBUS UCP",
+            0x400008 : "IBAT OCP",
+            0x400009 : "CFLY SHORT",
+            0x400010 : "CN SHORT",
+            0x40001A : "VIN SHORT",
+            0x40001B : "VOUT SHORT",
+            0x40001C : "Thermal Shutdown",
+            0x40001D : "Watchdog Timer",
+            0x40001E : "Charger Timer",
+            0x40001F : "NTC Protection",
+            0x400020 : "VBUS2VOUT Relative UVP",
+            0x400021 : "VBUS2VOUT Rekative OVP",
+            0x400022 : "MID2VOUT Relative UVP",
+            0x400023 : "MID2VOUT Relative OVP",
+            0x400024 : "VDSQRB OVP",
+            0x400025 : "Reverse Blocking",
+            0x400026 : "Thermal Regulation",
+            0x400027 : "Die Temperature warning",
+            0x400028 : "Soft Start Timeout",
+            0x400029 : "PIN DIAG FAIL",
+            0x40002A : "POWER NG",
+            0x40002B : "VEXT1 OVLO",
+            0x40002C : "VEXT2 OVLO",
+            0x40002D : "VEXT1 UVLO",
+            0x40002E : "VEXT2 UVLO",
+            0x40002F : "CHAR RCP",
+            0x400030 : "CFLY Open Detection",
+            0x400031 : "BST UVP",
+            0x400032 : "PVDD UVP",
+            0x400033 : "Regulation_Timout",
+            0x400034 : "RVSBST OCP",
+            0x400035 : "CHGR RCP",
+            0x400036 : "New feature1 (VBAT<3.1V or FG Vnow issue)",
+            0x400037 : "New feature2 (PD communication error)",
+            0x400038 : "New feature3 (Not enough WPC condition)",
+            0x400039 : "New feature4",
+            0x40003A : "New feature5",
+            0x40003B : "New feature6",
+            0x40003C : "New feature7",
+            0x40003D : "New feature8 (PMID_ERROR_HI, before SW)",
+            0x40003E : "New feature9 (PMID_ERROR_LO, before SW)",
+            0x40003F : "New feature10 (VWPC_OVP)"
+        }
+
         self.merged_keyword = self.basic_keyword + self.vendor_keyword
 
 
+    def count_lines(self, filename:str) -> int:
+
+        with open(filename, 'r+') as f:
+            mm = mmap.mmap(f.fileno(), 0)
+            count = 0
+            while mm.readline():
+                count += 1
+            mm.close()
+
+        return count
+    
+
     def init_parameter(self, source_file:str, device:str, revision:str, vendor_keyword:bool) -> None:
         
+        self.txt_lines = self.count_lines(source_file)
         self.source_file = source_file
         self.device = device
         self.revision = revision
@@ -121,7 +185,7 @@ class parsing:
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
             0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 
-            0x2b
+            0x2b, 0x40, 0x41, 0x42, 0x43, 0x44
             ]
 
             self.adc_range = {
@@ -174,6 +238,7 @@ class parsing:
         parsing_file = os.path.join(file_path, "process done")
 
         # clear the parameters before exit the method
+        self.txt_lines   = None
         self.source_file = None
         self.device      = None
         self.revision    = None
@@ -182,20 +247,31 @@ class parsing:
         self.regpage     = None
         self.addr_range  = None
 
-        print(f"[{log.time_stamp(display=False, ret=True)}] finish dump and adc parsing, clear the parameters")
+        print(f"[100.00%][{log.time_stamp(display=False, ret=True)}] finish dump and adc parsing, clear the parameters")
         
         with open(parsing_file, "a") as parsing:
             parsing.write(f" ")
     
 
-    def print_store_comment(self, text:str, filename:str) -> None:
+    def progress(self, line_num):
+
+        percentage = line_num / (self.txt_lines+1) * 100
+        print(f'\r[{percentage:6.02f}%] ', end='', flush=True) # \r returns to the beginning of the line
+    
+
+    def print_store_comment(self, text:str, filename:str, current_line) -> None:
         
         try:
-            print(text)
+            self.progress(line_num=current_line)
+            rstrip_text = text.rstrip()  # remove all trailing whitespace
+            print(rstrip_text)
+            
             with open(filename, "a") as parsing:
                 parsing.write(text)
 
-                if "\n" not in text:
+                if text.endswith('\n'):
+                    pass
+                else:
                     parsing.write("\n")
 
         except:
@@ -223,17 +299,18 @@ class parsing:
         adc_file = os.path.join(file_path, adc_base)
         self.parsing_comment = os.path.join(file_path, f"{stamp} - {name}_comments.txt")
 
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing    -> save to {parsing_file}", self.parsing_comment)
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start adc log         -> save to {adc_file}", self.parsing_comment)
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start parsing comment -> save to {self.parsing_comment}", self.parsing_comment)
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing    -> save to {parsing_file}", self.parsing_comment, 0)
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start adc log         -> save to {adc_file}", self.parsing_comment, 0)
+        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start parsing comment -> save to {self.parsing_comment}", self.parsing_comment, 0)
         # print(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing -> save to {parsing_file}")
         # print(f"[{log.time_stamp(display=False, ret=True)}] start adc log      -> save to {adc_file}")
 
-        count_sc_rel = 0
+        count_sc_rel = 0 # driver version
 
         with open(self.source_file, "rb") as dump: # binary mode
 
-            for line in dump:
+            # for line in dump:
+            for line_num, line in enumerate(dump, start=1):
                 
                 decoded_line = line.decode("utf-8", errors="ignore")
 
@@ -247,7 +324,7 @@ class parsing:
                         sc_rel = is_sc_rel.group(1)
                         count_sc_rel += 1
                     if count_sc_rel == 1:
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}", self.parsing_comment)
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}", self.parsing_comment, line_num)
                         # print(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}")
                 
                 # print out the line while proceed log parsing
@@ -255,7 +332,7 @@ class parsing:
                 if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
 
                     print_line = re.sub(r"\n", "", decoded_line)
-                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}", self.parsing_comment)
+                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
                     # print(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {print_line}")
                 
                 kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
@@ -264,10 +341,10 @@ class parsing:
                     if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
                         print_line = re.sub(r"\n", "", decoded_line)
                         if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
-                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {decoded_line}", self.parsing_comment)
+                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {decoded_line}", self.parsing_comment, line_num)
                             # print(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {print_line}")
                         elif "bootloader" in decoded_line or "name" in decoded_line:
-                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {decoded_line}", self.parsing_comment)
+                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {decoded_line}", self.parsing_comment, line_num)
                             # print(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {print_line}")
 
                 re_text = f"{self.device}-charger"
@@ -282,13 +359,13 @@ class parsing:
                         print_line = re.sub(r"\n", "", decoded_line)
 
                         # self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {decoded_line}", self.parsing_comment)
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment)
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment, line_num)
                         # print(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}")
                 
                 if re.search(r"sec_bat_show_attrs: batt_current_ua_now", decoded_line, re.IGNORECASE):
                     print_line = re.sub(r"\n", "", decoded_line)
 
-                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment)
+                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment, line_num)
                     # print(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {print_line}")
                 # -----------------------------------------------------------------------------------------------
 
@@ -306,12 +383,15 @@ class parsing:
                         ret_reglog = self.step_2_matching(dump_code=dump_code, data=decoded_line)
                         reg_log = ""
 
-                        if ret_reglog is not None:
+                        if ret_reglog is not None:  # list type register value return
                             for value in ret_reglog:
                                 reg_log += (value+"\n")
                                 
                             if reg_log != None:
                                 with open(parsing_file, "a") as parsing:
+                                    short_header = decoded_line.split("[0x00]")[0]
+                                    parsing.write(short_header)
+                                    parsing.write("\n")
                                     parsing.write(reg_log)
                                     parsing.write("\n")
                     
@@ -342,7 +422,7 @@ class parsing:
                             with open(adc_file, "a") as parsing:
                                 parsing.write(reg_log)
                                 parsing.write("\n")
-                    
+
                     else:
                         scan_list = {
                             "usb_typec_handle_id_power_status: "     : "usb_typec_handle_id_power_status",
@@ -356,7 +436,9 @@ class parsing:
                             "vbus/vout"                              : "initial vbus/vout ratio",
                             "detach"                                 : "detach log in the line",
                             "health_status"                          : "health_status",
-                            "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"   : "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"
+                            "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"   : "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE",
+                            "dcic_err_code"                          : "DCIC error code",
+                            "ps rdy is 0"                            : "PD Error : PS_RDY=0"
                         }
                         
                         for scan_item, log_text in scan_list.items():
@@ -398,16 +480,60 @@ class parsing:
                                             to_dump_text = f"        // pps request : pps_vol({pps_vol:.03f}V) - vbus_adc({vbus_adc:.06f}V) = {diff_pps_vbus:.06f}V\n"
                                         except:
                                             pass
-
+                                
+                                elif scan_item == "dcic_err_code":
+                                    if "sc_charger_get_property" in decoded_line and "cp_err_code" in decoded_line:
+                                        dcic_code_match = re.search(r'dcic_err_code=((?:0x)?[0-9a-fA-F]+)', decoded_line) # hex or dec
+                                        if dcic_code_match:
+                                            dcic_code = int(dcic_code_match.group(1), 16)
+                                        cp_code_match = re.search(r'cp_err_code=((?:0x)?[0-9a-fA-F]+)', decoded_line) # hex or dec
+                                        if cp_code_match:
+                                            cp_code = int(cp_code_match.group(1), 16)
+                                        vbat_code_match = re.search(r'vbat_err_code=((?:0x)?[0-9a-fA-F]+)', decoded_line) # hex or dec
+                                        if vbat_code_match:
+                                            vbat_code = int(vbat_code_match.group(1), 16)
+                                        pd_code_match = re.search(r'pd_comm_err_code=((?:0x)?[0-9a-fA-F]+)', decoded_line) # hex or dec
+                                        if pd_code_match:
+                                            pd_code = int(pd_code_match.group(1), 16)
+                                        wpc_code_match = re.search(r'wpc_err_code=((?:0x)?[0-9a-fA-F]+)', decoded_line) # hex or dec
+                                        if wpc_code_match:
+                                            wpc_code = int(wpc_code_match.group(1), 16)
+                                        error = "Not matched"
+                                        to_dump_text = f"        // POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}"
+                                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}", self.parsing_comment, line_num)
+                                        for_excel = None
+                                    
                                 else:
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
                                     for_excel = None
                                 
-                                with open(parsing_file, "a") as parsing:
-                                    parsing.write(to_dump_text)
-                                    if for_excel != None:
-                                        parsing.write(for_excel)
-                                    parsing.write("\n")
+                                try:
+                                    with open(parsing_file, "a") as parsing:
+                                        parsing.write(to_dump_text)
+                                        if for_excel != None:
+                                            parsing.write(for_excel)
+                                        parsing.write("\n")
+                                except:
+                                    pass
+                    
+                    if "ret" in decoded_line:
+                        pattern = r'ret\s*=\s*([+-]?\d+)' # pattern matches "ret=" with any whitespace
+                        match_int_list = [int(num) for num in re.findall(pattern, decoded_line)] # matched integer list
+                        for_excel = None
+
+                        if len(match_int_list) != 0:
+                            if any(x != 0 for x in match_int_list):
+                                to_dump_text = f"        // Return error : {str(match_int_list)}"
+                                self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Return error : {str(match_int_list)}", self.parsing_comment, line_num)
+
+                                try:
+                                    with open(parsing_file, "a") as parsing:
+                                        parsing.write(to_dump_text)
+                                        if for_excel != None:
+                                            parsing.write(for_excel)
+                                        parsing.write("\n")
+                                except:
+                                    pass
 
 
     def step_2_matching(self, dump_code, data):
@@ -437,22 +563,52 @@ class parsing:
 
         try:
             splited_data = data.split(dump_code)[1]
-            if splited_data.endswith(",\n"):
-                splited_data = splited_data[:-2]
+            splited_data = splited_data.rstrip(", ").rstrip(", ").rstrip("\n")
+            # if splited_data.endswith(",\n"):
+            #     splited_data = splited_data[:-2]
             pairs = splited_data.split(", ")
 
             datas = {} # key=register (int), value=value (int)
             ret = list()
 
             for pair in pairs:
-                clean_pair = pair.replace("[", "").replace("]", ",")
-                addr, value = clean_pair.split(",")
-                datas[int(addr,16)] = int(value,16)
+                try:
+                    clean_pair = pair.replace("[", "").replace("]", ",").replace(" ", "")
+                    addr, value = clean_pair.split(",")
+                    address = int(addr, 16)
+                    reg_value = int(value, 16)
+                    datas[address] = reg_value
+                    # print(addr, type(addr), value, type(value))
+                except:
+                    # print(f"conversion fail : {addr}={value}")
+                    pass
+            
+            adc_ret = dict()
 
-            # print(datas)
+            for adc_name, adc_reg in self.adc_range.items():
+                adc_ret[adc_name] = [0, 0]
+                
+                for dump_addr, dump_value in datas.items():
+
+                    for n in [0, 1]:
+                        if dump_addr == adc_reg[n]:
+                            if n == 0:
+                                adc_ret[adc_name][n] = dump_value << 8
+                            else:
+                                adc_ret[adc_name][n] = dump_value
+
+            for key_channel, value_adc in adc_ret.items():
+                for adc_name, adc_reg in self.adc_range.items():
+                    lsb = adc_reg[2]
+                    decimal_pooint = adc_reg[3]
+
+                    if key_channel == adc_name:
+                        adc = lsb * (value_adc[0] + value_adc[1])
+                        adc_final = round(adc, decimal_pooint+1)
+                ret.append(f"        // {key_channel} : {adc_final}")
 
             for addr in self.addr_range:
-
+                
                 temp = [0 for _ in range(8)]
 
                 for dump_addr in datas.keys():
@@ -514,6 +670,7 @@ class parsing:
                         ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
                         # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
             
+            '''
             adc_ret = dict()
 
             for adc_name, adc_reg in self.adc_range.items():
@@ -537,11 +694,12 @@ class parsing:
                         adc = lsb * (value_adc[0] + value_adc[1])
                         adc_final = round(adc, decimal_pooint+1)
                 ret.append(f"        // {key_channel} : {adc_final}")
+            '''
 
             return ret
         
         except:
-            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}", self.parsing_comment)
+            print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
             # print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
             return None
     
