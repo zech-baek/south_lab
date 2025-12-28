@@ -37,7 +37,10 @@ log_dir = pathlib.Path(phy_dir).parent/"log"
 
 class km003c:
 
-    def __init__(self, vid=0x5fc9, pid=0x63, logging=False):
+    Vendor_Id  = 0x5fc9
+    Product_Id = 0x63
+
+    def __init__(self, vid=None, pid=None, logging=False):
         
         # interface 0 : write_address=0x1, read_address=0x81, bInterfaceClass=Vendor Specific, ~1000 samples/sec
         # interface 1 : write_address=0x5, read_address=0x85, bInterfaceClass=HID, ~500 samples/sec
@@ -49,14 +52,17 @@ class km003c:
         self.log_current = None
         self.byteorde    = byteorder # little
 
-        self.vid = vid
-        self.pid = pid
+        self.vid = vid or self.Vendor_Id
+        self.pid = pid or self.Product_Id
         self.connect_dev(self.vid, self.pid)
     
 
     def connect_dev(self, vid, pid):
 
         self.interface = usb.core.find(idVendor=vid, idProduct=pid)
+        if self.interface is None:
+            raise ValueError(f"power-z km003c not found")
+        
         self._interface_num = 0 # vendor specific message
         self._write_addr = 0x1
         self._read_addr  = 0x81
@@ -102,21 +108,34 @@ class km003c:
         log.forcedLog("reset the km003c device interface")
     
 
-    def read_raw(self) -> float:
+    def send_data(self, cmd):
+
+        ret = self.h.interface.write(self.h.write_addr, cmd)
+        if ret != 4:
+            log.forcedLog(f"failed to write the bytes, length is not 4 : ret={ret}")
+    
+
+    def read_data(self):
+
+        ret = self.h.interface.read(self.h.read_addr, 64)
+        return ret
+    
+
+    def read_raw(self) -> list:
 
         cmd = bytes([0xc, 0x0, 0x2, 0x0]).decode("utf-8")
-        ret_write = self.h.interface.write(self.h.write_addr, cmd)
+        self.send_data(cmd)
+        data = self.read_data()
+        return data
 
-        if ret_write != 4:
-            log.forcedLog(f"failed to write the bytes, length is not 4 : ret={ret_write}")
 
-        data = self.h.interface.read(self.h.read_addr, 64)
+    def convert_data(self, data, start):
 
-        raw_voltage = data[8] + (data[9]<<8) + (data[10]<<16) + (data[11]<<24)
+        raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
         voltage = raw_voltage / 1000_000
         # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
 
-        raw_current = data[12] + (data[13]<<8) + (data[14]<<16) + (data[15]<<24)
+        raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
         current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
         # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
 
@@ -131,7 +150,10 @@ class km003c:
 
     @property
     def voltage(self):
-        return self.read_raw()[0]
+
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=8)
+        return ret_list[0]
     
 
     @voltage.setter
@@ -141,9 +163,36 @@ class km003c:
     
     @property
     def current(self):
-        return self.read_raw()[1]
+
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=8)
+        return ret_list[1]
 
 
     @current.setter
     def current(self):
+        pass
+
+
+    @property
+    def voltage_oneshot(self):
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=16)
+        return ret_list[0]
+    
+
+    @voltage_oneshot.setter
+    def voltage_oneshot(self):
+        pass
+    
+    
+    @property
+    def current_oneshot(self):
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=16)
+        return ret_list[1]
+
+
+    @current_oneshot.setter
+    def current_oneshot(self):
         pass
