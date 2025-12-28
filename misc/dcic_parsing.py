@@ -333,7 +333,6 @@ class parsing:
 
                     print_line = re.sub(r"\n", "", decoded_line)
                     self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
-                    # print(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {print_line}")
                 
                 kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
 
@@ -342,10 +341,8 @@ class parsing:
                         print_line = re.sub(r"\n", "", decoded_line)
                         if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
                             self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {decoded_line}", self.parsing_comment, line_num)
-                            # print(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {print_line}")
                         elif "bootloader" in decoded_line or "name" in decoded_line:
                             self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {decoded_line}", self.parsing_comment, line_num)
-                            # print(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {print_line}")
 
                 re_text = f"{self.device}-charger"
                 if re.search(re_text, decoded_line, re.IGNORECASE):
@@ -357,16 +354,13 @@ class parsing:
                             "th rev", "th chg", "qb on", "active", "cp switching", "ucp"])
                     if flag_contain and flag_exclude:
                         print_line = re.sub(r"\n", "", decoded_line)
-
-                        # self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {decoded_line}", self.parsing_comment)
                         self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment, line_num)
-                        # print(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}")
                 
-                if re.search(r"sec_bat_show_attrs: batt_current_ua_now", decoded_line, re.IGNORECASE):
-                    print_line = re.sub(r"\n", "", decoded_line)
-
-                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment, line_num)
-                    # print(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {print_line}")
+                print_keyword = [r"sec_bat_show_attrs: batt_current_ua_now"]
+                for scan_keyword in print_keyword:
+                    if re.search(scan_keyword, decoded_line, re.IGNORECASE):
+                        print_line = re.sub(r"\n", "", decoded_line)
+                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment, line_num)
                 # -----------------------------------------------------------------------------------------------
 
                 if any(keyword in decoded_line for keyword in self.keyword):
@@ -438,9 +432,13 @@ class parsing:
                             "health_status"                          : "health_status",
                             "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"   : "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE",
                             "dcic_err_code"                          : "DCIC error code",
-                            "ps rdy is 0"                            : "PD Error : PS_RDY=0"
+                            "ps rdy is 0"                            : "PD Error : PS_RDY=0",
+                            "retry charging start"                   : "retry charging",
+                            "Maximum retries reached"                : "reached to max retries"
                         }
                         
+                        to_dump_text = None
+
                         for scan_item, log_text in scan_list.items():
                             if scan_item.lower() in decoded_line.lower():
                                 
@@ -502,7 +500,17 @@ class parsing:
                                         to_dump_text = f"        // POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}"
                                         self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}", self.parsing_comment, line_num)
                                         for_excel = None
-                                    
+                                
+                                elif scan_item == "retry charging start" or scan_item == "Maximum retries reached":
+                                    suffix = "retry keyword"
+
+                                    retry_match = re.search(r'sc_charger_check_active_state:\s*(.*)', decoded_line)
+                                    if retry_match:
+                                        retry_result = retry_match.group(1)
+                                    for_excel = None
+                                    to_dump_text = f"        // {suffix} : {retry_result}"
+                                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] {suffix} : {retry_result}", self.parsing_comment, line_num)
+
                                 else:
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
                                     for_excel = None
