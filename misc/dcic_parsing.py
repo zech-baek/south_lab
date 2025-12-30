@@ -34,12 +34,10 @@ structure
 '''
 
 
-from interface.cui_colors import color
 from interface.cui_logger import logger as log
 from project.get_device_info import get_map, get_regpage
 
-from tabulate import tabulate as tb
-import yaml, sys, os, re, mmap, time
+import os, re, mmap
 
 
 class parsing:
@@ -190,13 +188,13 @@ class parsing:
 
             self.adc_range = {
                 "IIN_ADC"    : [0x2c, 0x2d, 0.001875, 6],
-                "VIN_ADC"    : [0x2e, 0x2f, 0.00625, 5],
-                "WPC_IN_ADC" : [0x30, 0x31, 0.00625, 5],
-                "VEXT_ADC"   : [0x32, 0x33, 0.00625, 5],
-                "VOUT_ADC"   : [0x34, 0x35, 0.00125, 5],
-                "VBAT_ADC"   : [0x36, 0x37, 0.00125, 5],
-                "C1P_ADC"    : [0x3a, 0x3b, 0.00625, 5],
-                "TDIE_ADC"   : [0x3e, 0x3f, 0.5, 2]
+                "VIN_ADC"    : [0x2e, 0x2f, 0.00625,  5],
+                "WPC_IN_ADC" : [0x30, 0x31, 0.00625,  5],
+                "VEXT_ADC"   : [0x32, 0x33, 0.00625,  5],
+                "VOUT_ADC"   : [0x34, 0x35, 0.00125,  5],
+                "VBAT_ADC"   : [0x36, 0x37, 0.00125,  5],
+                "C1P_ADC"    : [0x3a, 0x3b, 0.00625,  5],
+                "TDIE_ADC"   : [0x3e, 0x3f, 0.5,      2]
             }
 
         elif "sc8563" in self.device:
@@ -209,17 +207,27 @@ class parsing:
 
             self.adc_range = {
                 "IIN_ADC"   : [0x2b, 0x2c, 0.001875, 6],
-                "VIN_ADC"   : [0x2d, 0x2e, 0.005, 3],
-                "VEXT1_ADC" : [0x2f, 0x30, 0.005, 3],
-                "VEXT2_ADC" : [0x31, 0x32, 0.005, 3],
-                "VOUT_ADC"  : [0x33, 0x34, 0.00125, 5],
-                "VBAT_ADC"  : [0x35, 0x36, 0.00125, 5],
-                "C1P_ADC"   : [0x39, 0x3a, 0.005, 3],
-                "TDIE_ADC"  : [0x37, 0x38, 0.5, 2]
+                "VIN_ADC"   : [0x2d, 0x2e, 0.005,    3],
+                "VEXT1_ADC" : [0x2f, 0x30, 0.005,    3],
+                "VEXT2_ADC" : [0x31, 0x32, 0.005,    3],
+                "VOUT_ADC"  : [0x33, 0x34, 0.00125,  5],
+                "VBAT_ADC"  : [0x35, 0x36, 0.00125,  5],
+                "C1P_ADC"   : [0x39, 0x3a, 0.005,    3],
+                "TDIE_ADC"  : [0x37, 0x38, 0.5,      2]
             }
 
         else:
             raise Exception("device number is not applicable")
+
+
+    def print_logo(self):
+
+        print(f",---.                   ,--.  ,--.           ,--.     ,--.                      ,--.                       ,---.                  ,--.                                 ")
+        print(f"'   .-'  ,---. ,--.,--.,-'  '-.|  ,---.  ,---.|  ,---. `--' ,---.     ,-----.    |  |    ,---.  ,---.      /  O  \ ,--,--,  ,--,--.|  |,--. ,--.,-----. ,---. ,--.--.  ")
+        print(f"`.  `-. | .-. ||  ||  |'-.  .-'|  .-.  || .--'|  .-.  |,--.| .-. |    '-----'    |  |   | .-. || .-. |    |  .-.  ||      \' ,-.  ||  | \  '  / `-.  / | .-. :|  .--'  ")
+        print(f".-'    |' '-' ''  ''  '  |  |  |  | |  |\ `--.|  | |  ||  || '-' '               |  '--.' '-' '' '-' '    |  | |  ||  ||  |\ '-'  ||  |  \   '   /  `-.\   --.|  |     ")
+        print(f"`-----'  `---'  `----'   `--'  `--' `--' `---'`--' `--'`--'|  |-'                `-----' `---' .`-  /     `--' `--'`--''--' `--`--'`--'.-'  /   `-----' `----'`--'     ")
+        print(f"                                                        `--'                                `---'                                   `---'                          JY™ ")
 
 
     def start_parsing(self, dump:str, device:str, revision:str, vendor_keyword:bool) -> None:
@@ -231,6 +239,7 @@ class parsing:
         # step 4. compare with keyword
         # step 5. store the line when any keyword is in the line
 
+        self.print_logo()
         self.init_parameter(source_file=dump, device=device, revision=revision, vendor_keyword=vendor_keyword)
         self.step_1_matching()
 
@@ -350,8 +359,7 @@ class parsing:
                     flag_exclude = all(
                         phrase not in decoded_line
                         for phrase in [
-                            "vout th", "adc done", "insert", "present", "drv", "remove",
-                            "th rev", "th chg", "qb on", "active", "cp switching", "ucp"])
+                            "vout th", "insert", "present", "drv", "remove", "adc", "th rev", "th chg", "qb on"]) # excluded keywords
                     if flag_contain and flag_exclude:
                         print_line = re.sub(r"\n", "", decoded_line)
                         self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment, line_num)
