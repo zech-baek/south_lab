@@ -37,7 +37,7 @@ structure
 from interface.cui_logger import logger as log
 from project.get_device_info import get_map, get_regpage
 
-import os, re, mmap
+import os, re, mmap, yaml
 
 
 class parsing:
@@ -45,110 +45,7 @@ class parsing:
     def __init__(self, logging=False):
 
         self.logging = logging
-
-        self.basic_keyword = [
-            "usb_typec_handle_id_power_status", # for PDO list
-            "sb_set_dc_ta_forced_op_max_mode",
-            "sb_set_dc_ta_op_max_mode",
-            "sec_pd_get_apdo_max_power",
-            "VOTER_SLATE",
-            "sec_bat_check_dc_step_charging",
-            "sec_direct_chg_check_charging_source",
-            "sec_direct_chg_set_direct_charge",
-            "PASS_THROUGH",
-            "vwpc diff",
-            "sc8583",
-            "SC8583",
-            "SC8583_INFO",
-            "SC8583_ERR",
-            "sc8563",
-            "SC8563",
-            "SC8563_INFO",
-            "SC8563_ERR",
-            "sec_direct_charger",
-            "sc_charger",
-            "sc8583-charger",
-            "sc8563-charger",
-            "sec_bat_set_property",
-            "sc8583_dump_registers ", 
-            "sc8563_dump_registers ", 
-            "sec_wireless_set_property", 
-            "sec_direct_chg_set_property",
-            "UIWirelessFastCharge",
-            "UIDirectChargeTest",
-            "LAST KMSG",
-            "fsck.f2fs",
-            "batt_current_ua_now",
-            "sc8563_enable_charge enable DCIC"
-        ]
-
-        self.vendor_keyword = [
-            "max77775",
-            "usb_notify",
-            "cps4059",
-            "sec_bat_show_attrs",
-            "mfc_set_pps_vout",
-            "mfc_wpc_irq_thread",
-            "@PPS",
-            "sm5446",
-            "detach",
-            "DETACH",
-            "DETACHED"
-        ]
-
-        self.error_code = {
-            0x400001 : "VIN_UVLO",
-            0x400002 : "VIN_OVP",
-            0x400003 : "VOUT OVP",
-            0x400004 : "VOUT UVLO",
-            0x400005 : "VBAT OVP",
-            0x400006 : "IBUS OCP",
-            0x400007 : "IBUS UCP",
-            0x400008 : "IBAT OCP",
-            0x400009 : "CFLY SHORT",
-            0x400010 : "CN SHORT",
-            0x40001A : "VIN SHORT",
-            0x40001B : "VOUT SHORT",
-            0x40001C : "Thermal Shutdown",
-            0x40001D : "Watchdog Timer",
-            0x40001E : "Charger Timer",
-            0x40001F : "NTC Protection",
-            0x400020 : "VBUS2VOUT Relative UVP",
-            0x400021 : "VBUS2VOUT Rekative OVP",
-            0x400022 : "MID2VOUT Relative UVP",
-            0x400023 : "MID2VOUT Relative OVP",
-            0x400024 : "VDSQRB OVP",
-            0x400025 : "Reverse Blocking",
-            0x400026 : "Thermal Regulation",
-            0x400027 : "Die Temperature warning",
-            0x400028 : "Soft Start Timeout",
-            0x400029 : "PIN DIAG FAIL",
-            0x40002A : "POWER NG",
-            0x40002B : "VEXT1 OVLO",
-            0x40002C : "VEXT2 OVLO",
-            0x40002D : "VEXT1 UVLO",
-            0x40002E : "VEXT2 UVLO",
-            0x40002F : "CHAR RCP",
-            0x400030 : "CFLY Open Detection",
-            0x400031 : "BST UVP",
-            0x400032 : "PVDD UVP",
-            0x400033 : "Regulation_Timout",
-            0x400034 : "RVSBST OCP",
-            0x400035 : "CHGR RCP",
-            0x400036 : "New feature1 (VBAT<3.1V or FG Vnow issue)",
-            0x400037 : "New feature2 (PD communication error)",
-            0x400038 : "New feature3 (Not enough WPC condition)",
-            0x400039 : "New feature4",
-            0x40003A : "New feature5",
-            0x40003B : "New feature6",
-            0x40003C : "New feature7",
-            0x40003D : "New feature8 (PMID_ERROR_HI, before SW)",
-            0x40003E : "New feature9 (PMID_ERROR_LO, before SW)",
-            0x40003F : "New feature10 (VWPC_OVP)"
-        }
-
-        self.merged_keyword = self.basic_keyword + self.vendor_keyword
-
+    
 
     def count_lines(self, filename:str) -> int:
 
@@ -178,43 +75,12 @@ class parsing:
         self.regpage = get_regpage(device=self.device, revision=self.revision)
 
         if "sc8583" in self.device:
-
-            self.addr_range = [
-            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
-            0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 
-            0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 
-            0x2b, 0x40, 0x41, 0x42, 0x43, 0x44
-            ]
-
-            self.adc_range = {
-                "IIN_ADC"    : [0x2c, 0x2d, 0.001875, 6],
-                "VIN_ADC"    : [0x2e, 0x2f, 0.00625,  5],
-                "WPC_IN_ADC" : [0x30, 0x31, 0.00625,  5],
-                "VEXT_ADC"   : [0x32, 0x33, 0.00625,  5],
-                "VOUT_ADC"   : [0x34, 0x35, 0.00125,  5],
-                "VBAT_ADC"   : [0x36, 0x37, 0.00125,  5],
-                "C1P_ADC"    : [0x3a, 0x3b, 0.00625,  5],
-                "TDIE_ADC"   : [0x3e, 0x3f, 0.5,      2]
-            }
+            self.addr_range = self.global_keyword["sc8583_addr_range"]
+            self.adc_range  = self.global_keyword["sc8583_adc_range"]
 
         elif "sc8563" in self.device:
-
-            self.addr_range = [
-            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
-            0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 
-            0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a
-            ]
-
-            self.adc_range = {
-                "IIN_ADC"   : [0x2b, 0x2c, 0.001875, 6],
-                "VIN_ADC"   : [0x2d, 0x2e, 0.005,    3],
-                "VEXT1_ADC" : [0x2f, 0x30, 0.005,    3],
-                "VEXT2_ADC" : [0x31, 0x32, 0.005,    3],
-                "VOUT_ADC"  : [0x33, 0x34, 0.00125,  5],
-                "VBAT_ADC"  : [0x35, 0x36, 0.00125,  5],
-                "C1P_ADC"   : [0x39, 0x3a, 0.005,    3],
-                "TDIE_ADC"  : [0x37, 0x38, 0.5,      2]
-            }
+            self.addr_range = self.global_keyword["sc8563_addr_range"]
+            self.adc_range  = self.global_keyword["sc8563_adc_range"]
 
         else:
             raise Exception("device number is not applicable")
@@ -230,7 +96,7 @@ class parsing:
         print(f"                                                        `--'                                `---'                                   `---'                          JY™ ")
 
 
-    def start_parsing(self, dump:str, device:str, revision:str, vendor_keyword:bool) -> None:
+    def start_parsing(self, dump:str, keyword:str, device:str, revision:str, vendor_keyword:bool) -> None:
 
         # dump : file name
         # step 1. keyword decision
@@ -238,6 +104,14 @@ class parsing:
         # step 3. open dump
         # step 4. compare with keyword
         # step 5. store the line when any keyword is in the line
+
+        with open(keyword) as keyword_file:
+            self.global_keyword = yaml.safe_load(keyword_file)
+
+        self.basic_keyword  = self.global_keyword["basic_keyword"]
+        self.vendor_keyword = self.global_keyword["vendor_keyword"]
+        self.error_code     = self.global_keyword["error_code"]
+        self.merged_keyword = self.basic_keyword + self.vendor_keyword
 
         self.print_logo()
         self.init_parameter(source_file=dump, device=device, revision=revision, vendor_keyword=vendor_keyword)
@@ -256,7 +130,7 @@ class parsing:
         self.regpage     = None
         self.addr_range  = None
 
-        print(f"[100.00%][{log.time_stamp(display=False, ret=True)}] finish dump and adc parsing, clear the parameters")
+        print(f"[100.00%] finish dump and adc parsing, clear the parameters")
         
         with open(parsing_file, "a") as parsing:
             parsing.write(f" ")
@@ -308,11 +182,11 @@ class parsing:
         adc_file = os.path.join(file_path, adc_base)
         self.parsing_comment = os.path.join(file_path, f"{stamp} - {name}_comments.txt")
 
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing    -> save to {parsing_file}", self.parsing_comment, 0)
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start adc log         -> save to {adc_file}", self.parsing_comment, 0)
-        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] start parsing comment -> save to {self.parsing_comment}", self.parsing_comment, 0)
-        # print(f"[{log.time_stamp(display=False, ret=True)}] start dump parsing -> save to {parsing_file}")
-        # print(f"[{log.time_stamp(display=False, ret=True)}] start adc log      -> save to {adc_file}")
+        self.print_store_comment(f" start dump parsing    -> save to {parsing_file}", self.parsing_comment, 0)
+        self.print_store_comment(f" start adc log         -> save to {adc_file}", self.parsing_comment, 0)
+        self.print_store_comment(f" start parsing comment -> save to {self.parsing_comment}", self.parsing_comment, 0)
+        # print(f" start dump parsing -> save to {parsing_file}")
+        # print(f" start adc log      -> save to {adc_file}")
 
         count_sc_rel = 0 # driver version
 
@@ -333,15 +207,15 @@ class parsing:
                         sc_rel = is_sc_rel.group(1)
                         count_sc_rel += 1
                     if count_sc_rel == 1:
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}", self.parsing_comment, line_num)
-                        # print(f"[{log.time_stamp(display=False, ret=True)}] SC_REL : {sc_rel}")
+                        self.print_store_comment(f" SC_REL : {sc_rel}", self.parsing_comment, line_num)
+                        # print(f" SC_REL : {sc_rel}")
                 
                 # print out the line while proceed log parsing
                 # -----------------------------------------------------------------------------------------------
                 if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
 
                     print_line = re.sub(r"\n", "", decoded_line)
-                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
+                    self.print_store_comment(f" LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
                 
                 kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
 
@@ -349,26 +223,26 @@ class parsing:
                     if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
                         print_line = re.sub(r"\n", "", decoded_line)
                         if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
-                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] bootloader version : {decoded_line}", self.parsing_comment, line_num)
+                            self.print_store_comment(f" bootloader version : {decoded_line}", self.parsing_comment, line_num)
                         elif "bootloader" in decoded_line or "name" in decoded_line:
-                            self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Kernel version : {decoded_line}", self.parsing_comment, line_num)
+                            self.print_store_comment(f" Kernel version : {decoded_line}", self.parsing_comment, line_num)
 
                 re_text = f"{self.device}-charger"
                 if re.search(re_text, decoded_line, re.IGNORECASE):
+                    excluded_flag = self.global_keyword["excluded_flag"]
                     flag_contain = "trigger" in decoded_line and "flag" in decoded_line
                     flag_exclude = all(
                         phrase not in decoded_line
-                        for phrase in [
-                            "vout th", "insert", "present", "drv", "remove", "adc", "th rev", "th chg", "qb on"]) # excluded keywords
+                        for phrase in excluded_flag)
                     if flag_contain and flag_exclude:
                         print_line = re.sub(r"\n", "", decoded_line)
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] warning flag -- {print_line}", self.parsing_comment, line_num)
+                        self.print_store_comment(f" warning flag -- {print_line}", self.parsing_comment, line_num)
                 
                 print_keyword = [r"sec_bat_show_attrs: batt_current_ua_now"]
                 for scan_keyword in print_keyword:
                     if re.search(scan_keyword, decoded_line, re.IGNORECASE):
                         print_line = re.sub(r"\n", "", decoded_line)
-                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] IOUT current read : {decoded_line}", self.parsing_comment, line_num)
+                        self.print_store_comment(f" IOUT current read : {decoded_line}", self.parsing_comment, line_num)
                 # -----------------------------------------------------------------------------------------------
 
                 if any(keyword in decoded_line for keyword in self.keyword):
@@ -426,24 +300,7 @@ class parsing:
                                 parsing.write("\n")
 
                     else:
-                        scan_list = {
-                            "usb_typec_handle_id_power_status: "     : "usb_typec_handle_id_power_status",
-                            "sb_set_dc_ta_op_max_mode: "             : "sb_set_dc_ta_op_max_mode",
-                            "sc_charger_set_new_iin: "               : "set_new_iin",
-                            "sc_charger_set_new_voltage_and_current" : "set_new_voltage_and_current",
-                            "mfc_set_pps_vout"                       : "mfc_set_pps_vout (wpc pps request)",
-                            "sc_charger_request_power"               : "pps request",
-                            "sc_charger_prob"                        : "load the charger driver",
-                            "dc Start fail"                          : "retry fail",
-                            "vbus/vout"                              : "initial vbus/vout ratio",
-                            "detach"                                 : "detach log in the line",
-                            "health_status"                          : "health_status",
-                            "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE"   : "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE",
-                            "dcic_err_code"                          : "DCIC error code",
-                            "ps rdy is 0"                            : "PD Error : PS_RDY=0",
-                            "retry charging start"                   : "retry charging",
-                            "Maximum retries reached"                : "reached to max retries"
-                        }
+                        scan_list = self.global_keyword["scan_list"]
                         
                         to_dump_text = None
 
@@ -506,7 +363,7 @@ class parsing:
                                             wpc_code = int(wpc_code_match.group(1), 16)
                                         error = "Not matched"
                                         to_dump_text = f"        // POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}"
-                                        self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}", self.parsing_comment, line_num)
+                                        self.print_store_comment(f" POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}", self.parsing_comment, line_num)
                                         for_excel = None
                                 
                                 elif scan_item == "retry charging start" or scan_item == "Maximum retries reached":
@@ -517,7 +374,7 @@ class parsing:
                                         retry_result = retry_match.group(1)
                                     for_excel = None
                                     to_dump_text = f"        // {suffix} : {retry_result}"
-                                    self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] {suffix} : {retry_result}", self.parsing_comment, line_num)
+                                    self.print_store_comment(f" {suffix} : {retry_result}", self.parsing_comment, line_num)
 
                                 else:
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
@@ -540,7 +397,7 @@ class parsing:
                         if len(match_int_list) != 0:
                             if any(x != 0 for x in match_int_list):
                                 to_dump_text = f"        // Return error : {str(match_int_list)}"
-                                self.print_store_comment(f"[{log.time_stamp(display=False, ret=True)}] Return error : {str(match_int_list)}", self.parsing_comment, line_num)
+                                self.print_store_comment(f" Return error : {str(match_int_list)}", self.parsing_comment, line_num)
 
                                 try:
                                     with open(parsing_file, "a") as parsing:
@@ -623,22 +480,18 @@ class parsing:
                         adc_final = round(adc, decimal_pooint+1)
                 ret.append(f"        // {key_channel} : {adc_final}")
 
-            for addr in self.addr_range:
-                
+            for addr in self.addr_range:                
                 temp = [0 for _ in range(8)]
 
                 for dump_addr in datas.keys():
 
                     if addr == dump_addr:
 
-                        for register, info_list in self.regpage.items():
-                            
+                        for register, info_list in self.regpage.items():                            
+
                             if addr in info_list[2]:
-
-                                # print(f"{addr:#04x} : {register}[{info_list[5][0]}:{info_list[6][0]}]")
-
+                                
                                 if info_list[0] == 1:
-
                                     temp[info_list[3][0]] = info_list[1] # store the regiser name to the list in the msb index
 
                 for index in reversed(range(8)):
@@ -666,19 +519,9 @@ class parsing:
                             masking_b += (1<<mask)
                         
                         masked_value = shifted_dump_value & masking_b
-
-                        star_suffix = [
-                            "CP_SWITCHING_STAT",
-                            "MODE",
-                            "VIN_PRESENT_STAT",
-                            "VEXT_INSERT_STAT",
-                            "VEXT1_INSERT_STAT",
-                            "VEXT2_INSERT_STAT",
-                            "WPC_INSERT_STAT",
-                            "CP_EN"
-                            ]
-                        
+                        star_suffix = self.global_keyword["star_suffix"]                        
                         suffix = ""
+                        
                         for reg_check in star_suffix:
                             if re.search(reg_check, reg_name, re.IGNORECASE):
                                 suffix = "        ***"
@@ -715,8 +558,8 @@ class parsing:
             return ret
         
         except:
-            print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
-            # print(f"[{log.time_stamp(display=False, ret=True)}] wrong format - {dump_code} {data}")
+            print(f" wrong format - {dump_code} {data}")
+            # print(f" wrong format - {dump_code} {data}")
             return None
     
 
@@ -776,34 +619,10 @@ class parsing:
         if match:
             timer = int(match.group(1))
             state = match.group(2)  # this is a string, not an integer
-        
 
-            if timer == 0:
-                ret = f"        // DCIC Process state : TIMER_ID_NONE"
-            elif timer == 1:
-                ret = f"        // DCIC Process state : TIMER_VBATMIN_CHECK"
-            elif timer == 2:
-                ret = f"        // DCIC Process state : TIMER_PRESET_DC"
-            elif timer == 3:
-                ret = f"        // DCIC Process state : TIMER_PRESET_CONFIG"
-            elif timer == 4:
-                ret = f"        // DCIC Process state : TIMER_CHECK_ACTIVE"
-            elif timer == 5:
-                ret = f"        // DCIC Process state : TIMER_ADJUST_CCMODE"
-            elif timer == 6:
-                ret = f"        // DCIC Process state : TIMER_ENTER_CCMODE"
-            elif timer == 7:
-                ret = f"        // DCIC Process state : TIMER_CHECK_CCMODE"
-            elif timer == 8:
-                ret = f"        // DCIC Process state : TIMER_ENTER_CVMODE"
-            elif timer == 9:
-                ret = f"        // DCIC Process state : TIMER_CHECK_CVMODE"
-            elif timer == 10:
-                ret = f"        // DCIC Process state : TIMER_PDMSG_SEND"
-            elif timer == 13:
-                ret = f"        // DCIC Process state : TIMER_CHECK_BYPASSMODE"
-            elif timer == 14:
-                ret = f"        // DCIC Process state : TIMER_DCMODE_CHANGE"
+            process_no = self.global_keyword["process_no"]
+            if timer in process_no.keys():
+                ret = process_no[timer]
         
         return ret
 
