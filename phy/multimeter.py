@@ -623,7 +623,7 @@ class function_keithley:
 
 class keithley_dm6500(function_keithley):
 
-    def __init__(self, resource_name=None):
+    def __init__(self, single=False, multi=False, resource_name=None):
         
         log.initLogger(log.info)
         self.rm = visa.ResourceManager()
@@ -654,10 +654,18 @@ class keithley_dm6500(function_keithley):
                 with open(equipment_dir/"devices.yaml") as yaml_dev:
                     digital_scope = yaml.safe_load(yaml_dev)
                 
-                ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500"]
-                self.dev = self.rm.open_resource(ds_id)
-                log.forcedLog(f"initialized the dm6500 connection")
+                if single:
+                    ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500_single"]
+                    self.dev = self.rm.open_resource(ds_id)
+                    log.forcedLog(f"initialized the dm6500 connection")
 
+                elif multi:
+                    ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500_multi"]
+                    num_device = len(ds_id.keys())
+
+                    for n in range(1, num_device+1):
+                        self.__dict__[f"ch{n}"] = self.rm.open_resource(ds_id[f"ch{n}"])
+                
             except:
                 log.errorLog(f"{color.bgred}resource_name is None{color.end}")
         

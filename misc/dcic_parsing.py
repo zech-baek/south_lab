@@ -248,8 +248,11 @@ class parsing:
                 if any(keyword in decoded_line for keyword in self.keyword):
 
                     try:
-                        with open(parsing_file, "a") as parsing:
-                            parsing.write(decoded_line)
+                        if "adc done flag" in decoded_line:
+                            pass
+                        else:
+                            with open(parsing_file, "a") as parsing:
+                                parsing.write(decoded_line)
                     except:
                         pass
                     

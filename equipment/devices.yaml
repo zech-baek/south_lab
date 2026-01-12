@@ -1,15 +1,21 @@
-digital_multimeter:
-  keithley_dmm6500: 
+digital_multimeter :
+  keithley_dmm6500_multi :
     ch1 : "USB0::0x05E6::0x6500::04651237::INSTR"
     ch2 : "USB0::0x05E6::0x6500::04651251::INSTR"
-power_supply:
+  keithley_dmm6500_single : "USB0::0x05E6::0x6500::04651237::INSTR"
+
+power_supply :
   rigol_dp821a : "USB0::0x1AB1::0x0E11::DP8E261000023::INSTR"
-  rigol_dp811 : "USB0::0x1AB1::0x0E11::DP8H245000515::INSTR"
-power_analyzer:
+  rigol_dp811a : "USB0::0x1AB1::0x0E11::DP8H245000515::INSTR"
+
+power_analyzer :
   keysight_n6705 : "USB0::0x0957::0x0F07::MY47000200::INSTR"
-oscilloscope:
+
+oscilloscope :
   tektronix_mdo34 : "USB0::0x0699::0x052C::SGVJ0003244::INSTR"
-source_meter:
+
+source_meter :
   keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"
-e-loader:
-  sdl1030x: "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR" 
+
+e-loader :
+  sdl1030x : "USB0::0xF4EC::0x1630::SDL13GCD6R1710::INSTR" 
