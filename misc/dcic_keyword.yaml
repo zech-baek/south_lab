@@ -22,6 +22,7 @@ basic_keyword: [
   "sc8583-charger",
   "sc8563-charger",
   "sec_bat_set_property",
+  "sec_bat_monitor_work",
   "sc8583_dump_registers ", 
   "sc8563_dump_registers ", 
   "sec_wireless_set_property", 
@@ -36,6 +37,7 @@ basic_keyword: [
 
 vendor_keyword: [
   "max77775",
+  "sm5714",
   "usb_notify",
   "cps4059",
   "sec_bat_show_attrs",

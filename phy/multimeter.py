@@ -656,7 +656,8 @@ class keithley_dm6500(function_keithley):
                 
                 if single:
                     ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500_single"]
-                    self.dev = self.rm.open_resource(ds_id)
+                    self.device = self.rm.open_resource(ds_id)
+                    self.connection = True
                     log.forcedLog(f"initialized the dm6500 connection")
 
                 elif multi:
@@ -665,6 +666,8 @@ class keithley_dm6500(function_keithley):
 
                     for n in range(1, num_device+1):
                         self.__dict__[f"ch{n}"] = self.rm.open_resource(ds_id[f"ch{n}"])
+                    
+                    self.connection = True
                 
             except:
                 log.errorLog(f"{color.bgred}resource_name is None{color.end}")

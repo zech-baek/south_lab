@@ -118,7 +118,7 @@ class parsing:
         self.step_1_matching()
 
         file_path, file_name = os.path.split(self.source_file)
-        parsing_file = os.path.join(file_path, "process done")
+        parsing_file = os.path.join(file_path, f"process done - {file_name}")
 
         # clear the parameters before exit the method
         self.txt_lines   = None
