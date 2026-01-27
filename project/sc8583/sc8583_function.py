@@ -338,7 +338,7 @@ class function:
     
 
     def m3_init_ref(self, mode):
-
+        
         self.obj.MODE=mode
         self.obj.SS_TIMEOUT=0x0
         self.obj.SS_FAIL_DIS=0x0
@@ -356,47 +356,107 @@ class function:
         self.obj.REG_RST=0x0
         self.obj.VEXT_SHUT_DOWN_SET=0x0
         self.obj.STANDBY_MODE_SET=0x1
+        print(f"STANDBY_MODE_SET : {self.obj.STANDBY_MODE_SET:#x}")
         self.obj.WD_VEXT_SHUTDOWN_EN=0x0
         self.obj.WD_STANDBY_EN=0x0
         self.obj.WD_TIMEOUT_DIS=0x1
+        print(f"WD_TIMEOUT_DIS : {self.obj.WD_TIMEOUT_DIS:#x}")
         self.obj.WD_TIMEOUT=0x3
         self.obj.VEXT_MANUAL_EN=0x1
         self.obj.VEXT_DRV_ON=0x0
         self.obj.VEXT_OVP_DIS=0x0
-        self.obj.VEXT_OVP=0xc
+        print(f"VEXT_OVP_DIS : {self.obj.VEXT_OVP_DIS:#x}")
+
+        if mode == 0:
+            vext_ovp = 12
+        elif mode == 1:
+            vext_ovp = 6
+        elif mode == 2:
+            vext_ovp = 1
+        elif mode == 3:
+            vext_ovp = 0
+        self.obj.VEXT_OVP=vext_ovp
+        print(f"VEXT_OVP : {self.obj.VEXT_OVP:#x} (11V+{self.obj.VEXT_OVP}V)")
+
         self.obj.EXT_DISCHG_EN=0x0
         self.obj.EXT_AUTO_DISCHG_CTRL=0x0
         self.obj.DRV_SHORT_DET_DIS=0x0
         self.obj.FET_OPEN_DET_DIS=0x0
         self.obj.FET_OPEN=0x0
-        self.obj.VBAT_REG=0xd8
+
+        self.obj.VBAT_REG=0xd9
+        vbat_reg = self.obj.VBAT_REG
+        if vbat_reg <= 0b01010000 : vbat_reg = 0b01010000
+        elif vbat_reg >= 0b11100110 : vbat_reg = 0b11100110
+        print(f"VBAT_REG : {self.obj.VBAT_REG:#x} (3.4V+{0.005*vbat_reg}V)")
+
         self.obj.IBAT_REG_DIS=0x1
+        print(f"IBAT_REG_DIS : {self.obj.IBAT_REG_DIS}")
         self.obj.IBAT_REG=0x68    
-        self.obj.VBAT_REG_DIS=0x1
+        self.obj.VBAT_REG_DIS=0x0
+        print(f"VBAT_REG_DIS : {self.obj.VBAT_REG_DIS}")
         self.obj.IIN_UCP_CFG=0x1
         self.obj.TDIE_REG_DIS=0x1
+        print(f"TDIE_REG_DIS : {self.obj.TDIE_REG_DIS}")
         self.obj.IIN_TDIE_REG_INTERVAL=0x0
         self.obj.TDIE_REG=0x1
+
         self.obj.VBAT_OVP=0xf0
+        vbat_ovp = self.obj.VBAT_OVP
+        if vbat_ovp <= 0b01111000 : vbat_ovp = 0b01111000
+        elif vbat_ovp >= 0b11110000 : vbat_ovp = 0b11110000
+        print(f"VBAT_OVP : {self.obj.VBAT_OVP:#x} (3.4V+{0.005*vbat_ovp}V)")
+
         self.obj.IBAT_OCP_DIS=0x1
+        print(f"IBAT_OCP_DIS : {self.obj.IBAT_OCP_DIS:#x}")
         self.obj.IBAT_OCP=0x6c
         self.obj.VIN_OVP_DIS=0x0
-        self.obj.VIN_OVP=0x9
+        print(f"VIN_OVP_DIS : {self.obj.VIN_OVP_DIS:#x}")
+
+        if mode == 0:
+            offset = 15
+            step = 0.8
+            self.obj.VIN_OVP=0x9
+        elif mode == 1:
+            offset = 11.25
+            step = 0.6
+            self.obj.VIN_OVP=0x9
+        elif mode == 2:
+            offset = 7.5
+            step = 0.4
+            self.obj.VIN_OVP=0xa
+        elif mode == 3:
+            offset = 3.75
+            step = 0.2
+            self.obj.VIN_OVP=0x6
+        vin_ovp = self.obj.VIN_OVP
+        print(f"VIN_OVP : {vin_ovp:#x} ({offset}V+{vin_ovp*step}V)")
+
         self.obj.VIN_PD_EN=0x0
         self.obj.WPC_IN_OVP_DIS=0x0
+        print(f"WPC_IN_OVP_DIS : {self.obj.WPC_IN_OVP_DIS:#x}")
         self.obj.WPC_IN_OVP=0x9
+        print(f"WPC_IN_OVP : {self.obj.WPC_IN_OVP:#x}")
         self.obj.WPC_IN_PD_EN=0x0
         self.obj.VOUT_OVP_DIS=0x0
+        print(f"VOUT_OVP_DIS : {self.obj.VOUT_OVP_DIS:#x}")
+
         self.obj.VOUT_OVP=0x2
+        vout_ovp = self.obj.VOUT_OVP
+        print(f"VOUT_OVP : {self.obj.VOUT_OVP:#x} (4.7V+{vout_ovp*0.2}V)")
+
         self.obj.C1P2OUT_OVP_DIS=0x0
+        print(f"C1P2OUT_OVP_DIS : {self.obj.C1P2OUT_OVP_DIS:#x}")
         self.obj.C1P2OUT_OVP_BLK=0x3
         self.obj.C1P2OUT_OVP_DG=0x0
         self.obj.C1P2OUT_OVP=0x3
-        self.obj.C1P2OUT_UVP_DIS=0x1
+        self.obj.C1P2OUT_UVP_DIS=0x0
+        print(f"C1P2OUT_UVP_DIS : {self.obj.C1P2OUT_UVP_DIS:#x}")
         self.obj.C1P2OUT_UVP_BLK=0x0
         self.obj.C1P2OUT_UVP_DG=0x0
         self.obj.C1P2OUT_UVP=0x1
         self.obj.NTC_FLT_DIS=0x1
+        print(f"NTC_FLT_DIS : {self.obj.NTC_FLT_DIS:#x}")
         self.obj.NTC_FLT=0x20    
         self.obj.PIN_DIAG_FAIL_DIS=0x0
         self.obj.CFLY_OPEN_DIS=0x0
@@ -404,7 +464,8 @@ class function:
         self.obj.BST_FAIL_DIS=0x0
         self.obj.TSHUT_DIS=0x0
         self.obj.VBAT_OVP_DIS=0x0
-        self.obj.IIN_UCP_DIS=0x1
+        self.obj.IIN_UCP_DIS=0x0
+        print(f"IIN_UCP_DIS : {self.obj.IIN_UCP_DIS:#x}")
         self.obj.IBAT_OCP_DG_SET=0x0
         self.obj.IIN_OCP_DG_SET=0x1
         self.obj.VBAT_OVP_DG_SET=0x0
@@ -414,6 +475,7 @@ class function:
         self.obj.WPC_IN_OVP_DG_SET=0x0
         self.obj.IIN_UCP_FALL_DG_SET=0x2
         self.obj.ADC_EN=0x0
+        print(f"ADC_EN : {self.obj.ADC_EN:#x}")
         self.obj.ADC_RATE=0x1
         self.obj.ADC_FREEZE=0x0
         self.obj.IIN_ADC_DIS=0x0
@@ -428,8 +490,14 @@ class function:
         self.obj.IBAT_ADC_DIS=0x1
         self.obj.IIN_REG=0x55
         self.obj.IIN_REG_DIS=0x0
+        print(f"IIN_REG_DIS : {self.obj.IIN_REG_DIS:#x}")
+        
         self.obj.IIN_OCP=0xa0
-        self.obj.IIN_OCP_DIS=0x1
+        iin_ocp = self.obj.IIN_OCP
+        if iin_ocp <= 0b00001010 : iin_ocp = 0b00001010
+        elif iin_ocp >= 0b10101010 : iin_ocp = 0b10101010
+        print(f"IIN_OCP : {self.obj.IIN_OCP:#x} ({0.0375*iin_ocp:.04f}A)")
+
+        self.obj.IIN_OCP_DIS=0x0
+        print(f"IIN_OCP_DIS : {self.obj.IIN_OCP_DIS:#x}")
         self.obj.VEXT_MANUAL_EN = 0
-        self.obj.VBAT_REG_DIS = 1
-        self.obj.IBAT_REG_DIS = 1

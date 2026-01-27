@@ -14,6 +14,7 @@ from sys import byteorder, exit
 import os
 import sys
 import pathlib
+import serial
 
 from interface.cui_logger import logger as log
 from interface.cui_colors import color
@@ -40,7 +41,7 @@ class km003c:
     Vendor_Id  = 0x5fc9
     Product_Id = 0x63
 
-    def __init__(self, vid=None, pid=None, logging=False):
+    def __init__(self, vid=None, pid=None, logging=False, port=None):
         
         # interface 0 : write_address=0x1, read_address=0x81, bInterfaceClass=Vendor Specific, ~1000 samples/sec
         # interface 1 : write_address=0x5, read_address=0x85, bInterfaceClass=HID, ~500 samples/sec
@@ -54,10 +55,12 @@ class km003c:
 
         self.vid = vid or self.Vendor_Id
         self.pid = pid or self.Product_Id
-        self.connect_dev(self.vid, self.pid)
+        self.port = port
+        self.connect_usb(self.vid, self.pid)
+        self.connect_uart(self.port)
     
 
-    def connect_dev(self, vid, pid):
+    def connect_usb(self, vid, pid):
 
         self.interface = usb.core.find(idVendor=vid, idProduct=pid)
         if self.interface is None:
@@ -72,6 +75,57 @@ class km003c:
         self.dev_struct = namedtuple("device", ["interface", "write_addr", "read_addr"])
         self.h = self.dev_struct(self.interface, self._write_addr, self._read_addr)
     
+
+    def connect_uart(self, port):
+        self.uart_handler = serial.Serial(port=port, baudrate=115200)
+
+
+    def uart_wpd(self, cmd):
+        self.uart_handler.write((cmd + "\n").encode("ascii"))
+
+
+    def uart_rpd(self):
+        ret = self.uart_handler.readline().decode('utf-8')
+        return ret
+    
+
+    @property
+    def init_powerz(self):
+
+        self.uart_wpd("pdm open")
+        self.uart_wpd("pdm set type=0,em=0,sink=0")
+        self.uart_wpd("entry pd")
+
+
+    @property
+    def hard_reset(self):
+        self.uart_wpd("reset")
+    
+
+    @property
+    def cfg_all(self):
+        pass
+
+
+    @cfg_all.setter
+    def cfg_all(self, *args):
+        
+        len_args = len(args)
+        
+        if len_args == 1:
+            pps_v = args[0][0]
+            pps_curr = args[0][1]
+
+            conv_pps_v = int(pps_v * 1000)     # 10V order
+            conv_pps_i = int(pps_curr * 10000) # 1A order
+            self.uart_wpd(f"pd req=5,volt={conv_pps_v},curr={conv_pps_i}")
+        else:
+            log.forcedLog(f"configuration error, require pps voltage and pps current input (e.g. self.cfg_all = 5, 0.2)")
+
+        conv_pps_v = int(pps_v * 1000)     # 10V order
+        conv_pps_i = int(pps_curr * 10000) # 1A order
+        self.uart_wpd(f"pd req=5,volt={conv_pps_v},curr={conv_pps_i}")
+
 
     def close(self):
 

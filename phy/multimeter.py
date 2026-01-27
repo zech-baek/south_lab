@@ -674,7 +674,7 @@ class keithley_dm6500(function_keithley):
         
         if self.connection:
             
-            current_range = ["10E-6", "100E-6", "1E-3", "10E-3", "100E-3", "1", "3"]
+            current_range = ["10E-6", "100E-6", "1E-3", "10E-3", "100E-3", "1", "3", "auto"]
             voltage_range = ["1E-1", "1", "10", "100", "1000", "auto", "hiz"]
 
             self.create_property("voltage", voltage_range)

@@ -31,8 +31,9 @@ dm = keithley_dm6500(single=True)
 
 # ps = keysight_N6705()
 ds = tektronix_mdo34()
-bs = asd_906b(port=4)
-ps = keysight_N6705()
+bs = asd_906b(port=28)
+# ps = keysight_N6705()
+ps = rigol_dp821a()
 ld = it8511a("COM12")
 
 # relay = relay_box(i2c_h=ic)
