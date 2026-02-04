@@ -14,7 +14,9 @@ from sys import byteorder, exit
 import os
 import sys
 import pathlib
+
 import serial
+import serial.tools.list_ports
 
 from interface.cui_logger import logger as log
 from interface.cui_colors import color
@@ -57,7 +59,31 @@ class km003c:
         self.pid = pid or self.Product_Id
         self.port = port
         self.connect_usb(self.vid, self.pid)
+
+        self.reset_uart_port(self.port)
         self.connect_uart(self.port)
+
+        self.delay = 0.2    
+    
+
+    def reset_uart_port(self, port):
+
+        try:
+            # close if port is already open
+            if port in [port.device for port in serial.tools.list_ports.comports()]:
+                try:
+                    temp_serial = serial.Serial(port)
+                    temp_serial.close()
+                    print(f"Port {port} was open and has been closed")
+                    delay(1)
+                except serial.SerialException:
+                    # port might be busy orin use
+                    print(f"port {port} is busy or in use")
+                    pass
+            
+        except Exception as e:
+            print(f"error opening port {port}: {e}")
+            return None
     
 
     def connect_usb(self, vid, pid):
@@ -81,10 +107,13 @@ class km003c:
 
 
     def uart_wpd(self, cmd):
+
         self.uart_handler.write((cmd + "\n").encode("ascii"))
+        delay(self.delay)
 
 
     def uart_rpd(self):
+
         ret = self.uart_handler.readline().decode('utf-8')
         return ret
     
@@ -95,6 +124,8 @@ class km003c:
         self.uart_wpd("pdm open")
         self.uart_wpd("pdm set type=0,em=0,sink=0")
         self.uart_wpd("entry pd")
+        delay(self.delay * 10)
+        log.forcedLog(f"reinitialize power-z")
 
 
     @property
@@ -178,28 +209,37 @@ class km003c:
     def read_raw(self) -> list:
 
         cmd = bytes([0xc, 0x0, 0x2, 0x0]).decode("utf-8")
-        self.send_data(cmd)
-        data = self.read_data()
+
+        try:
+            self.send_data(cmd)
+            delay(self.delay)
+            data = self.read_data()
+        except:
+            data= None
+
         return data
 
 
     def convert_data(self, data, start):
 
-        raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
-        voltage = raw_voltage / 1000_000
-        # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
+        if data == None:
+            return [0, 0]
+        else:
+            raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
+            voltage = raw_voltage / 1000_000
+            # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
 
-        raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
-        current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
-        # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
+            raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
+            current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
+            # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
 
-        if self.logging:
-            log.forcedLog(f"[{log.time_stamp(display=False, ret=True)}] read data : {data}")
-            self.log_raw = data
-            self.log_voltage = data[8:12]
-            self.log_current = data[12:16]
-        
-        return [voltage, current]
+            if self.logging:
+                log.forcedLog(f"[{log.time_stamp(display=False, ret=True)}] read data : {data}")
+                self.log_raw = data
+                self.log_voltage = data[8:12]
+                self.log_current = data[12:16]
+            
+            return [voltage, current]
     
 
     @property

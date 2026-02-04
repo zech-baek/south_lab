@@ -283,6 +283,8 @@ class logger:
         print("available serial/usb ports:")
         print("-" * 60)
         
+        ret_port = dict()
+
         for port in ports:
             print(f"port: {port.device}")
             print(f"name: {port.name}")
@@ -291,3 +293,15 @@ class logger:
             print(f"product: {port.product}")
             print(f"hwid: {port.hwid}")
             print("-" * 60)
+            ret_port[port.device] = {
+                "port" : port.device,
+                "name" : port.name,
+                "pid"  : port.pid,
+                "vid"  : port.vid
+            }
+        
+        if len(ret_port):
+            return ret_port
+        else:
+            print(f"not found device on uart port")
+            return None
