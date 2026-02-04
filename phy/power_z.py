@@ -119,6 +119,11 @@ class km003c:
     
 
     @property
+    def set_delay(self, delay):
+        self.delay = delay
+    
+
+    @property
     def init_powerz(self):
 
         self.uart_wpd("pdm open")
