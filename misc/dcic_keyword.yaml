@@ -32,7 +32,8 @@ basic_keyword: [
   "LAST KMSG",
   "fsck.f2fs",
   "batt_current_ua_now",
-  "sc8563_enable_charge enable DCIC"
+  "sc8563_enable_charge enable DCIC",
+  "POWER_SUPPLY_PROP_HEALTH"
   ]
 
 vendor_keyword: [
@@ -153,7 +154,9 @@ scan_list: {
   "dcic_err_code"                          : "DCIC error code",
   "ps rdy is 0"                            : "PD Error : PS_RDY=0",
   "retry charging start"                   : "retry charging",
-  "Maximum retries reached"                : "reached to max retries"
+  "Maximum retries reached"                : "reached to max retries",
+  "in iin regulation state"                : "Maxtill PD TA workaround",
+  "batt_current_ua_now"                    : "ibat measurement by equipment in production line"
 }
 
 star_suffix: [

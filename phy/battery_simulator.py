@@ -105,7 +105,7 @@ class asd_906b(serial.Serial):
                 self.logging
             )
         
-        delay(2)
+        delay(0.5)
 
     def conv_voltage(self, voltage):
 

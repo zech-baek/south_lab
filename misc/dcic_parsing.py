@@ -35,6 +35,7 @@ structure
 
 
 from interface.cui_logger import logger as log
+from interface.cui_colors import color
 from project.get_device_info import get_map, get_regpage
 
 import os, re, mmap, yaml
@@ -93,7 +94,7 @@ class parsing:
         print(f"`.  `-. | .-. ||  ||  |'-.  .-'|  .-.  || .--'|  .-.  |,--.| .-. |    '-----'    |  |   | .-. || .-. |    |  .-.  ||      \' ,-.  ||  | \  '  / `-.  / | .-. :|  .--'  ")
         print(f".-'    |' '-' ''  ''  '  |  |  |  | |  |\ `--.|  | |  ||  || '-' '               |  '--.' '-' '' '-' '    |  | |  ||  ||  |\ '-'  ||  |  \   '   /  `-.\   --.|  |     ")
         print(f"`-----'  `---'  `----'   `--'  `--' `--' `---'`--' `--'`--'|  |-'                `-----' `---' .`-  /     `--' `--'`--''--' `--`--'`--'.-'  /   `-----' `----'`--'     ")
-        print(f"                                                        `--'                                `---'                                   `---'                          JY™ ")
+        print(f"                                                           `--'                                `---'                                   `---'                       JY™ ")
 
 
     def start_parsing(self, dump:str, keyword:str, device:str, revision:str, vendor_keyword:bool) -> None:
@@ -147,7 +148,12 @@ class parsing:
         try:
             self.progress(line_num=current_line)
             rstrip_text = text.rstrip()  # remove all trailing whitespace
-            print(rstrip_text)
+
+            coloring_list = ["LAST KMSG"]
+            for color_item in coloring_list:
+                if color_item.lower() in rstrip_text.lower():
+                    print(f"{color.cyan}{rstrip_text}{color.end}")
+                else:print(rstrip_text)
             
             with open(filename, "a") as parsing:
                 parsing.write(text)
@@ -288,7 +294,7 @@ class parsing:
                         if reg_log != None:
                             with open(parsing_file, "a") as parsing:
                                 parsing.write(reg_log)
-                                parsing.write("\n\n")
+                                parsing.write("\n")
                     
                     elif "sc_charger_check_dcmode_status" in decoded_line:
                         reg_log = self.step_5_matching(data=decoded_line)
@@ -308,6 +314,7 @@ class parsing:
                         to_dump_text = None
 
                         for scan_item, log_text in scan_list.items():
+                            
                             if scan_item.lower() in decoded_line.lower():
                                 
                                 if scan_item == "mfc_set_pps_vout":
@@ -324,6 +331,11 @@ class parsing:
                                         to_dump_text = f"        // {suffix} : {log_text} // {decoded_line}"
                                         for_excel    = f"        // {cleaned_decoded_line} -- wpc pps request, {pps/1000}, {rx_out/1000}, {diff}\n"
 
+                                elif scan_item == "health_status":
+                                    suffix = "health status found"
+                                    for_excel = None
+                                    to_dump_text = f"        // {suffix} : {decoded_line}"
+                                
                                 elif scan_item == "detach":
                                     suffix = "detach keyword"
                                     for_excel = None
@@ -380,6 +392,7 @@ class parsing:
                                     self.print_store_comment(f" {suffix} : {retry_result}", self.parsing_comment, line_num)
 
                                 else:
+                                    log.forcedLog(f"### {decoded_line} : {scan_item} -- {log_text}")
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
                                     for_excel = None
                                 
@@ -624,9 +637,14 @@ class parsing:
             state = match.group(2)  # this is a string, not an integer
 
             process_no = self.global_keyword["process_no"]
+
             if timer in process_no.keys():
                 ret = process_no[timer]
-        
+
+        elif "health_status".lower() in data.lower():
+            suffix = "health status found"
+            ret = f"        // {suffix} : {data}"
+
         return ret
 
 

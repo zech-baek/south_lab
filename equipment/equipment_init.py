@@ -4,6 +4,7 @@ from phy.power_analyzer import keysight_N6705
 from phy.scope import tektronix_mdo34
 from phy.battery_simulator import asd_906b
 from phy.eloader import it8511a
+from phy.power_z import km003c
 
 # from phy.eloader import sdl1030x
 # from phy.relay_16ch import relay_box
@@ -42,3 +43,9 @@ ld = it8511a("COM12")
 # list_voltage = list(np.arange(5, 8, 0.005))
 # voltage  = [round(num, 3) for num in list_voltage]
 # --------------------------------------------------
+
+uart_ret = log.scan_uart()
+if uart_ret is not None:
+    for key, value in uart_ret.items():
+        if uart_ret[key]["pid"] == 0x006c:
+            pz = km003c(port=key)
