@@ -413,7 +413,7 @@ class parsing:
                                     self.print_store_comment(f" {suffix} : {retry_result}", self.parsing_comment, line_num)
 
                                 else:
-                                    log.forcedLog(f"### {decoded_line} : {scan_item} -- {log_text}")
+                                    # log.forcedLog(f"### {decoded_line} : {scan_item} -- {log_text}")
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
                                     for_excel = None
                                 
