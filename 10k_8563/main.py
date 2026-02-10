@@ -1,5 +1,6 @@
-from sc_approval.multimeter import agilent_34410a_usb
+from sc_approval.multimeter import agilent_34410a_usb, keithley_dm6500
 from sc_approval.power_supply import itech_it_m3612_usb
+from sc_approval.power_analyzer import keysight_N6705
 from sc_approval.ch341 import ch341
 from sc_approval.relay_16ch import relay_box
 
@@ -32,7 +33,7 @@ form_class = uic.loadUiType(ui_file_path)[0]
 
 class WindowClass(QMainWindow, form_class) :
 
-    def __init__(self, logging=False) :
+    def __init__(self, logging=True, is_3rd_party=True) :
 
         super().__init__()
         self.setupUi(self)
@@ -46,8 +47,9 @@ class WindowClass(QMainWindow, form_class) :
         self.log_pre.setFontPointSize(15)
         self.log_post.setFontPointSize(15)
 
-        self.mode = None
+        self.mode = "pre_test"
         self.logging = logging
+        self.is_3rd_party = is_3rd_party
 
         yaml_path = os.getcwd() + "/equipment.yaml"
 
@@ -72,9 +74,10 @@ class WindowClass(QMainWindow, form_class) :
         now  = datetime.datetime.now()
         self.date = "[" + now.strftime("%Y-%m-%d") + "]"
 
+        self.i2c_a = 111
         self.count = 1
         self.init_flag = False
-    
+
 
     def closeEvent(self, event):
 
@@ -91,37 +94,48 @@ class WindowClass(QMainWindow, form_class) :
             print(f"equipments id : ps={ps_id}, dmm={dmm_id}")
 
         try:
-            self.dm = agilent_34410a_usb(dmm_id)
-            self.output_log(message=f"initialized dmm connection", terminal=False)
+            if self.is_3rd_party:
+                dmm_name = "agilent_34410a_usb"
+                self.dm = agilent_34410a_usb(dmm_id)
+            else:
+                dmm_name = "keithley6500"
+                self.dm = keithley_dm6500(dmm_id)
+            self.output_log(message=f"initialized dmm connection to {dmm_name}", terminal=True)
             self.init_flag = True
         except:
-            self.output_log(message=f"failed to init dmm", terminal=False)
+            self.output_log(message=f"failed to init dmm {dmm_name}", terminal=True)
             self.init_flag = False
 
         try:
-            self.ps = itech_it_m3612_usb(ps_id)
-            self.output_log(message=f"initialized p/s connection", terminal=False)
+            if self.is_3rd_party:
+                ps_name = "itech_it_m3612_usb"
+                self.ps = itech_it_m3612_usb(ps_id)
+            else:
+                ps_name = "keysight n6705"
+                ps_instance = keysight_N6705(ps_id)
+                self.ps = ps_instance.ch2
+            self.output_log(message=f"initialized p/s connection to {ps_name}", terminal=True)
             self.init_flag = True
         except:
-            self.output_log(message=f"failed to init p/s", terminal=False)
+            self.output_log(message=f"failed to init p/s to {ps_name}", terminal=True)
             self.init_flag = False
         
         try:
             self.i2c = ch341(logging=False)
-            self.output_log(message=f"initialized i2c connection", terminal=False)
+            self.output_log(message=f"initialized i2c connection", terminal=True)
             self.init_flag = True
         except:
-            self.output_log(message=f"failed to init i2c", terminal=False)
+            self.output_log(message=f"failed to init i2c", terminal=True)
             self.init_flag = False
         
         try:
             self.relay = relay_box(i2c_h=self.i2c, i2c_a=0x27)
-            self.output_log(message=f"initialized relay connection\n", terminal=False)
+            self.output_log(message=f"initialized relay connection\n", terminal=True)
             self.relay.init_channels
             self.relay.logging = False
             self.init_flag = True
         except:
-            self.output_log(message=f"failed to init relay", terminal=False)
+            self.output_log(message=f"failed to init relay", terminal=True)
             self.init_flag = False
         
         if self.init_flag:
@@ -158,12 +172,12 @@ class WindowClass(QMainWindow, form_class) :
                     laptime_start = time.time()
 
                     for n in range(count):
-                        self.output_log(message=f"enter to pre-test : mode={self.mode}, tray no.={tray_no} (count={n+1}/{count})", terminal=False)
+                        self.output_log(message=f"enter to pre-test : mode={self.mode}, tray no.={tray_no} (count={n+1}/{count})", terminal=True)
                         self.run_test(tray_no=tray_no)
-                        self.output_log(message=f"exit from pre-test mode", terminal=False)
+                        self.output_log(message=f"exit from pre-test mode", terminal=True)
 
                         lap_time = round(time.time() - laptime_start, 3)
-                        self.output_log(message=f"total lap time : {lap_time}sec\n", terminal=False)
+                        self.output_log(message=f"total lap time : {lap_time}sec\n", terminal=True)
         else:
             self.output_log(message=f"devices are not connected", terminal=True)
 
@@ -197,12 +211,12 @@ class WindowClass(QMainWindow, form_class) :
                     laptime_start = time.time()
 
                     for n in range(count):
-                        self.output_log(message=f"enter to post-test : mode={self.mode}, tray no.={tray_no} (count={n+1}/{count})", terminal=False)
+                        self.output_log(message=f"enter to post-test : mode={self.mode}, tray no.={tray_no} (count={n+1}/{count})", terminal=True)
                         self.run_test(tray_no=tray_no)
-                        self.output_log(message=f"exit from post-test mode", terminal=False)
+                        self.output_log(message=f"exit from post-test mode", terminal=True)
 
                         lap_time = round(time.time() - laptime_start, 3)
-                        self.output_log(message=f"total lap time : {lap_time}sec\n", terminal=False)
+                        self.output_log(message=f"total lap time : {lap_time}sec\n", terminal=True)
         else:
             self.output_log(message=f"devices are not connected", terminal=True)
         
@@ -237,16 +251,16 @@ class WindowClass(QMainWindow, form_class) :
 
     def run_test(self, tray_no):
 
-        v_vext = 20
+        v_vext = 15 # for sc8563
         v_vout = 4.5
 
         filename = f"{self.date} Tray #{tray_no} - {self.mode}"
 
         self.relay.init_channels
-        self.output_log(message=f"init relay channels", terminal=False)
+        self.output_log(message=f"init relay channels", terminal=True)
 
         self.ps.disable
-        self.output_log(message=f"disable power supply", terminal=False)
+        self.output_log(message=f"disable power supply", terminal=True)
         delay(1)
 
         self.relay.ch5.enable # start signal
@@ -255,62 +269,76 @@ class WindowClass(QMainWindow, form_class) :
         #  IQ_VEXT
         #--------------------------------------------------------------------------------
         self.relay.ch3.enable
-        self.output_log(message=f"enable relay ch3 for vext path", terminal=False)
-
-        self.ps.cfg_all = v_vext, 0.05 # vext
+        self.output_log(message=f"enable relay ch3 for vext path", terminal=True)
+        
+        self.ps.cfg_all = 0.1, 0.05 # vext
         self.ps.enable
-        self.output_log(message=f"turn-on vext to {v_vext}V", terminal=False)
-        delay(1)
+        delay(0.5)
 
-        ret_00h = self.i2c.i2c_read(110, 0)
-        self.output_log(message=f"[I2C Check] 0x00={ret_00h:#04x}", terminal=True)
-        QApplication.processEvents()
+        for n in reversed(range(1, 6)):
+            self.ps.vset = v_vext / n
+            delay(0.5)
+
+        self.output_log(message=f"turn-on vext to {v_vext}V", terminal=True)
+        delay(1)
 
         iq_vext = round(self.dm.current * 1e+6, 3)
         self.output_log(message=f"[IQ_VEXT] {iq_vext}uA", terminal=True)
         QApplication.processEvents()
 
-        self.ps.cfg_all = 0.1, 0.02
+        ret_00h = self.i2c.i2c_read(self.i2c_a, 0)
+        ret_01h = self.i2c.i2c_read(self.i2c_a, 1)
+        self.output_log(message=f"[I2C Check] 0x00={ret_00h:#04x} 0x01={ret_01h:#04x}", terminal=True)
+        QApplication.processEvents()
+
+        self.ps.cfg_all = 0.1, 0.05
         self.ps.disable
-        self.output_log(message=f"turn-off vext", terminal=False)
+        self.output_log(message=f"turn-off vext", terminal=True)
         delay(0.5)
 
         self.relay.ch3.disable
-        self.output_log(message=f"disable relay ch3 for vext path", terminal=False)
+        self.output_log(message=f"disable relay ch3 for vext path", terminal=True)
         #--------------------------------------------------------------------------------
 
         #--------------------------------------------------------------------------------
         #  IQ_VOUT
         #--------------------------------------------------------------------------------
         self.relay.ch1.enable
-        self.output_log(message=f"enable relay ch1 for vout path", terminal=False)
+        self.output_log(message=f"enable relay ch1 for vout path", terminal=True)
 
-        self.ps.cfg_all = v_vout, 0.05 # vout
+        self.ps.cfg_all = 0.1, 0.05 # vext
         self.ps.enable
-        self.output_log(message=f"turn-on vout to {v_vout}V", terminal=False)
-        delay(1)
+        delay(0.5)
 
-        ret_00h = self.i2c.i2c_read(110, 0)
-        self.output_log(message=f"[I2C Check] 0x00={ret_00h:#04x}", terminal=True)
-        QApplication.processEvents()
+        for n in reversed(range(1, 6)):
+            self.ps.vset = v_vout / n
+            delay(0.5)
+
+        self.output_log(message=f"turn-on vout to {v_vout}V", terminal=True)
+        delay(1)
 
         iq_vout = round(self.dm.current * 1e+6, 3)
         self.output_log(message=f"[IQ_VOUT] {iq_vout}uA", terminal=True)
         QApplication.processEvents()
 
+        ret_00h = self.i2c.i2c_read(self.i2c_a, 0)
+        ret_01h = self.i2c.i2c_read(self.i2c_a, 1)
+        self.output_log(message=f"[I2C Check] 0x00={ret_00h:#04x} 0x01={ret_01h:#04x}", terminal=True)
+        QApplication.processEvents()
+
         self.ps.cfg_all = 0.1, 0.02
         self.ps.disable
-        self.output_log(message=f"turn-off vout", terminal=False)
+        self.output_log(message=f"turn-off vout", terminal=True)
 
         self.relay.ch1.disable
-        self.output_log(message=f"disable relay ch1 for vout path", terminal=False)
+        self.output_log(message=f"disable relay ch1 for vout path", terminal=True)
         #--------------------------------------------------------------------------------
 
         self.output_csv(output=[tray_no, iq_vext, iq_vout], filename=filename)
-        self.output_log(message=f"store the data into the {filename}.csv", terminal=False)
+        self.output_log(message=f"store the data into the {filename}.csv", terminal=True)
 
         self.output_log(message=f"----- Test done : Tray no. {tray_no} -----", terminal=True)
-        self.output_log(message=f" ", terminal=True, logging=False)
+        self.output_log(message=f" ", terminal=True, logging=True)
         QApplication.processEvents()
 
         self.relay.ch5.disable

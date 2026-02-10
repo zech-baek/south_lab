@@ -261,6 +261,7 @@ class logger:
     @classmethod
     def scan_uart(cls):
         
+        '''
         import serial
 
         for i in range(256):  # Check COM0 to COM255
@@ -270,3 +271,37 @@ class logger:
                 print(f"found UART port : COM{i}")
             except (OSError, serial.SerialException):
                 pass
+        '''
+        
+        import serial.tools.list_ports
+        ports = serial.tools.list_ports.comports()
+        
+        if not ports:
+            print("no serial/usb ports found")
+            return
+        
+        print("available serial/usb ports:")
+        print("-" * 60)
+        
+        ret_port = dict()
+
+        for port in ports:
+            print(f"port: {port.device}")
+            print(f"name: {port.name}")
+            print(f"description: {port.description}")
+            print(f"manufacturer: {port.manufacturer}")
+            print(f"product: {port.product}")
+            print(f"hwid: {port.hwid}")
+            print("-" * 60)
+            ret_port[port.device] = {
+                "port" : port.device,
+                "name" : port.name,
+                "pid"  : port.pid,
+                "vid"  : port.vid
+            }
+        
+        if len(ret_port):
+            return ret_port
+        else:
+            print(f"not found device on uart port")
+            return None

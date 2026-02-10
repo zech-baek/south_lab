@@ -105,7 +105,7 @@ class asd_906b(serial.Serial):
                 self.logging
             )
         
-        delay(2)
+        delay(0.5)
 
     def conv_voltage(self, voltage):
 
@@ -140,7 +140,8 @@ class asd_906b(serial.Serial):
     def disable(self):
 
         self._enable_flag = False
-        msb, lsb = self.conv_voltage(self._voltage)
+        # msb, lsb = self.conv_voltage(self._voltage)
+        msb, lsb = self.conv_voltage(0.1)
 
         ps_state = "02" # unchanged
         curr_state = "00" # unchanged

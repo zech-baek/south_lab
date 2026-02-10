@@ -589,6 +589,21 @@ class function_keithley:
         
         ret = self.read("READ?")
         return float(ret)
+
+
+    @property
+    def diode(self):
+        
+        self.send(':FUNCtion "DIODe"')
+        
+        if self.mode != "diode":
+            self.mode = "diode"
+            self.rang = None
+            self.set_nplc = 5
+            self.set_sampling = 10
+        
+        ret = self.read("READ?")
+        return float(ret)
     
     
     @property
@@ -608,7 +623,7 @@ class function_keithley:
 
 class keithley_dm6500(function_keithley):
 
-    def __init__(self, resource_name=None):
+    def __init__(self, single=False, multi=False, resource_name=None):
         
         log.initLogger(log.info)
         self.rm = visa.ResourceManager()
@@ -639,16 +654,27 @@ class keithley_dm6500(function_keithley):
                 with open(equipment_dir/"devices.yaml") as yaml_dev:
                     digital_scope = yaml.safe_load(yaml_dev)
                 
-                ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500"]
-                self.dev = self.rm.open_resource(ds_id)
-                log.forcedLog(f"initialized the dm6500 connection")
+                if single:
+                    ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500_single"]
+                    self.device = self.rm.open_resource(ds_id)
+                    self.connection = True
+                    log.forcedLog(f"initialized the dm6500 connection")
 
+                elif multi:
+                    ds_id = digital_scope["digital_multimeter"]["keithley_dmm6500_multi"]
+                    num_device = len(ds_id.keys())
+
+                    for n in range(1, num_device+1):
+                        self.__dict__[f"ch{n}"] = self.rm.open_resource(ds_id[f"ch{n}"])
+                    
+                    self.connection = True
+                
             except:
                 log.errorLog(f"{color.bgred}resource_name is None{color.end}")
         
         if self.connection:
             
-            current_range = ["10E-6", "100E-6", "1E-3", "10E-3", "100E-3", "1", "3"]
+            current_range = ["10E-6", "100E-6", "1E-3", "10E-3", "100E-3", "1", "3", "auto"]
             voltage_range = ["1E-1", "1", "10", "100", "1000", "auto", "hiz"]
 
             self.create_property("voltage", voltage_range)

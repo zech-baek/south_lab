@@ -32,7 +32,7 @@ from datetime import datetime
 import pyvisa as visa
 import cv2 as cv
 import yaml
-import PIL as pil
+from PIL import Image as pil
 
 
 class constant:
@@ -489,14 +489,14 @@ class common_function:
         imgFile.close()
 
         # cropped file
-        pre_img = pil.Image.open(file_path)
+        pre_img = pil.open(file_path)
         width, height = pre_img.size
         crop_box = (0, 27, width-214, height)
         crop = pre_img.crop(crop_box)
         crop.save(waveform_dir/"crop_image"/self.filename)
 
         # remove the time table
-        color_change_img = pil.Image.open(file_path)
+        color_change_img = pil.open(file_path)
         x_color, y_color = width-2, height-2
         pixels = color_change_img.load()
         captured_color = pixels[x_color, y_color]
