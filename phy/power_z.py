@@ -41,6 +41,13 @@ equipment_dir = pathlib.Path(phy_dir).parent/"equipment"
 log_dir = pathlib.Path(phy_dir).parent/"log"
 
 
+def print_log(message, logging):
+
+    if logging:
+        print(message)
+
+
+
 class km003c:
 
     Vendor_Id  = 0x5fc9
@@ -52,11 +59,9 @@ class km003c:
         # interface 1 : write_address=0x5, read_address=0x85, bInterfaceClass=HID, ~500 samples/sec
         # interface 3 : write_address=0x3, read_address=0x83, bInterfaceClass=CDC Data, ~ 1000 samples/sec
 
-        self.logging     = logging
-        self.log_raw     = None
-        self.log_voltage = None
-        self.log_current = None
-        self.byteorde    = byteorder # little
+        self.logging  = logging
+        self.log_raw  = None
+        self.byteorde = byteorder # little
 
         self.vid = vid or self.Vendor_Id
         self.pid = pid or self.Product_Id
@@ -70,6 +75,11 @@ class km003c:
         self.delay = delay
         self.__selected_pdo = None
         self.__found_pdo_list = None
+
+        self.log_voltage = None
+        self.log_current = None
+
+        self.pdo_list
     
 
     def reset_uart_port(self, port):
@@ -80,15 +90,15 @@ class km003c:
                 try:
                     temp_serial = serial.Serial(port)
                     temp_serial.close()
-                    print(f"port {port} has been closed")
+                    # print_log(message=f"port {port} has been closed", logging=self.logging)
                     delay(1)
                 except serial.SerialException:
                     # port might be busy orin use
-                    print(f"port {port} is busy or in use")
+                    print_log(message=f"port {port} is busy or in use", logging=self.logging)
                     pass
             
         except Exception as e:
-            print(f"error opening port {port}: {e}")
+            print_log(message=f"error opening port {port}: {e}", logging=self.logging)
             return None
     
 
@@ -110,7 +120,11 @@ class km003c:
     
 
     def connect_uart(self, port):
-        self.uart_handler = serial.Serial(port=port, baudrate=230400, timeout=self.timeout)
+
+        try:
+            self.uart_handler = serial.Serial(port=port, baudrate=230400, timeout=self.timeout)
+        except:
+            self.uart_handler = None
 
 
     def uart_wpd(self, cmd):
@@ -132,12 +146,16 @@ class km003c:
         self.uart_wpd("pdm set type=0,em=0,sink=0")
         self.uart_wpd("entry pd")
         delay(1)
-        log.forcedLog(f"reinitialize power-z km003c")
+        print_log(message=f"reinitialize power-z km003c", logging=self.logging)
+
+        self.__selected_pdo = None
 
 
     @property
     def hard_reset(self):
+
         self.uart_wpd("reset")
+        self.__selected_pdo = None
     
 
     @property
@@ -151,7 +169,7 @@ class km003c:
         len_args = len(args)
 
         if self.__selected_pdo is None:
-            log.forcedLog(f"required select pdo")
+            print_log(message=f"required select pdo", logging=self.logging)
         else:
             if len_args == 1:
                 pps_v = args[0][0]
@@ -161,10 +179,9 @@ class km003c:
                 conv_pps_i = int(pps_curr * 1000) # 1A order
 
                 self.uart_wpd(f"pd req={self.__selected_pdo},volt={conv_pps_v},cur={conv_pps_i}")
-                if self.logging:
-                    log.forcedLog(f"pd req={self.__selected_pdo},volt={conv_pps_v},cur={conv_pps_i}")
+                print_log(message=f"pd req={self.__selected_pdo},volt={conv_pps_v},cur={conv_pps_i}", logging=self.logging)
             else:
-                log.forcedLog(f"configuration error, pps_v and pps_i are required (e.g. self.cfg_all = 5, 0.2)")
+                print_log(message=f"configuration error, pps_v and pps_i are required (e.g. self.cfg_all = 5, 0.2)", logging=self.logging)
 
 
     def close(self):
@@ -181,11 +198,10 @@ class km003c:
             self.dev_struct = None
             self.h = None
             self.log_list_r  = None
-            self.log_voltage = None
-            self.log_current = None
+            self.__selected_pdo = None
+            self.__found_pdo_list = None
 
-            if self.logging:
-                log.forcedLog("remove the km003c device interface")
+            print_log(message="remove the km003c device interface", logging=self.logging)
 
 
     def __del__(self):
@@ -200,14 +216,14 @@ class km003c:
 
         self.close()
         self.connect_dev(self.vid, self.pid)
-        log.forcedLog("reset km003c interface")
+        print_log(message="reset km003c interface", logging=self.logging)
     
 
     def send_data(self, cmd):
 
         ret = self.h.interface.write(self.h.write_addr, cmd)
         if ret != 4:
-            log.forcedLog(f"failed to write the bytes, length is not 4 : ret={ret}")
+            print_log(message=f"failed to write the bytes, length is not 4 : ret={ret}", logging=self.logging)
     
 
     def read_data(self):
@@ -235,28 +251,39 @@ class km003c:
         if data == None:
             voltage = 0
             current = 0
+            power   = 0
         else:
-            try:
-                raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
-                voltage = raw_voltage / 1000_000
-                # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
+            raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
+            voltage = raw_voltage / 1000_000
+            # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
 
-                raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
-                current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
-                # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
+            raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
+            current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
+            # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
 
-                if self.logging:
-                    log.forcedLog(f"[{log.time_stamp(display=False, ret=True)}] read data : {data}")
-                    self.log_raw = data
+            self.log_voltage = data[8:12]
+            self.log_current = data[12:16]
+            power = voltage * current
 
-                self.log_voltage = data[8:12]
-                self.log_current = data[12:16]
-            except:
-                voltage = 0
-                current = 0
+            print_log(message=f"[{log.time_stamp(display=False, ret=True)}] read data : {data}", logging=self.logging)
+            print_log(message=f"[{log.time_stamp(display=False, ret=True)}] {voltage} {current} {power}", logging=self.logging)
+            self.log_raw = data
             
-        return [voltage, current]
+        return [voltage, current, power]
     
+
+    @property
+    def read_all(self):
+
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=8)
+        return ret_list
+    
+
+    @read_all.setter
+    def read_all(self):
+        pass
+
 
     @property
     def voltage(self):
@@ -281,6 +308,19 @@ class km003c:
 
     @current.setter
     def current(self):
+        pass
+
+
+    @property
+    def power(self):
+
+        raw_data = self.read_raw()
+        ret_list = self.convert_data(raw_data, start=8)
+        return ret_list[2]
+    
+
+    @power.setter
+    def power(self):
         pass
 
 
@@ -356,13 +396,16 @@ class km003c:
                 current = match.group(3)
                 temp_list.append([mode, voltage, current])
         
-        ret_list = list()
-        ret_list.append(header)
-        for index, value in enumerate(temp_list):
-            ret_list.append([index+1, value[0], value[1], value[2], ""])
+        if len(pdo_list) > 0:
+            ret_list = list()
+            ret_list.append(header)
+            for index, value in enumerate(temp_list):
+                ret_list.append([index+1, value[0], value[1], value[2], ""])
 
-        self.__found_pdo_list = ret_list
-        print(tb(self.__found_pdo_list, headers="firstrow", numalign="center", stralign="center"))
+            self.__found_pdo_list = ret_list
+            print(tb(self.__found_pdo_list, headers="firstrow", numalign="center", stralign="center"))
+        else:
+            print_log(message=f"not found pdo list", logging=self.logging)
     
 
     @property
@@ -374,7 +417,7 @@ class km003c:
     def select_pdo(self, *args):
 
         if self.__found_pdo_list == None:
-            log.forcedLog(f"failed to select pdo list, run self.pdo_list first")
+            print_log(message=f"failed to select pdo list, run self.pdo_list first", logging=self.logging)
 
         else:
             len_args = len(args)

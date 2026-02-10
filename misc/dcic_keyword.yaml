@@ -156,7 +156,8 @@ scan_list: {
   "retry charging start"                   : "retry charging",
   "Maximum retries reached"                : "reached to max retries",
   "in iin regulation state"                : "Maxtill PD TA workaround",
-  "batt_current_ua_now"                    : "ibat measurement by equipment in production line"
+  "batt_current_ua_now"                    : "ibat measurement by equipment in production line",
+  "max77775_select_pps"                    : "pps request by pd phy"
 }
 
 star_suffix: [

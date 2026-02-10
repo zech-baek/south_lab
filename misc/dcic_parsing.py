@@ -66,6 +66,7 @@ class parsing:
         self.source_file = source_file
         self.device = device
         self.revision = revision
+        self.trigger_last_kmsg = False
 
         if vendor_keyword:
             self.keyword = self.merged_keyword
@@ -131,6 +132,8 @@ class parsing:
         self.regpage     = None
         self.addr_range  = None
 
+        self.trigger_last_kmsg = False
+
         print(f"[100.00%] finish dump and adc parsing, clear the parameters")
         
         with open(parsing_file, "a") as parsing:
@@ -150,13 +153,16 @@ class parsing:
             rstrip_text = text.rstrip()  # remove all trailing whitespace
 
             coloring_list = ["LAST KMSG"]
+
             for color_item in coloring_list:
                 if color_item.lower() in rstrip_text.lower():
                     print(f"{color.cyan}{rstrip_text}{color.end}")
-                else:print(rstrip_text)
+                else:
+                    print(rstrip_text)
             
             with open(filename, "a") as parsing:
-                parsing.write(text)
+                self.file_write(handler=parsing, message=text)
+                # parsing.write(text)
 
                 if text.endswith('\n'):
                     pass
@@ -165,6 +171,14 @@ class parsing:
 
         except:
             pass
+    
+
+    def file_write(self, handler, message):
+
+        if self.trigger_last_kmsg:
+            message = "(LAST KMSG)  " + message
+
+        handler.write(message)
 
 
     def step_1_matching(self) -> None:
@@ -222,6 +236,7 @@ class parsing:
 
                     print_line = re.sub(r"\n", "", decoded_line)
                     self.print_store_comment(f" LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
+                    self.trigger_last_kmsg = True
                 
                 kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
 
@@ -258,7 +273,8 @@ class parsing:
                             pass
                         else:
                             with open(parsing_file, "a") as parsing:
-                                parsing.write(decoded_line)
+                                self.file_write(handler=parsing, message=decoded_line)
+                                # parsing.write(decoded_line)
                     except:
                         pass
                     
@@ -275,9 +291,11 @@ class parsing:
                             if reg_log != None:
                                 with open(parsing_file, "a") as parsing:
                                     short_header = decoded_line.split("[0x00]")[0]
-                                    parsing.write(short_header)
+                                    self.file_write(handler=parsing, message=short_header)
+                                    # parsing.write(short_header)
                                     parsing.write("\n")
-                                    parsing.write(reg_log)
+                                    self.file_write(handler=parsing, message=reg_log)
+                                    # parsing.write(reg_log)
                                     parsing.write("\n")
                     
                     elif "sc_charger_set_property" in decoded_line:
@@ -285,7 +303,8 @@ class parsing:
 
                         if reg_log != None:
                             with open(parsing_file, "a") as parsing:
-                                parsing.write(reg_log)
+                                self.file_write(handler=parsing, message=reg_log)
+                                # parsing.write(reg_log)
                                 parsing.write("\n")
                     
                     elif "sc_charger_timer_work" in decoded_line:
@@ -293,7 +312,8 @@ class parsing:
                         
                         if reg_log != None:
                             with open(parsing_file, "a") as parsing:
-                                parsing.write(reg_log)
+                                self.file_write(handler=parsing, message=reg_log)
+                                # parsing.write(reg_log)
                                 parsing.write("\n")
                     
                     elif "sc_charger_check_dcmode_status" in decoded_line:
@@ -305,7 +325,8 @@ class parsing:
 
                         if reg_log != None:
                             with open(adc_file, "a") as parsing:
-                                parsing.write(reg_log)
+                                self.file_write(handler=parsing, message=reg_log)
+                                # parsing.write(reg_log)
                                 parsing.write("\n")
 
                     else:
@@ -398,9 +419,11 @@ class parsing:
                                 
                                 try:
                                     with open(parsing_file, "a") as parsing:
-                                        parsing.write(to_dump_text)
+                                        self.file_write(handler=parsing, message=to_dump_text)
+                                        # parsing.write(to_dump_text)
                                         if for_excel != None:
-                                            parsing.write(for_excel)
+                                            self.file_write(handler=parsing, message=for_excel)
+                                            # parsing.write(for_excel)
                                         parsing.write("\n")
                                 except:
                                     pass
@@ -417,9 +440,11 @@ class parsing:
 
                                 try:
                                     with open(parsing_file, "a") as parsing:
-                                        parsing.write(to_dump_text)
+                                        self.file_write(handler=parsing, message=to_dump_text)
+                                        # parsing.write(to_dump_text)
                                         if for_excel != None:
-                                            parsing.write(for_excel)
+                                            self.file_write(handler=parsing, message=for_excel)
+                                            # parsing.write(for_excel)
                                         parsing.write("\n")
                                 except:
                                     pass
