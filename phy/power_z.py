@@ -149,20 +149,22 @@ class km003c:
     def cfg_all(self, *args):
         
         len_args = len(args)
-        
-        if len_args == 1:
-            pps_v = args[0][0]
-            pps_curr = args[0][1]
 
-            conv_pps_v = int(pps_v * 1000)     # 10V order
-            conv_pps_i = int(pps_curr * 10000) # 1A order
-
-            if self.logging:
-                log.forcedLog(f"{conv_pps_v}, {conv_pps_i}, {self.__selected_pdo}")
-
-            self.uart_wpd(f"pd req={self.__selected_pdo},volt={conv_pps_v},curr={conv_pps_i}")
+        if self.__selected_pdo is None:
+            log.forcedLog(f"required select pdo")
         else:
-            log.forcedLog(f"configuration error, pps_v and pps_i are required (e.g. self.cfg_all = 5, 0.2)")
+            if len_args == 1:
+                pps_v = args[0][0]
+                pps_curr = args[0][1]
+
+                conv_pps_v = int(pps_v * 1000)     # 10V order
+                conv_pps_i = int(pps_curr * 1000) # 1A order
+
+                self.uart_wpd(f"pd req={self.__selected_pdo},volt={conv_pps_v},cur={conv_pps_i}")
+                if self.logging:
+                    log.forcedLog(f"pd req={self.__selected_pdo},volt={conv_pps_v},cur={conv_pps_i}")
+            else:
+                log.forcedLog(f"configuration error, pps_v and pps_i are required (e.g. self.cfg_all = 5, 0.2)")
 
 
     def close(self):
