@@ -270,7 +270,9 @@ class parsing:
 
                     try:
                         if "adc done flag" in decoded_line:
-                            pass
+                            with open(parsing_file, "a") as parsing:
+                                self.file_write(handler=parsing, message=decoded_line)
+                            # pass
                         else:
                             with open(parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=decoded_line)
@@ -346,7 +348,7 @@ class parsing:
 
                                     if pps != None and rx_out != None:
                                         diff = (pps-rx_out) / 1000 # mV to V scale
-                                        suffix = f"diff={diff:.03f}"
+                                        suffix = f"diff = {diff:.03f}"
                                         cleaned_decoded_line = decoded_line.strip("\n")
 
                                         to_dump_text = f"        // {suffix} : {log_text} // {decoded_line}"
@@ -436,7 +438,9 @@ class parsing:
                         if len(match_int_list) != 0:
                             if any(x != 0 for x in match_int_list):
                                 to_dump_text = f"        // Return error : {str(match_int_list)}"
-                                self.print_store_comment(f" Return error : {str(match_int_list)}", self.parsing_comment, line_num)
+                                with open(parsing_file, "a") as parsing:
+                                    self.file_write(handler=parsing, message=to_dump_text)
+                                # self.print_store_comment(f" Return error : {str(match_int_list)}", self.parsing_comment, line_num)
 
                                 try:
                                     with open(parsing_file, "a") as parsing:
@@ -567,7 +571,33 @@ class parsing:
                             if re.search(reg_check, reg_name, re.IGNORECASE):
                                 suffix = "        ***"
 
-                        ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix}")
+                        if "8583" in self.device:
+                            if reg_name == "VEXT_OVP":
+                                remark = f"11V + {masked_value}"
+                            elif reg_name == "VBAT_REG":
+                                if masked_value <= 0b01010000:
+                                    masked_value = 0b01010000
+                                elif masked_value >= 0b11100110:
+                                    masked_value = 0b11100110
+                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                            elif reg_name == "VBAT_OVP":
+                                if masked_value <= 0b01111000:
+                                    masked_value = 0b01111000
+                                elif masked_value >= 0b11110000:
+                                    masked_value = 0b11110000
+                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                            elif reg_name == "VOUT_OVP":
+                                remark = f"(4.7V+{masked_value*0.2}V)"
+                            elif reg_name == "IIN_OCP":
+                                if masked_value <= 0b00001010:
+                                    masked_value = 0b00001010
+                                elif masked_value >= 0b10101010:
+                                    masked_value = 0b10101010
+                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                            else:
+                                remark = ""
+
+                        ret.append(f"        // {addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} {suffix} {remark}")
                         # log.infoLog(f"{addr:#04x}[{msb}:{lsb}] {reg_name}={masked_value:#x} (shift={lsb}, dump value={dump_value:#04x}, masking={masking_b:#04x})")
             
             '''
@@ -596,7 +626,18 @@ class parsing:
                 ret.append(f"        // {key_channel} : {adc_final}")
             '''
 
-            return ret
+            flag_info = list()
+            stat_info = list()
+            flag_info.append("\n")
+            stat_info.append("\n")
+
+            for index, value in enumerate(ret):
+                if "stat" in value.lower() and "=0x1" in value.lower():
+                    flag_info.append(f"        // {value}")
+                if "stat" in value.lower() and "=0x1" in value.lower():
+                    stat_info.append(f"        // {value}")
+
+            return ret + flag_info + stat_info
         
         except:
             print(f" wrong format - {dump_code} {data}")
