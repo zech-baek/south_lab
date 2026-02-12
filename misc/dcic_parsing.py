@@ -573,27 +573,27 @@ class parsing:
 
                         if "8583" in self.device:
                             if reg_name == "VEXT_OVP":
-                                remark = f"11V + {masked_value}"
+                                remark = f"     --->  11V+{masked_value} = {11+masked_value:.01f}V"
                             elif reg_name == "VBAT_REG":
                                 if masked_value <= 0b01010000:
                                     masked_value = 0b01010000
                                 elif masked_value >= 0b11100110:
                                     masked_value = 0b11100110
-                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                                remark = f"     --->  3.4V+{0.005*masked_value}V = {3.4+0.005*masked_value:.03f}V"
                             elif reg_name == "VBAT_OVP":
                                 if masked_value <= 0b01111000:
                                     masked_value = 0b01111000
                                 elif masked_value >= 0b11110000:
                                     masked_value = 0b11110000
-                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                                remark = f"     --->  3.4V+{0.005*masked_value}V = {3.4+0.005*masked_value:.03f}V"
                             elif reg_name == "VOUT_OVP":
-                                remark = f"(4.7V+{masked_value*0.2}V)"
+                                remark = f"     --->  4.7V+{masked_value*0.2}V = {4.7+masked_value*0.2:.01f}V"
                             elif reg_name == "IIN_OCP":
                                 if masked_value <= 0b00001010:
                                     masked_value = 0b00001010
                                 elif masked_value >= 0b10101010:
                                     masked_value = 0b10101010
-                                remark = f"1(3.4V+{0.005*masked_value}V)"
+                                remark = f"     --->  {0.0375*masked_value:.04f}A"
                             else:
                                 remark = ""
 
