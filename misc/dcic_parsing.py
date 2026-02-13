@@ -632,7 +632,7 @@ class parsing:
             stat_info.append("\n")
 
             for index, value in enumerate(ret):
-                if "stat" in value.lower() and "=0x1" in value.lower():
+                if "flag" in value.lower() and "=0x1" in value.lower():
                     flag_info.append(f"        // {value}")
                 if "stat" in value.lower() and "=0x1" in value.lower():
                     stat_info.append(f"        // {value}")
