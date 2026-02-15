@@ -11,6 +11,8 @@ import re
 import csv
 import pyvisa as visa
 
+from interface.timer import precise_timer
+
 
 # ! /usr/bin/env python
 # coding=utf-8
@@ -247,6 +249,13 @@ class logger:
     
     
     @classmethod
+    def ms_delay(cls, parameter:float):
+        
+        timer = precise_timer()
+        timer.sleep(parameter)
+
+    
+    @classmethod
     def scan_visa(cls):
         
         rm = visa.ResourceManager()
@@ -259,7 +268,7 @@ class logger:
     
 
     @classmethod
-    def scan_uart(cls):
+    def scan_uart(cls, display=True):
         
         '''
         import serial
@@ -275,30 +284,38 @@ class logger:
         
         import serial.tools.list_ports
         ports = serial.tools.list_ports.comports()
+
+        ret_port = dict()
         
         if not ports:
             print("no serial/usb ports found")
             return
         
-        print("available serial/usb ports:")
-        print("-" * 60)
-        
-        ret_port = dict()
-
-        for port in ports:
-            print(f"port: {port.device}")
-            print(f"name: {port.name}")
-            print(f"description: {port.description}")
-            print(f"manufacturer: {port.manufacturer}")
-            print(f"product: {port.product}")
-            print(f"hwid: {port.hwid}")
+        if display:
+            print("available serial/usb ports:")
             print("-" * 60)
-            ret_port[port.device] = {
-                "port" : port.device,
-                "name" : port.name,
-                "pid"  : port.pid,
-                "vid"  : port.vid
-            }
+            for port in ports:
+                print(f"port: {port.device}")
+                print(f"name: {port.name}")
+                print(f"description: {port.description}")
+                print(f"manufacturer: {port.manufacturer}")
+                print(f"product: {port.product}")
+                print(f"hwid: {port.hwid}")
+                print("-" * 60)
+                ret_port[port.device] = {
+                    "port" : port.device,
+                    "name" : port.name,
+                    "pid"  : port.pid,
+                    "vid"  : port.vid
+                }
+        else:
+            for port in ports:
+                ret_port[port.device] = {
+                    "port" : port.device,
+                    "name" : port.name,
+                    "pid"  : port.pid,
+                    "vid"  : port.vid
+                }
         
         if len(ret_port):
             return ret_port

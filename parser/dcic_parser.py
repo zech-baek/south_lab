@@ -18,16 +18,16 @@ structure
 	- ventor_keyword (bool) : option for adding vendor's keyword
 - method call
 	--> init_parameter()
-	--> step_1_mathcing()
+	--> step1_mathcing()
 		- make "_parsing.txt" and "_parsing_adc.txt"
 		- open the source file in binary mode
 			- check "SC_REL"
 			- check "LAST KMSG"
 			- check any keyword defined in init_parameter()
-			- "dump_register" : call step_2_matching()
-			- "sc_charger_set_property" : call step_3_mathcing()
-			- "sc_charger_timer_work" : call step_4_mathcing()
-			- "sc_charger_check_dcmode_status" : call step_5_matching()
+			- "dump_register" : call step2_matching()
+			- "sc_charger_set_property" : call step3_mathcing()
+			- "sc_charger_timer_work" : call step4_mathcing()
+			- "sc_charger_check_dcmode_status" : call step5_matching()
 			- other cases : check the words in scan_list
 - make "process done" file
 - clear the parameters before exit the method
@@ -117,7 +117,7 @@ class parsing:
 
         self.print_logo()
         self.init_parameter(source_file=dump, device=device, revision=revision, vendor_keyword=vendor_keyword)
-        self.step_1_matching()
+        self.step1_matching()
 
         file_path, file_name = os.path.split(self.source_file)
         parsing_file = os.path.join(file_path, f"process done - {file_name}")
@@ -162,12 +162,11 @@ class parsing:
             
             with open(filename, "a") as parsing:
                 self.file_write(handler=parsing, message=text)
-                # parsing.write(text)
 
-                if text.endswith('\n'):
-                    pass
-                else:
-                    parsing.write("\n")
+                # if text.endswith("\n"):
+                #     pass
+                # else:
+                #     parsing.write("\n")
 
         except:
             pass
@@ -177,11 +176,10 @@ class parsing:
 
         if self.trigger_last_kmsg:
             message = "(LAST KMSG)  " + message
+        # handler.write(message + "\n")
 
-        handler.write(message)
 
-
-    def step_1_matching(self) -> None:
+    def step1_matching(self) -> None:
 
         file_path, file_name = os.path.split(self.source_file)
         name, ext = os.path.splitext(file_name)
@@ -205,19 +203,20 @@ class parsing:
         self.print_store_comment(f" start dump parsing    -> save to {parsing_file}", self.parsing_comment, 0)
         self.print_store_comment(f" start adc log         -> save to {adc_file}", self.parsing_comment, 0)
         self.print_store_comment(f" start parsing comment -> save to {self.parsing_comment}", self.parsing_comment, 0)
-        # print(f" start dump parsing -> save to {parsing_file}")
-        # print(f" start adc log      -> save to {adc_file}")
 
         count_sc_rel = 0 # driver version
+        dump_code = self.device + "_dump_registers "
 
         with open(self.source_file, "rb") as dump: # binary mode
 
-            # for line in dump:
             for line_num, line in enumerate(dump, start=1):
                 
-                decoded_line = line.decode("utf-8", errors="ignore")
+                # ----------------------------------------------------------------------------------------
+                decoded_line = re.sub(r"\n", "", line.decode("utf-8", errors="ignore")) # remove line feed
+                print(color.bgyel, decoded_line, color.end)
+                print(color.red, line, color.end)
+                # ----------------------------------------------------------------------------------------
 
-                # if "SC_REL" in decoded_line:
                 if re.search(r"SC_REL", decoded_line, re.IGNORECASE):
 
                     driver_version = r"SC_REL\((.*?)\)"
@@ -226,15 +225,15 @@ class parsing:
                     if is_sc_rel:
                         sc_rel = is_sc_rel.group(1)
                         count_sc_rel += 1
+                        
                     if count_sc_rel == 1:
-                        self.print_store_comment(f" SC_REL : {sc_rel}", self.parsing_comment, line_num)
-                        # print(f" SC_REL : {sc_rel}")
+                        with open(parsing_file, "a") as parsing:
+                            self.file_write(handler=parsing, message=decoded_line)
+                            # self.print_store_comment(f" SC_REL {self.parsing_comment}", self.parsing_comment, 0)
                 
                 # print out the line while proceed log parsing
                 # -----------------------------------------------------------------------------------------------
                 if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
-
-                    print_line = re.sub(r"\n", "", decoded_line)
                     self.print_store_comment(f" LAST KMSG : {decoded_line}", self.parsing_comment, line_num)
                     self.trigger_last_kmsg = True
                 
@@ -242,7 +241,6 @@ class parsing:
 
                 for kernel_keyword in kernel_version:
                     if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
-                        print_line = re.sub(r"\n", "", decoded_line)
                         if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
                             self.print_store_comment(f" bootloader version : {decoded_line}", self.parsing_comment, line_num)
                         elif "bootloader" in decoded_line or "name" in decoded_line:
@@ -256,90 +254,69 @@ class parsing:
                         phrase not in decoded_line
                         for phrase in excluded_flag)
                     if flag_contain and flag_exclude:
-                        print_line = re.sub(r"\n", "", decoded_line)
-                        self.print_store_comment(f" warning flag -- {print_line}", self.parsing_comment, line_num)
+                        self.print_store_comment(f" warning flag -- {decoded_line}", self.parsing_comment, line_num)
                 
                 print_keyword = [r"sec_bat_show_attrs: batt_current_ua_now"]
                 for scan_keyword in print_keyword:
                     if re.search(scan_keyword, decoded_line, re.IGNORECASE):
-                        print_line = re.sub(r"\n", "", decoded_line)
-                        self.print_store_comment(f" IOUT current read : {decoded_line}", self.parsing_comment, line_num)
+                        self.print_store_comment(f" IOUT read by AT Command : {decoded_line}", self.parsing_comment, line_num)
+                        with open(parsing_file, "a") as parsing:
+                            self.file_write(handler=parsing, message=f"        // IOUT read by AT Command : {decoded_line}")
                 # -----------------------------------------------------------------------------------------------
 
                 if any(keyword in decoded_line for keyword in self.keyword):
 
                     try:
                         if "adc done flag" in decoded_line:
-                            with open(parsing_file, "a") as parsing:
-                                self.file_write(handler=parsing, message=decoded_line)
-                            # pass
+                            pass
                         else:
                             with open(parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=decoded_line)
-                                # parsing.write(decoded_line)
                     except:
                         pass
                     
-                    dump_code = self.device + "_dump_registers "
-
                     if dump_code in decoded_line:
-                        ret_reglog = self.step_2_matching(dump_code=dump_code, data=decoded_line)
+                        ret_reglog = self.step2_matching(dump_code=dump_code, data=decoded_line)
                         reg_log = ""
 
                         if ret_reglog is not None:  # list type register value return
                             for value in ret_reglog:
                                 reg_log += (value+"\n")
                                 
-                            if reg_log != None:
+                            if reg_log != "":
                                 with open(parsing_file, "a") as parsing:
                                     short_header = decoded_line.split("[0x00]")[0]
                                     self.file_write(handler=parsing, message=short_header)
-                                    # parsing.write(short_header)
-                                    parsing.write("\n")
                                     self.file_write(handler=parsing, message=reg_log)
-                                    # parsing.write(reg_log)
-                                    parsing.write("\n")
                     
-                    elif "sc_charger_set_property" in decoded_line:
-                        reg_log = self.step_3_matching(data=decoded_line)
+                    # elif "sc_charger_set_property" in decoded_line:
+                    #     reg_log = self.step3_matching(data=decoded_line)
 
-                        if reg_log != None:
-                            with open(parsing_file, "a") as parsing:
-                                self.file_write(handler=parsing, message=reg_log)
-                                # parsing.write(reg_log)
-                                parsing.write("\n")
+                    #     if reg_log != None:
+                    #         with open(parsing_file, "a") as parsing:
+                    #             self.file_write(handler=parsing, message=reg_log)
                     
                     elif "sc_charger_timer_work" in decoded_line:
-                        reg_log = self.step_4_matching(data=decoded_line)
+                        reg_log = self.step4_matching(data=decoded_line)
                         
                         if reg_log != None:
                             with open(parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=reg_log)
-                                # parsing.write(reg_log)
-                                parsing.write("\n")
                     
                     elif "sc_charger_check_dcmode_status" in decoded_line:
-                        reg_log = self.step_5_matching(data=decoded_line)
-
-                        if self.logging:
-                            print(f"adc_file : {adc_file}")
-                            print(f"reg_log : {reg_log}")
+                        reg_log = self.step5_matching(data=decoded_line)
 
                         if reg_log != None:
                             with open(adc_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=reg_log)
-                                # parsing.write(reg_log)
-                                parsing.write("\n")
 
                     else:
                         scan_list = self.global_keyword["scan_list"]
-                        
                         to_dump_text = None
+                        for_excel = None
 
                         for scan_item, log_text in scan_list.items():
-                            
                             if scan_item.lower() in decoded_line.lower():
-                                
                                 if scan_item == "mfc_set_pps_vout":
                                     pps_match = re.search(r'\((\d+)mv,', decoded_line)
                                     pps = int(pps_match.group(1)) if pps_match else None
@@ -356,17 +333,14 @@ class parsing:
 
                                 elif scan_item == "health_status":
                                     suffix = "health status found"
-                                    for_excel = None
                                     to_dump_text = f"        // {suffix} : {decoded_line}"
                                 
                                 elif scan_item == "detach":
                                     suffix = "detach keyword"
-                                    for_excel = None
                                     to_dump_text = f"        // {suffix} : {log_text} // {decoded_line}"
                                 
                                 elif scan_item == "sc_charger_request_power":
                                     if "pps_vol" in decoded_line and "vbus_adc" in decoded_line:
-                                        for_excel = None
 
                                         pps_vol_match = re.search(r'pps_vol=(\d+)', decoded_line)
                                         if pps_vol_match:
@@ -400,33 +374,33 @@ class parsing:
                                         if wpc_code_match:
                                             wpc_code = int(wpc_code_match.group(1), 16)
                                         error = "Not matched"
-                                        to_dump_text = f"        // POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}"
-                                        self.print_store_comment(f" POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}", self.parsing_comment, line_num)
-                                        for_excel = None
+                                        err_comment = "POWER_SUPPLY_EXT_PROP_DC_ERROR_CAUSE : dcic {self.error_code.get(dcic_code, error)}, cp {self.error_code.get(cp_code, error)}, vbat {self.error_code.get(vbat_code, error)}, pd {self.error_code.get(pd_code, error)}, wpc {self.error_code.get(wpc_code, error)}"
+                                        to_dump_text = f"        // {err_comment}"
+                                        self.print_store_comment(f" {err_comment}", self.parsing_comment, line_num)
                                 
-                                elif scan_item == "retry charging start" or scan_item == "Maximum retries reached":
+                                elif scan_item in {"retry charging start", "Maximum retries reached"}:
                                     suffix = "retry keyword"
 
                                     retry_match = re.search(r'sc_charger_check_active_state:\s*(.*)', decoded_line)
                                     if retry_match:
                                         retry_result = retry_match.group(1)
-                                    for_excel = None
                                     to_dump_text = f"        // {suffix} : {retry_result}"
                                     self.print_store_comment(f" {suffix} : {retry_result}", self.parsing_comment, line_num)
+                                
+                                elif scan_item == "max77775_current_pdo" and any(x in decoded_line for x in ("FIXED", "APDO")):
+                                    to_dump_text = f"        // {log_text}"
+                                
+                                elif scan_item == "usbpd-sm5714b" and any(x in decoded_line for x in ("FIXED volt", "Augmented min_volt")):
+                                    to_dump_text = f"        // {log_text}"
 
                                 else:
-                                    # log.forcedLog(f"### {decoded_line} : {scan_item} -- {log_text}")
                                     to_dump_text = f"        // {log_text} : {decoded_line}"
-                                    for_excel = None
                                 
                                 try:
                                     with open(parsing_file, "a") as parsing:
-                                        self.file_write(handler=parsing, message=to_dump_text)
-                                        # parsing.write(to_dump_text)
+                                        self.file_write(handler=parsing, message=f"{to_dump_text}\n")
                                         if for_excel != None:
                                             self.file_write(handler=parsing, message=for_excel)
-                                            # parsing.write(for_excel)
-                                        parsing.write("\n")
                                 except:
                                     pass
                     
@@ -437,24 +411,20 @@ class parsing:
 
                         if len(match_int_list) != 0:
                             if any(x != 0 for x in match_int_list):
-                                to_dump_text = f"        // Return error : {str(match_int_list)}"
+                                to_dump_text = f"        // return error : {str(match_int_list)}"
                                 with open(parsing_file, "a") as parsing:
                                     self.file_write(handler=parsing, message=to_dump_text)
-                                # self.print_store_comment(f" Return error : {str(match_int_list)}", self.parsing_comment, line_num)
 
                                 try:
                                     with open(parsing_file, "a") as parsing:
                                         self.file_write(handler=parsing, message=to_dump_text)
-                                        # parsing.write(to_dump_text)
                                         if for_excel != None:
                                             self.file_write(handler=parsing, message=for_excel)
-                                            # parsing.write(for_excel)
-                                        parsing.write("\n")
                                 except:
                                     pass
 
 
-    def step_2_matching(self, dump_code, data):
+    def step2_matching(self, dump_code, data):
 
         # regpage format
         # key : register name
@@ -641,11 +611,10 @@ class parsing:
         
         except:
             print(f" wrong format - {dump_code} {data}")
-            # print(f" wrong format - {dump_code} {data}")
             return None
     
 
-    def step_3_matching(self, data):
+    def step3_matching(self, data):
 
         # pattern that looks for the specific format
 
@@ -679,9 +648,9 @@ class parsing:
                 res = match.group(1)
 
                 if "POWER_SUPPLY_EXT_PROP_PWR_CTRL_UPDATE" in res:
-                    ret = f"        // reached to target power, sync rx vout to pps ta_vol, {res}\n"
+                    ret = f"        // reached to target power, sync rx vout to pps ta_vol, {res}"
                 else:
-                    ret = f"        // {res}\n"
+                    ret = f"        // {res}"
         
         else:
             ret = None
@@ -689,19 +658,15 @@ class parsing:
         return ret
     
 
-    def step_4_matching(self, data):
-
-        # pattern that looks for the specific format
+    def step4_matching(self, data):
 
         pattern = r'sc_charger_timer_work:\s*timer id=(\d+),\s*charging_state=(\w+)'
         match = re.search(pattern, data)
-
         ret = None
 
         if match:
             timer = int(match.group(1))
             state = match.group(2)  # this is a string, not an integer
-
             process_no = self.global_keyword["process_no"]
 
             if timer in process_no.keys():
@@ -714,9 +679,8 @@ class parsing:
         return ret
 
 
-    def step_5_matching(self, data:str) -> str:
+    def step5_matching(self, data:str) -> str:
 
-        ret = None
         re_scale = 1000_000
 
         if data.startswith('['):
@@ -734,16 +698,16 @@ class parsing:
         vwpc_match        = re.search(r'vbus_wpc:(\d+)', data)
         vbat_dcic_match   = re.search(r'vbat_dcic:(\d+)', data)
 
-        if self.logging:
-            print(data)
-            print(f"iin_match         : {iin_match        }")
-            print(f"iin_target_match  : {iin_target_match }")
-            print(f"vbat_match        : {vbat_match       }")
-            print(f"vbat_target_match : {vbat_target_match}")
-            print(f"power_match       : {power_match      }")
-            print(f"vbus_match        : {vbus_match       }")
-            print(f"vwpc_match        : {vwpc_match       }")
-            print(f"vbat_dcic_match   : {vbat_dcic_match  }")
+        # if self.logging:
+        #     print(data)
+        #     print(f"iin_match         : {iin_match        }")
+        #     print(f"iin_target_match  : {iin_target_match }")
+        #     print(f"vbat_match        : {vbat_match       }")
+        #     print(f"vbat_target_match : {vbat_target_match}")
+        #     print(f"power_match       : {power_match      }")
+        #     print(f"vbus_match        : {vbus_match       }")
+        #     print(f"vwpc_match        : {vwpc_match       }")
+        #     print(f"vbat_dcic_match   : {vbat_dcic_match  }")
 
         if any(item is not None for item in [iin_match, iin_target_match, vbat_match, vbat_target_match, power_match, vbus_match, vwpc_match, vbat_dcic_match]):
 
@@ -758,11 +722,6 @@ class parsing:
 
             vbat_diff = vbat_value - vbat_dcic_value
 
-            try:
-                ret = f"{timeline}, iin={iin_value:.03f}A, iin_target={iin_target_value:.03f}A, vbat={vbat_value:.03f}V, vbat_target={vbat_target_value:.03f}V, power={power_value:.03f}W, vbus={vbus_value:.03f}V, vwpc={vwpc_value:.03f}V, vbat_dcic={vbat_dcic_value:.03f}V, vbat_diff={vbat_diff:.03f}V"
-            except:
-                return None
-
             if self.logging:
                 print(f"iin_value : {iin_value}")
                 print(f"iin_target_value : {iin_target_value}")
@@ -772,8 +731,20 @@ class parsing:
                 print(f"vbus_value : {vbus_value}")
                 print(f"vwpc_value : {vwpc_value}")
                 print(f"vbat_dcic_value : {vbat_dcic_value}")
+
+            try:
+                ret = f"        // iin={iin_value:.03f}A"
+                + f"        // iin_target={iin_target_value:.03f}A"
+                + f"        // vbat={vbat_value:.03f}V"
+                + f"        // vbat_target={vbat_target_value:.03f}V"
+                + f"        // power={power_value:.03f}W"
+                + f"        // vbus={vbus_value:.03f}V"
+                + f"        // vwpc={vwpc_value:.03f}V"
+                + f"        // vbat_dcic={vbat_dcic_value:.03f}V"
+                + f"        // vbat_diff={vbat_diff:.03f}V"
+                return ret
+            except:
+                return None
         
         else:
-            ret = None
-
-        return ret
+            return None

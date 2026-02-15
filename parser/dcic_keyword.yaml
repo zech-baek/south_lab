@@ -158,7 +158,9 @@ scan_list: {
   "in iin regulation state"                : "Maxtill PD TA workaround",
   "batt_current_ua_now"                    : "ibat measurement by equipment in production line",
   "max77775_select_pps"                    : "pps request by pd phy",
-  "wired_interr_retry_cnt"                 : "retry dcic"
+  "wired_interr_retry_cnt"                 : "retry dcic",
+  "max77775_current_pdo"                   : "pdo list and index from ifpmic",
+  "usbpd-sm5714b"                          : "pdo list and index from ifpmic"
 }
 
 star_suffix: [

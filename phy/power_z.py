@@ -67,10 +67,15 @@ class km003c:
         self.pid = pid or self.Product_Id
         self.port = port
         self.timeout = timeout
-        self.connect_usb(self.vid, self.pid)
 
         self.reset_uart_port(self.port)
-        self.connect_uart(self.port)
+        ret_usb = self.connect_usb(self.vid, self.pid)
+        ret_uart = self.connect_uart(self.port)
+
+        if ret_usb or ret_uart :
+            log.forcedLog(f"initialized power-z connection")
+        else:
+            log.errorLog(f"{color.bgred}failed to initialize power-z{color.end}")
 
         self.delay = delay
         self.__selected_pdo = None
@@ -78,8 +83,7 @@ class km003c:
 
         self.log_voltage = None
         self.log_current = None
-
-        self.pdo_list
+        # self.pdo_list
     
 
     def reset_uart_port(self, port):
@@ -107,24 +111,29 @@ class km003c:
         self.interface = usb.core.find(idVendor=vid, idProduct=pid)
 
         if self.interface is None:
-            raise ValueError(f"power-z km003c not found")
-        
-        self._interface_num = 0 # vendor specific message
-        self._write_addr = 0x1
-        self._read_addr  = 0x81
+            log.forcedLog(f"power-z km003c not found")
+            return 0
+        else:
+            self._interface_num = 0 # vendor specific message
+            self._write_addr = 0x1
+            self._read_addr  = 0x81
 
-        usb.util.claim_interface(self.interface, self._interface_num)
+            usb.util.claim_interface(self.interface, self._interface_num)
 
         self.dev_struct = namedtuple("device", ["interface", "write_addr", "read_addr"])
         self.h = self.dev_struct(self.interface, self._write_addr, self._read_addr)
+
+        return 1
     
 
     def connect_uart(self, port):
 
         try:
             self.uart_handler = serial.Serial(port=port, baudrate=230400, timeout=self.timeout)
+            return 1
         except:
             self.uart_handler = None
+            return 0
 
 
     def uart_wpd(self, cmd):

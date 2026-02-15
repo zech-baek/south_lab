@@ -15,15 +15,9 @@ from interface.cui_colors import color
 from interface.i2c_bridge.tca9548a import tca9548
 from interface.docs.output_excel import excel_frame, style
 from interface.cui_logger import logger as log
-from interface.timer import precise_timer
-
 from concurrent.futures import ThreadPoolExecutor
 
-timer = precise_timer()
 chart = plot()
-
-def delay(parameter:float):
-    timer.sleep(parameter*1000)
 
 dm = keithley_dm6500(single=True)
 
@@ -44,8 +38,8 @@ ld = it8511a("COM12")
 # voltage  = [round(num, 3) for num in list_voltage]
 # --------------------------------------------------
 
-uart_ret = log.scan_uart()
+uart_ret = log.scan_uart(display=False)
 if uart_ret is not None:
     for key, value in uart_ret.items():
-        if uart_ret[key]["pid"] == 0x006c:
-            pz = km003c(port=key)
+        if uart_ret[key]["pid"] == 99 or uart_ret[key]["pid"] == 24521:
+            pz = km003c(port=key, logging=False)
