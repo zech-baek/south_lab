@@ -36,7 +36,7 @@ log_dir = pathlib.Path(doc_dir).parent/"log"
 if not log_dir.exists():
     log_dir.mkdir(parents=True, exist_ok=True)
 
-  
+
 '''
 function description
 - write_log(text)
@@ -80,16 +80,18 @@ def output(text, title, style="message"):
     
     '''
     [case 1] style == "message" : remove all color pattern, then save into the log file
-    [case 2] style == "csv"     : save the message into the csv file
+    [case 2] style == "csv"     : save the message (list) into the csv file
     '''
     
+    path, name = os.path.split(title)
+    file, ext = os.path.splitext(name)
     if style == "message":
         ansi_pattern = re.compile(r'\x1b\[[0-9;]*m') # remove color pattern
-        res = ansi_pattern.sub('', text)
-        with open(log_dir/f"{title}.log", "a") as log_file:
+        res = ansi_pattern.sub("", text)
+        with open(log_dir/f"{file}.log", "a") as log_file:
             log_file.write(f"{res}"+"\n")
     elif style == "csv":
-        with open(log_dir/f"{title}.csv", "a", newline="") as f:
+        with open(log_dir/f"{file}.csv", "a", newline="") as f:
             write_handler = csv.writer(f)
             write_handler.writerow(text)
     else:

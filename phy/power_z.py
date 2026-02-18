@@ -257,27 +257,30 @@ class km003c:
 
     def convert_data(self, data, start):
 
-        if data == None:
-            voltage = 0
-            current = 0
-            power   = 0
-        else:
-            raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
-            voltage = raw_voltage / 1000_000
-            # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
+        if data is None:
+            return [0, 0, 0]
+        
+        # raw_voltage = data[start] + (data[start+1]<<8) + (data[start+2]<<16) + (data[start+3]<<24)
+        raw_voltage = int.from_bytes(data[start:start+4], "little")
+        voltage = raw_voltage / 1000_000
+        # voltage = int.from_bytes(data[8:12], self.byteorde) / 1000000
 
-            raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
-            current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
-            # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
+        # raw_current = data[start+4] + (data[start+5]<<8) + (data[start+6]<<16) + (data[start+7]<<24)
+        # current = abs(twos.convert_signed_int(raw_current, 32) / 1000_000)
+        # current = c_int32(int.from_bytes(data[12:16], self.byteorde)).value / 1000000 # convert negative to 2s compliment
+        raw_current = int.from_bytes(data[start+4:start+8], "little", signed=True)
+        current = abs(raw_current / 1_000_000)
 
-            self.log_voltage = data[8:12]
-            self.log_current = data[12:16]
-            power = voltage * current
+        self.log_voltage = data[8:12]
+        self.log_current = data[12:16]
+        self.log_raw = data
 
-            print_log(message=f"[{log.time_stamp(display=False, ret=True)}] read data : {data}", logging=self.logging)
-            print_log(message=f"[{log.time_stamp(display=False, ret=True)}] {voltage} {current} {power}", logging=self.logging)
-            self.log_raw = data
-            
+        power = voltage * current
+
+        timestamp = log.time_stamp(display=False, ret=True)
+        print_log(message=f"[{timestamp}] read data : {data}", logging=self.logging)
+        print_log(message=f"[{timestamp}] {voltage:.6f} {current:.6f} {power:.6f}", logging=self.logging)
+        
         return [voltage, current, power]
     
 
