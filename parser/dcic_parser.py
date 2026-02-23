@@ -15,14 +15,14 @@ class parsing:
         # pps_request : 3 items
         # sc_charger_check_dcmode_status : 14 items
         # others : from adc
-        self.__adc__   = ["pps_v", "pps_i", "vbus", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc"]
+        self.__adc__   = ["time", "pps_v", "pps_i", "vbus", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc"]
 
         self.logging = logging
     
 
     def count_lines(self, filename: str) -> int:
 
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding="utf-8", errors="ignore") as f:
             return sum(1 for _ in f)
     
 
@@ -113,6 +113,19 @@ class parsing:
         handler.write(message+"\n")
 
 
+    def get_timestamp(self, content) -> str:
+
+        match = re.search(r'\[\s*(\d+\.\d+)\]', content)
+        if match:
+            return match.group(1)
+        
+        match = re.search(r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})', content)
+        if match:
+            return match.group(1)
+        
+        return ""
+
+
     def matching_start(self) -> None:
 
         name, ext = os.path.splitext(self.file_name)
@@ -180,7 +193,7 @@ class parsing:
                 print_keyword = [r"sec_bat_show_attrs: batt_current_ua_now"]
                 for scan_keyword in print_keyword:
                     if re.search(scan_keyword, decoded_line, re.IGNORECASE):
-                        self.print_comment(color.bggrn+f"IOUT read by AT Command : {decoded_line}"+color.end, line_num)
+                        self.print_comment(color.green+f"IOUT read by AT Command : {decoded_line}"+color.end, line_num)
                         with open(self.parsing_file, "a") as parsing:
                             self.file_write(handler=parsing, message=decoded_line)
                             self.file_write(handler=parsing, message=f"        // IOUT read by AT Command : {decoded_line}\n")
@@ -216,12 +229,32 @@ class parsing:
                             with open(self.parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=f"        // reached to target power, sync rx vout to pps ta_vol\n")
                     
+                    elif "sc_charger_timer_work" in decoded_line:
+                        reg_log = self.process_matching(data=decoded_line)
+                        
+                        if reg_log != None:
+                            with open(self.parsing_file, "a") as parsing:
+                                self.file_write(handler=parsing, message=reg_log)
+                                self.file_write(handler=parsing, message="\n")
+                    
                     elif "sc_charger_check_dcmode_status" in decoded_line:
                         adc_suffix = self.adc_matching(data=decoded_line)
 
                         if adc_suffix != None:
                             with open(self.parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=adc_suffix)
+                    
+                    elif f"{self.device}_info" in decoded_line.lower():
+                        match_iin  = re.search(r'set ibus regulation is\s+(\d+)', decoded_line.lower())
+                        match_vbat = re.search(r'set vbat regulation is\s+(\d+)', decoded_line.lower())
+                        if match_iin:
+                            result_iin = int(match_iin.group(1))
+                            with open(self.parsing_file, "a") as parsing:
+                                    self.file_write(handler=parsing, message=f"        // iin regulation : {result_iin/1e+6:.04f}A\n")
+                        if match_vbat:
+                            result_vbat = int(match_vbat.group(1))
+                            with open(self.parsing_file, "a") as parsing:
+                                    self.file_write(handler=parsing, message=f"        // vbat regulation : {result_vbat/1e+6:.04f}V\n")
 
                     else:
                         scan_list = self.global_keyword["scan_list"]
@@ -246,7 +279,7 @@ class parsing:
                                     suffix = "health status found"
                                     to_dump_text = f"        // {suffix}"
                                 
-                                elif scan_item == "detach" and "MUIC".lower not in decoded_line:
+                                elif scan_item == "detach" and "muic" not in decoded_line.lower():
                                     suffix = "detach keyword"
                                     to_dump_text = f"        // {suffix} : {log_text}"
                                 
@@ -264,11 +297,13 @@ class parsing:
                                         pps_cur_match = re.search(r'pps_cur=(\d+)', decoded_line)
                                         if pps_cur_match:
                                             pps_cur = float(pps_cur_match.group(1))/1000 # mA scale
+                                        
+                                        time_stamp = self.get_timestamp(content=decoded_line)
 
                                         try:
                                             diff_pps_vbus = pps_vol - vbus_adc
                                             to_dump_text = f"        // pps request : pps_vol({pps_vol:.03f}V) - vbus_adc({vbus_adc:.03f}V) = {diff_pps_vbus:.03f}V"
-                                            log.output_csv(message=[pps_vol, pps_cur, vbus_adc])
+                                            log.output_csv(message=[time_stamp, pps_vol, pps_cur, vbus_adc])
                                         except:
                                             pass
                                 
@@ -412,8 +447,9 @@ class parsing:
                         adc_dict[key_channel] = adc_final
                 ret.append(f"        // {key_channel} : {adc_final}")
 
+            time_stamp = self.get_timestamp(content=data)
             sorted_adc = [adc_dict[k] for k in sorted(adc_dict)]
-            adc_log = [
+            adc_log = [time_stamp,
                 999, 999, 999, 999, 999,
                 999, 999, 999, 999, 999,
                 999, 999, 999, 999] + sorted_adc
@@ -482,6 +518,12 @@ class parsing:
                                 remark = f"     --->  3.4V+{0.005*masked_value}V = {3.4+0.005*masked_value:.03f}V"
                             elif reg_name == "VOUT_OVP":
                                 remark = f"     --->  4.7V+{masked_value*0.2}V = {4.7+masked_value*0.2:.01f}V"
+                            elif reg_name == "IIN_REG":
+                                if masked_value <= 0b00001010:
+                                    masked_value = 0b00001010
+                                elif masked_value >= 0b10100000:
+                                    masked_value = 0b10101010
+                                remark = f"     --->  {0.0375*masked_value:.04f}A"
                             elif reg_name == "IIN_OCP":
                                 if masked_value <= 0b00001010:
                                     masked_value = 0b00001010
@@ -523,6 +565,7 @@ class parsing:
     def adc_matching(self, data:str) -> str:
 
         re_scale = 1000_000
+        time_stamp = self.get_timestamp(content=data)
 
         if data.startswith('['):
             timeline = data.split(']')[0].replace('[', '').strip()
@@ -583,7 +626,7 @@ class parsing:
                 for item, value in value_dict.items():
                     ret = ret + f"        // {item} : {value[0]:.03f}{value[1]}\n"
                 
-                csv_list = [999, 999, 999,
+                csv_list = [time_stamp, 999, 999, 999,
                             iin_target_value, iin_value      , iin_diff     , vbat_target_value, vbat_ifpm_value,
                             vbat_diff,        vbat_dcic_value, vbat_adc_diff, power_value      , vbus_value     ,
                             vwpc_value]
@@ -596,3 +639,24 @@ class parsing:
         
         else:
             return None
+
+
+    def process_matching(self, data) -> str:
+
+        pattern = r'sc_charger_timer_work:\s*timer id=(\d+),\s*charging_state=(\w+)'
+        match = re.search(pattern, data)
+        ret = None
+
+        if match:
+            timer = int(match.group(1))
+            state = match.group(2)  # this is a string, not an integer
+            process_no = self.global_keyword["process_no"]
+
+            if timer in process_no.keys():
+                ret = process_no[timer]
+
+        elif "health_status".lower() in data.lower():
+            suffix = "health status found"
+            ret = f"        // {suffix} : {data}"
+
+        return ret

@@ -175,17 +175,17 @@ star_suffix: [
   ]
 
 process_no: {
-  0  : "        // DCIC Process state : TIMER_ID_NONE",
-  1  : "        // DCIC Process state : TIMER_VBATMIN_CHECK",
-  2  : "        // DCIC Process state : TIMER_PRESET_DC",
-  3  : "        // DCIC Process state : TIMER_PRESET_CONFIG",
-  4  : "        // DCIC Process state : TIMER_CHECK_ACTIVE",
-  5  : "        // DCIC Process state : TIMER_ADJUST_CCMODE",
-  6  : "        // DCIC Process state : TIMER_ENTER_CCMODE",
-  7  : "        // DCIC Process state : TIMER_CHECK_CCMODE",
-  8  : "        // DCIC Process state : TIMER_ENTER_CVMODE",
-  9  : "        // DCIC Process state : TIMER_CHECK_CVMODE",
-  10 : "        // DCIC Process state : TIMER_PDMSG_SEND",
-  13 : "        // DCIC Process state : TIMER_CHECK_BYPASSMODE",
-  14 : "        // DCIC Process state : TIMER_DCMODE_CHANGE"
+  0  : "        // dcic process state : TIMER_ID_NONE",
+  1  : "        // dcic process state : TIMER_VBATMIN_CHECK",
+  2  : "        // dcic process state : TIMER_PRESET_DC",
+  3  : "        // dcic process state : TIMER_PRESET_CONFIG",
+  4  : "        // dcic process state : TIMER_CHECK_ACTIVE",
+  5  : "        // dcic process state : TIMER_ADJUST_CCMODE",
+  6  : "        // dcic process state : TIMER_ENTER_CCMODE",
+  7  : "        // dcic process state : TIMER_CHECK_CCMODE",
+  8  : "        // dcic process state : TIMER_ENTER_CVMODE",
+  9  : "        // dcic process state : TIMER_CHECK_CVMODE",
+  10 : "        // dcic process state : TIMER_PDMSG_SEND",
+  13 : "        // dcic process state : TIMER_CHECK_BYPASSMODE",
+  14 : "        // dcic process state : TIMER_DCMODE_CHANGE"
   }
