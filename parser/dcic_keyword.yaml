@@ -136,7 +136,7 @@ sc8563_adc_range: {
   "TDIE_ADC"  : [0x37, 0x38, 0.5,      2]
   }
 
-excluded_flag: ["vout th", "insert", "present", "drv", "remove", "adc", "th rev", "th chg", "qb on"]
+excluded_flag: ["vout th", "insert", "present", "drv", "remove", "adc", "th rev", "th chg", "qb"]
 
 scan_list: {
   "usb_typec_handle_id_power_status: "     : "usb_typec_handle_id_power_status",
@@ -158,6 +158,7 @@ scan_list: {
   "in iin regulation state"                : "Maxtill PD TA workaround",
   "batt_current_ua_now"                    : "ibat measurement by equipment in production line",
   "max77775_select_pps"                    : "pps request by pd phy",
+  "max77775_fg_read_current: current"      : "fuel gauge read current",
   "wired_interr_retry_cnt"                 : "retry dcic",
   "max77775_current_pdo"                   : "pdo list and index from ifpmic",
   "usbpd-sm5714b"                          : "pdo list and index from ifpmic"

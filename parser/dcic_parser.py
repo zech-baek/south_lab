@@ -436,6 +436,8 @@ class parsing:
                                 adc_ret[adc_name][n] = dump_value
 
             adc_dict = dict()
+            adc_info = list()
+
             for key_channel, value_adc in adc_ret.items():
                 for adc_name, adc_reg in self.adc_range.items():
                     lsb = adc_reg[2]
@@ -445,14 +447,14 @@ class parsing:
                         adc = lsb * (value_adc[0] + value_adc[1])
                         adc_final = round(adc, decimal_point+1)
                         adc_dict[key_channel] = adc_final
-                ret.append(f"        // {key_channel} : {adc_final}")
+                adc_info.append(f"        // {key_channel} : {adc_final}")
 
             time_stamp = self.get_timestamp(content=data)
             sorted_adc = [adc_dict[k] for k in sorted(adc_dict)]
             adc_log = [time_stamp,
-                999, 999, 999, 999, 999,
-                999, 999, 999, 999, 999,
-                999, 999, 999, 999] + sorted_adc
+                999999, 999999, 999999, 999999, 999999,
+                999999, 999999, 999999, 999999, 999999,
+                999999, 999999, 999999, 999999] + sorted_adc
             log.output_csv(message=adc_log)
 
             for addr in self.addr_range:                
@@ -546,8 +548,10 @@ class parsing:
                     flag_info.append(value)
                 if "stat" in value.lower() and "=0x1" in value.lower():
                     stat_info.append(value)
+            
+            stat_info.append(" ")
 
-            return ret + flag_info + stat_info
+            return adc_info + flag_info + stat_info + ret
         
         except:
             print(f" wrong format - {dump_code} {data}")
@@ -593,21 +597,21 @@ class parsing:
             vwpc_value = int(vwpc_match.group(1))/re_scale if vwpc_match else None
             vbat_dcic_value = int(vbat_dcic_match.group(1))/re_scale if vbat_dcic_match else None
 
-            vbat_diff = vbat_target_value - vbat_ifpm_value
-            vbat_adc_diff = vbat_ifpm_value - vbat_dcic_value
-            iin_diff  = iin_target_value - iin_value
-
-            if self.logging:
-                print(f"iin_value : {iin_value}")
-                print(f"iin_target_value : {iin_target_value}")
-                print(f"vbat_ifpm_value : {vbat_ifpm_value}")
-                print(f"vbat_target_value : {vbat_target_value}")
-                print(f"power_value : {power_value}")
-                print(f"vbus_value : {vbus_value}")
-                print(f"vwpc_value : {vwpc_value}")
-                print(f"vbat_dcic_value : {vbat_dcic_value}")
-
             try:
+                vbat_diff = vbat_target_value - vbat_ifpm_value
+                vbat_adc_diff = vbat_ifpm_value - vbat_dcic_value
+                iin_diff  = iin_target_value - iin_value
+
+                if self.logging:
+                    print(f"iin_value : {iin_value}")
+                    print(f"iin_target_value : {iin_target_value}")
+                    print(f"vbat_ifpm_value : {vbat_ifpm_value}")
+                    print(f"vbat_target_value : {vbat_target_value}")
+                    print(f"power_value : {power_value}")
+                    print(f"vbus_value : {vbus_value}")
+                    print(f"vwpc_value : {vwpc_value}")
+                    print(f"vbat_dcic_value : {vbat_dcic_value}")
+                
                 ret = ""
                 value_dict = {
                     "iin target"    : [iin_target_value, "A"],
@@ -626,7 +630,7 @@ class parsing:
                 for item, value in value_dict.items():
                     ret = ret + f"        // {item} : {value[0]:.03f}{value[1]}\n"
                 
-                csv_list = [time_stamp, 999, 999, 999,
+                csv_list = [time_stamp, 999999, 999999, 999999,
                             iin_target_value, iin_value      , iin_diff     , vbat_target_value, vbat_ifpm_value,
                             vbat_diff,        vbat_dcic_value, vbat_adc_diff, power_value      , vbus_value     ,
                             vwpc_value]
