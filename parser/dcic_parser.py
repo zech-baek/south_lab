@@ -81,10 +81,12 @@ class parsing:
         self.init_parameter(source_file=dump, device=device, revision=revision, vendor_keyword=vendor_keyword)
         self.matching_start()
 
+        '''
         process_done = os.path.join(self.file_path, f"process done - {self.file_name}")
         print(f"[100.00%] finish dump and adc parsing, clear the parameters")
         with open(process_done, "a") as parsing:
             parsing.write(f" ")
+        '''
 
         self.clear_parameter() # clear the parameters before exit the method
     
@@ -503,6 +505,7 @@ class parsing:
                             if re.search(reg_check, reg_name, re.IGNORECASE):
                                 suffix = "        ***"
 
+                        remark = ""
                         if "8583" in self.device:
                             if reg_name == "VEXT_OVP":
                                 remark = f"     --->  11V+{masked_value} = {11+masked_value:.01f}V"
