@@ -13,6 +13,38 @@ warnings.simplefilter("ignore", UserWarning)
 import dearpygui.dearpygui as dpg
 from openpyxl import load_workbook
 
+import yaml
+import pandas as pd
+
+
+
+def yaml_to_csv(yaml_file, csv_file):
+
+    # conver yaml file to csv
+    # e.g. yaml_to_csv('input.yaml', 'output.csv')
+
+    with open(yaml_file, 'r') as file:
+        data = yaml.safe_load(file)
+    
+    # convert hierarchical yaml to dDataframe
+    # each top-level key becomes a row, with nested attributes as columns
+
+    rows = []
+    for key, attributes in data.items():
+        row = {"register_name": key}
+
+        # add all attributes as columns
+        if isinstance(attributes, dict):
+            for attr_key, attr_value in attributes.items():
+                row[attr_key] = attr_value
+        else:
+            row["value"] = attributes
+        rows.append(row)
+    
+    df = pd.DataFrame(rows)
+    df.to_csv(csv_file, index=False)
+
+
 
 class tab_form:
     

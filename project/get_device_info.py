@@ -114,49 +114,50 @@ def get_reg_table(device, revision):
     
     for addr in addr_list:
         reg_table[addr] = ["Rsvd" for _ in range(14)] # for reserved bit
-
-
+    
     for key, value in reg_map.items():
         
         cnt = sum(1 for item in value if "address" in item) # for seperated register
-        
-        if cnt == 1 and  value["msb1"] == value["lsb1"]:
-            address = value["address1"]
-            reg_table[address][0] = address
-            reg_table[address][1] = value["register1"]
-            reg_table[address][2] = value[f"rw"]
-            reg_table[address][3] = 0
-            reg_table[address][4] = 0
-            msb = value["msb1"]
-            
-            reg_table[address][12-msb] = key
-            permission = value["permission"]
-            reg_table[address][13] = permission
-            
-        else:
-            cnt = sum(1 for item in value if "address" in item) # for seperated register
-        
-            for index in range(cnt):
-                address = value[f"address{index+1}"]
-                bith = value[f"bith{index+1}"]
-                bitl = value[f"bitl{index+1}"]
-                msb  = value[f"msb{index+1}"]
-                lsb  = value[f"lsb{index+1}"]
-                
+        try: 
+            if cnt == 1 and  value["msb1"] == value["lsb1"]:
+                address = value["address1"]
                 reg_table[address][0] = address
-                reg_table[address][1] = value[f"register{index+1}"]
+                reg_table[address][1] = value["register1"]
                 reg_table[address][2] = value[f"rw"]
                 reg_table[address][3] = 0
                 reg_table[address][4] = 0
+                msb = value["msb1"]
                 
-                for name_index in range(msb, lsb-1, -1):
-                    # log.forcedLog(f"{key}, cnt={cnt}, {12-name_index}, singluar={singular}, bith={bith}, bitl={bitl}, msb={msb}, lsb={lsb}")
-                    reg_table[address][12-name_index] = f"{key}[{bith}]"
-                    bith -= 1
-                
+                reg_table[address][12-msb] = key
                 permission = value["permission"]
                 reg_table[address][13] = permission
+                
+            else:
+                cnt = sum(1 for item in value if "address" in item) # for seperated register
+            
+                for index in range(cnt):
+                    address = value[f"address{index+1}"]
+                    bith = value[f"bith{index+1}"]
+                    bitl = value[f"bitl{index+1}"]
+                    msb  = value[f"msb{index+1}"]
+                    lsb  = value[f"lsb{index+1}"]
                     
+                    reg_table[address][0] = address
+                    reg_table[address][1] = value[f"register{index+1}"]
+                    reg_table[address][2] = value[f"rw"]
+                    reg_table[address][3] = 0
+                    reg_table[address][4] = 0
+                    
+                    for name_index in range(msb, lsb-1, -1):
+                        # log.forcedLog(f"{key}, cnt={cnt}, {12-name_index}, singluar={singular}, bith={bith}, bitl={bitl}, msb={msb}, lsb={lsb}")
+                        reg_table[address][12-name_index] = f"{key}[{bith}]"
+                        bith -= 1
+                    
+                    permission = value["permission"]
+                    reg_table[address][13] = permission
+        except:
+            print(f"error : key={key}, value={value}, index={index}")
+            
     return reg_table
 
 

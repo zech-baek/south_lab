@@ -141,7 +141,6 @@ def handler_interface_connection(sender, app_data, user_data):
         shared_var.device = app_data.split(" ")[0]
         shared_var.revision = app_data.split(" ")[1]
     
-    '''
     elif "project_select" in sender:
         
         handler_console(None, f"create register tables for {shared_var.device.upper()} {shared_var.revision.upper()}", var.id_console)
@@ -152,7 +151,6 @@ def handler_interface_connection(sender, app_data, user_data):
         reinitialize()
         handler_console(None, f"close register tables", var.id_console)
         tab_2.destroy_contents()
-    '''
 
 
 def reinitialize():
@@ -480,7 +478,7 @@ def tab_i2c():
             with dpg.child_window(width=600+8, height=50+25*n_project, tag="project_selection"):
                 
                 with dpg.group(horizontal=True, horizontal_spacing=10):
-                     
+                    
                     dpg.add_text(
                         default_value="Scanned list",
                         color=(255, 255, 0) # yellow
@@ -492,7 +490,6 @@ def tab_i2c():
                             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [0, 150, 30, 150])  # on hover
                             dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 0, 200, 150])  # even brighter when clicked
                     
-                    '''
                     dpg.add_button(
                         label="Open Project",
                         user_data="project_select",
@@ -506,7 +503,6 @@ def tab_i2c():
                         callback=handler_interface_connection,
                         tag=f"project_deselect"
                         )
-                    '''
                 
                 dpg.add_spacer(height=5)
                 
