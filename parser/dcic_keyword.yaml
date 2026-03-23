@@ -46,6 +46,7 @@ vendor_keyword: [
   "mfc_wpc_irq_thread",
   "@PPS",
   "sm5446",
+  "sm5443",
   "detach",
   "DETACH",
   "DETACHED"
