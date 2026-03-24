@@ -168,6 +168,7 @@ scan_list: {
   "ap_curr_flag"                           : "ap current flag for workaround",
   "POWER_SUPPLY_EXT_PROP_CURR_MODE"        : "current flag for workaround from ap",
   "fg_read_vcell"                          : "fuel gauge vcell read",
+  "pdic_max77775"                          : "ADI PD phy message",
   "Check CC already satisfied current decrease condition" : "iin_cc_decrease_flag=1 condition to avoid duplicate"
 }
 

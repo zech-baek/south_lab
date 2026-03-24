@@ -349,6 +349,9 @@ class parsing:
                                 
                                 elif scan_item == "usbpd-sm5714b" and any(x.lower() in decoded_line.lower() for x in ("FIXED volt", "Augmented min_volt")):
                                     to_dump_text = f"        // {log_text}"
+                                
+                                elif scan_item == "usbpd-pdic_max77775":
+                                    to_dump_text = f"        // {log_text}"
 
                                 else:
                                     to_dump_text = f"        // {log_text}"
