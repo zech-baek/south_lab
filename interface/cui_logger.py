@@ -9,9 +9,15 @@ import datetime
 import os
 import re
 import csv
+import platform
 import pyvisa as visa
 
-from interface.timer import precise_timer
+if "macos" in platform.platform().lower():
+    from time import sleep as delay
+    os_type = "macos"
+else:
+    from interface.timer import precise_timer
+    os_type = "winos"
 
 
 # ! /usr/bin/env python
@@ -253,8 +259,12 @@ class logger:
     @classmethod
     def ms_delay(cls, parameter:float):
         
-        timer = precise_timer()
-        timer.sleep(parameter)
+        if os_type == "winos":
+            timer = precise_timer()
+            timer.sleep(parameter)
+        else:
+            ms_parameter = round(parameter/1000, 3)
+            delay(ms_parameter)
 
     
     @classmethod

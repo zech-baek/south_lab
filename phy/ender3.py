@@ -30,11 +30,13 @@ import serial
 
 class preset:
 
-    origin        = "G28" # move to home
-    abs_coor      = "G90" # absolute coordinate
-    relative_coor = "G92" # relative coordinate, set the current coordinate to 0
-    move          = "G0"
-    limit         = "240"
+    parm_reset = "G28" # move to origin
+    parm_abs   = "G90" # absolute coordinate
+    parm_rel   = "G92" # relative coordinate, set the current coordinate to 0
+    parm_mov   = "G0"
+    parm_limit = "240" # absolute mode : 0 ~ 240
+    abs_coor   = [0, 0, 0]
+    rel_coor   = [120, 120, 50] # adjusted coordinate
 
 
 # F number : moving speed (lower than 3000 for x and y, z for max 300)
@@ -49,22 +51,40 @@ class ender3(serial.Serial):
             print(self.readline().decode().strip()) # make empty log
         
         self.mode = None
+        self.coor_now = [0, 0, 0]
+        self.coor_rel = [120, 120, 50]
+    
+
+    def set_abs_mode(self):
+        self.mode = "abs"
+    
+
+    def set_rel_mode(self):
+        self.mode = "rel"
+
+
+    def reset_abs_origin(self):
+
         self.set_abs_mode()
-        self.reset_origin()
+        self.send(preset.parm_reset)
+        self.coor_now = preset.abs_coor
+        log.forcedLog(f"reset [x, y, z] coordinate to {preset.abs_coor} in {self.mode} mode")
     
 
-    def reset_origin(self):
+    def reset_rel_origin(self):
 
-        self.origin = [0, 0, 0]
-        log.forcedLog(f"reset coordinate to (0, 0, 0) in {self.mode} mode")
+        preset.parm_coor = [120, 120, 50]
+        self.set_rel_mode()
+        self.coor_now = preset.rel_coor
+        log.forcedLog(f"reset [x, y, z] coordinate to {preset.rel_coor} in {self.mode} mode")
     
 
-    def print_coordinate(self):
+    def status(self):
 
-        if "absolute" in self.mode:
-            log.forcedLog(f"coordinate in {self.mode} mode : x={self.origin[0]}, y={self.origin[1]}, z={self.origin[2]}")
-        elif "relative" in self.mode:
-            log.forcedLog(f"coordinate in {self.mode} mode : x={self.origin[0]} (), y={self.origin[1]} (), z={self.origin[2]} ()")
+        if "abs" in self.mode:
+            log.forcedLog(f"coordinate in {self.mode} mode : x={self.coor_now[0]}, y={self.coor_now[1]}, z={self.coor_now[2]}")
+        elif "rel" in self.mode:
+            log.forcedLog(f"coordinate in {self.mode} mode : x={self.coor_now[0]} ({self.coor_rel[0]}), y={self.coor_now[1]} ({self.coor_rel[1]}), z={self.coor_now[2]} ({self.coor_rel[2]})")
     
 
     def send_packet(self, cmd):
