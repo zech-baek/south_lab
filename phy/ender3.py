@@ -45,13 +45,18 @@ class ender3(serial.Serial):
         
         super().__init__(port, baudrate, bytesize, parity, stopbits, timeout, xonxoff, rtscts, write_timeout, dsrdtr, inter_byte_timeout, exclusive)
 
-        while self.in_waiting:
-            print(self.readline().decode().strip()) # make empty log
-        
+        self.flush()
         self.mode = None
         self.set_abs_mode()
         self.reset_origin()
     
+
+    def flush(self):
+        
+        # while self.in_waiting:
+            # print(self.readline().decode().strip())
+        self.reset_input_buffer()
+
 
     def reset_origin(self):
 

@@ -1,5 +1,5 @@
 ACDRV_SS:
-  address1: 101
+  address1: 65
   bith1: 1
   bitl1: 0
   lsb1: 5
@@ -521,7 +521,7 @@ DEVICE_ID:
   rw: R
   singular: false
 DIS_QB_RCP:
-  address1: 103
+  address1: 67
   bith1: 0
   bitl1: 0
   lsb1: 7
@@ -640,6 +640,18 @@ EXT_FET_OPEN_STAT:
   reset: 0
   rw: R
   singular: true
+FAST_PROTECT_BLANKING:
+  address1: 66
+  bith1: 1
+  bitl1: 0
+  lsb1: 5
+  msb1: 6
+  name: FAST_PROTECT_BLANKING
+  permission: Hidden
+  register1: CTRL7
+  reset: 0
+  rw: RW
+  singular: false
 FET_OPEN:
   address1: 25
   bith1: 1
@@ -1168,6 +1180,18 @@ MODE:
   reset: 0
   rw: RW
   singular: false
+MOS_OCP_DIS:
+  address1: 66
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: MOS_OCP_DIS
+  permission: Hidden
+  register1: CTRL7
+  reset: 0
+  rw: RW
+  singular: true
 NTC_ADC:
   address1: 60
   address2: 61
@@ -1499,7 +1523,7 @@ QB2_ON_STAT:
   rw: R
   singular: true
 QB_FAST_SS:
-  address1: 101
+  address1: 65
   bith1: 1
   bitl1: 0
   lsb1: 3
@@ -1511,7 +1535,7 @@ QB_FAST_SS:
   rw: RW
   singular: false
 QB_RCP:
-  address1: 103
+  address1: 67
   bith1: 1
   bitl1: 0
   lsb1: 5
@@ -1522,6 +1546,30 @@ QB_RCP:
   reset: 0
   rw: RW
   singular: false
+QB_RCP_FLAG:
+  address1: 67
+  bith1: 0
+  bitl1: 0
+  lsb1: 4
+  msb1: 4
+  name: QB_RCP_FLAG
+  permission: Hidden
+  register1: QB_RCP_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+QB_RCP_MASK:
+  address1: 67
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: QB_RCP_MASK
+  permission: Hidden
+  register1: QB_RCP_CTRL
+  reset: 0
+  rw: RW
+  singular: true
 QB_USB_EN:
   address1: 19
   bith1: 0
@@ -2482,8 +2530,20 @@ VIN_TH_CHG_EN_STAT:
   reset: 0
   rw: R
   singular: true
+VO12OUT_UVP:
+  address1: 65
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: VO12OUT_UVP
+  permission: Hidden
+  register1: CTRL6
+  reset: 0
+  rw: RW
+  singular: false
 VO12OUT_UVP_DIS:
-  address1: 101
+  address1: 65
   bith1: 0
   bitl1: 0
   lsb1: 2
@@ -2557,6 +2617,66 @@ VOUT_ADC_DIS:
   name: VOUT_ADC_DIS
   permission: User
   register1: ADC_FN_DISABLE
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_DELTA:
+  address1: 68
+  bith1: 1
+  bitl1: 0
+  lsb1: 2
+  msb1: 3
+  name: VOUT_DELTA
+  permission: Hidden
+  register1: VOUT_DROP_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+VOUT_DELTA_AVG:
+  address1: 68
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: VOUT_DELTA_AVG
+  permission: Hidden
+  register1: VOUT_DROP_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+VOUT_DROP_CTRL:
+  address1: 68
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: VOUT_DROP_CTRL
+  permission: Hidden
+  register1: VOUT_DROP_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_FAST_DROP_FLAG:
+  address1: 68
+  bith1: 0
+  bitl1: 0
+  lsb1: 6
+  msb1: 6
+  name: VOUT_FAST_DROP_FLAG
+  permission: Hidden
+  register1: VOUT_DROP_CTRL
+  reset: 0
+  rw: RW
+  singular: true
+VOUT_FAST_DROP_MASK:
+  address1: 68
+  bith1: 0
+  bitl1: 0
+  lsb1: 5
+  msb1: 5
+  name: VOUT_FAST_DROP_MASK
+  permission: Hidden
+  register1: VOUT_DROP_CTRL
   reset: 0
   rw: RW
   singular: true
@@ -2753,7 +2873,7 @@ VOUT_TH_REV_EN_STAT:
   rw: R
   singular: true
 VOUT_TH_RE_LOW:
-  address1: 101
+  address1: 65
   bith1: 0
   bitl1: 0
   lsb1: 7
@@ -3059,12 +3179,24 @@ WPC_REMOVE_MASK:
   rw: RW
   singular: true
 ZVS_DLY_SEL:
-  address1: 100
+  address1: 64
   bith1: 5
   bitl1: 0
   lsb1: 2
   msb1: 7
   name: ZVS_DLY_SEL
+  permission: Hidden
+  register1: ZVX_CTRL
+  reset: 0
+  rw: RW
+  singular: false
+ZVS_MODE:
+  address1: 64
+  bith1: 1
+  bitl1: 0
+  lsb1: 0
+  msb1: 1
+  name: ZVS_MODE
   permission: Hidden
   register1: ZVX_CTRL
   reset: 0
