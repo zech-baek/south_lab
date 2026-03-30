@@ -2,6 +2,11 @@
 # coding=utf-8
 
 import os, sys,pathlib
+from interface.cui_logger import logger as log
+from interface.cui_colors import color
+from tabulate import tabulate as tb
+from time import sleep as delay
+import crcmod, serial
 
 try:
     # try to use __file__
@@ -20,12 +25,6 @@ log_dir = pathlib.Path(phy_dir).parent/"log"
 if not log_dir.exists():
     log_dir.mkdir(parents=True, exist_ok=True)
 
-
-from interface.cui_logger import logger as log
-from interface.cui_colors import color
-from tabulate import tabulate as tb
-from time import sleep as delay
-import crcmod, serial
 
 
 
@@ -50,14 +49,17 @@ class asd_906b(serial.Serial):
 
     """
     api list
-        - get_info()
-        - vset (setter)
-        - iset (setter)
+        - get_info : property
+        - vset : setter
+        - iset : setter, can be set to the first decimal place
         - enable (property)
         - disable (property)
         - voltage (property)
         - current (property)
+    trouble shooting
+        - if packet error exists in the received data, adjust lower baud rate
     """
+
 
     def __init__(self, port, local_addr="01", logging=False, ignore=False):
         
@@ -80,8 +82,8 @@ class asd_906b(serial.Serial):
                 )
 
             self.flush()
-            
             log.forcedLog(f"initialized the asd-906b connection to COM{port}")
+
         except:
             log.errorLog(f"{color.bgred}failed to initialize asd-906b{color.end}")
     
@@ -141,17 +143,9 @@ class asd_906b(serial.Serial):
             data_wo_crc = packet[:-2]
             calculated_crc = self.crc_generate(" ".join(data_wo_crc))
 
-            log_wrapping(
-                self.__class__.__name__,
-                    f"[receive_packet] {packet}",
-                    self.logging
-                )
-            
-            log_wrapping(
-                self.__class__.__name__,
-                    f"[receive_packet] rx_crc={rx_crc}, data_crc={calculated_crc}",
-                    self.logging
-                )
+            log_message = f"[receive_packet] packet={packet}, rx_crc={rx_crc}, data_crc={calculated_crc}"
+            log_wrapping(self.__class__.__name__, log_message, self.logging)
+            log.debugLog(log_message)
             
             if rx_crc == calculated_crc: # validate the CRC
                 return packet
@@ -159,7 +153,8 @@ class asd_906b(serial.Serial):
                 if self.ignore:
                     return packet
                 else:
-                    print("invalid crc, packet discarded")
+                    log_message = f"[receive_packet] invalid crc, packet discarded"
+                    log.debugLog("invalid crc, packet discarded")
                     return None
             
         except serial.SerialException as e:
@@ -169,6 +164,7 @@ class asd_906b(serial.Serial):
             print(f"error receiving packet: {e}")
 
 
+    @property
     def get_info(self):
 
         module = self.local_addr + preset.info
@@ -307,8 +303,10 @@ class asd_906b(serial.Serial):
     def iset(self, current):
 
         # set the same limit current for input and output
+        # can be set to the first decimal place
+
         measure_range = "04" # auto
-        current_limit = int(current*1000)
+        current_limit = int(round(current,1)*1000)
         msb_ilimt = str(f"{current_limit:04X}")[0:2]
         lsb_ilimt = str(f"{current_limit:04X}")[2:4]
         t_prot    = "96" # 150ms
@@ -331,9 +329,11 @@ class asd_906b(serial.Serial):
     
 
     def get_vi(self):
+
+        module = self.local_addr + preset.get_vi
         
         try:
-            module = self.local_addr + preset.get_vi
+            
             self.send_packet(module)
             ret = self.receive_packet()
 
@@ -343,19 +343,25 @@ class asd_906b(serial.Serial):
                 self.logging
             )
 
+            if ret == None:
+                try:
+                    self.send_packet(module)
+                    ret = self.receive_packet()
+
+                    log_wrapping(
+                        self.__class__.__name__,
+                        f"[get_vi] retry return={ret}",
+                        self.logging
+                    )
+                except:
+                    return [0, 0]
+                
             ret_voltage = self.convert_packet(hex_list=ret[4:8], ret_int=True) / 1000
             ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1000
             return [ret_voltage, ret_current]
+
         except:
-            try:
-                module = self.local_addr + preset.get_vi
-                self.send_packet(module)
-                ret = self.receive_packet()
-                ret_voltage = self.convert_packet(hex_list=ret[4:8], ret_int=True) / 1000
-                ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1000
-                return [ret_voltage, ret_current]
-            except:
-                return [0, 0]
+            return [0, 0]
 
 
 

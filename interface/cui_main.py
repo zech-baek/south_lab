@@ -37,7 +37,8 @@ import pandas as pd
 
 def log_wrapping(header, message, is_logging):
     
-    msg = f"[{header} {sys._getframe(2).f_code.co_name}] {message}"
+    # msg = f"[{header} {sys._getframe(2).f_code.co_name}] {message}"
+    msg = f"{message}"
     log.forcedLog(msg) if is_logging else log.debugLog(msg)
 
 

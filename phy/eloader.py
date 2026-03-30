@@ -4,6 +4,15 @@
 import os
 import sys
 import pathlib
+import yaml
+import pyvisa as visa
+import serial
+import threading
+import serial.tools.list_ports
+
+from interface.cui_logger import logger as log
+from interface.cui_colors import color
+from time import sleep
 
 try:
     # try to use __file__
@@ -22,14 +31,6 @@ log_dir = pathlib.Path(phy_dir).parent/"log"
 if not log_dir.exists():
     log_dir.mkdir(parents=True, exist_ok=True)
 
-
-from interface.cui_logger import logger as log
-from interface.cui_colors import color
-from time import sleep
-import yaml
-import pyvisa as visa
-import serial
-import serial.tools.list_ports
 
 
 class sdl1030x:
