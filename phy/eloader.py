@@ -475,7 +475,7 @@ class it8511a_cv:
 
 class it8511a(serial.Serial, it8511a_cc, it8511a_cv, it8511a_cr):
     
-    def __init__(self, resource=None):
+    def __init__(self, resource:int=None):
         
         log.initLogger(log.info)
         
@@ -485,7 +485,7 @@ class it8511a(serial.Serial, it8511a_cc, it8511a_cv, it8511a_cr):
             log.infoLog(f"returned list of the com ports {comport_list}")
         else:
             try:
-                serial.Serial.__init__(self, port=resource, baudrate=9600, timeout=5)
+                serial.Serial.__init__(self, port=f"COM{resource}", baudrate=9600, timeout=5)
                 super().__dict__["cc"] = it8511a_cc(self)
                 super().__dict__["cv"] = it8511a_cv(self)
                 super().__dict__["cr"] = it8511a_cr(self)

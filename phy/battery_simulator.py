@@ -61,7 +61,7 @@ class asd_906b(serial.Serial):
     """
 
 
-    def __init__(self, port, local_addr="01", logging=False, ignore=False):
+    def __init__(self, port:int, local_addr="01", logging=False, ignore=False):
         
         self.logging = logging
         self.packet_port  = f"{port:02}"
@@ -356,14 +356,29 @@ class asd_906b(serial.Serial):
                 except:
                     return [0, 0]
                 
-            ret_voltage = self.convert_packet(hex_list=ret[4:8], ret_int=True) / 1000
-            ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1000
+            ret_voltage = self.convert_packet(hex_list=ret[4:8], ret_int=True) / 1e+3
+            ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1e+6
             return [ret_voltage, ret_current]
 
         except:
             return [0, 0]
+    
+    
+    @property
+    def cfg_all(self):
+        pass
 
 
+    @cfg_all.setter
+    def cfg_all(self, *args):
+        
+        len_args = len(args)
+        if len_args == 1:
+            self.vset = args[0][0]
+            self.iset = args[0][1]
+        else:
+            log.forcedLog(f"configuration error, require voltage and current input (e.g. self.cfg_all = 5, 0.2)")
+    
 
     @property
     def voltage(self):

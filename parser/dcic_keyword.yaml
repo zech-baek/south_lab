@@ -33,7 +33,12 @@ basic_keyword: [
   "fsck.f2fs",
   "batt_current_ua_now",
   "sc8563_enable_charge enable DCIC",
-  "POWER_SUPPLY_PROP_HEALTH"
+  "POWER_SUPPLY_PROP_HEALTH",
+  "DcError",
+  "status_vbus_low",
+  "pdic_max77775",
+  "fg_read_vcell",
+  "SystemEventReceiver"
   ]
 
 vendor_keyword: [
@@ -170,6 +175,7 @@ scan_list: {
   "fg_read_vcell"                          : "fuel gauge vcell read",
   "pdic_max77775"                          : "ADI PD phy message",
   "status_vbus_low"                        : "vbus low status",
+  "DcError"                                : "DC Error is detected",
   "Check CC already satisfied current decrease condition" : "iin_cc_decrease_flag=1 condition to avoid duplicate"
 }
 

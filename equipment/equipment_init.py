@@ -27,7 +27,7 @@ dm = keithley_dm6500(single=True)
 ps = keysight_N6705()
 ds = tektronix_mdo34()
 bs = asd_906b(port=14)
-ld = it8511a("COM12")
+ld = it8511a(resource=12)
 
 # relay = relay_box(i2c_h=ic)
 # tc = chamber(port=3)

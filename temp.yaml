@@ -1,0 +1,6 @@
+Keysight_N6705C :
+  USB_ID : "USB0::10893::3842::MY56006008::0::INSTR"
+  IP : "None"
+Tektronix_MSO58 :
+  USB_ID : "None"
+  IP : "10.254.236.176"
