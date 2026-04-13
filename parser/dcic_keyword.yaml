@@ -38,7 +38,11 @@ basic_keyword: [
   "status_vbus_low",
   "pdic_max77775",
   "fg_read_vcell",
-  "SystemEventReceiver"
+  "SystemEventReceiver",
+  "usb_notifier",
+  "vbus_handle_notification",
+  "manager_handle_vbus_notification",
+  "sc_charger_set_bypass_ta_voltage_by_soc"
   ]
 
 vendor_keyword: [
@@ -167,6 +171,7 @@ scan_list: {
   "max77775_fg_read_current: current"      : "fuel gauge read current",
   "wired_interr_retry_cnt"                 : "retry dcic",
   "max77775_current_pdo"                   : "pdo list and index from ifpmic",
+  "usbpd-pdic_max77775"                    : "pdo list and index from ifpmic",
   "usbpd-sm5714b"                          : "pdo list and index from ifpmic",
   "sec_bat_check_lrp_step"                 : "lrp temperature",
   "new current is not increasing"          : "restart dcic",
@@ -174,8 +179,13 @@ scan_list: {
   "POWER_SUPPLY_EXT_PROP_CURR_MODE"        : "current flag for workaround from ap",
   "fg_read_vcell"                          : "fuel gauge vcell read",
   "pdic_max77775"                          : "ADI PD phy message",
-  "status_vbus_low"                        : "vbus low status",
+  "status_vbus_low"                        : "detect vbus low status",
+  "vbus_handle_notification"               : "vbus_handle_notification",
   "DcError"                                : "DC Error is detected",
+  "manager_handle_vbus_notification"       : "misc. info",
+  "PASS_THROUGH_VOL"                       : "pass through mode",
+  "sc_charger_set_bypass"                  : "need to check delta_soc",
+  "POWER_SUPPLY_EXT_PROP_PASS_THROUGH_MODE_TA_VOL" : "pass through mode",
   "Check CC already satisfied current decrease condition" : "iin_cc_decrease_flag=1 condition to avoid duplicate"
 }
 

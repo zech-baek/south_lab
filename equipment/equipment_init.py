@@ -17,6 +17,8 @@ from interface.docs.output_excel import excel_frame, style
 from interface.cui_logger import logger as log
 from concurrent.futures import ThreadPoolExecutor
 
+from time import sleep as delay
+
 chart = plot()
 
 dm = keithley_dm6500(single=True)
@@ -38,8 +40,10 @@ ld = it8511a(resource=12)
 # voltage  = [round(num, 3) for num in list_voltage]
 # --------------------------------------------------
 
+'''
 uart_ret = log.scan_uart(display=False)
 if uart_ret is not None:
     for key, value in uart_ret.items():
         if uart_ret[key]["pid"] == 99 or uart_ret[key]["pid"] == 24521:
             pz = km003c(port=key, logging=False)
+'''

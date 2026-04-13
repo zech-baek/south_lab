@@ -33,7 +33,9 @@ class parsing:
         self.device      = device
         self.revision    = revision
         self.trg_kmsg    = False
-
+        self.trg_sc_rel  = 0
+        self.line_flag   = True
+        
         self.file_path, self.file_name = os.path.split(self.source_file)
         self.keyword = self.merged_keyword if vendor_keyword else self.basic_keyword
         self.regmap  = get_map(device=self.device, revision=self.revision)
@@ -56,6 +58,8 @@ class parsing:
         for attr in self.__slots__:
             setattr(self, attr, None)
         self.trg_kmsg = False 
+        self.trg_sc_rel = 0
+        self.line_flag  = True
 
     def print_logo(self):
 
@@ -141,30 +145,38 @@ class parsing:
         log.output_set_filename(title=self.adc_file)
         log.output_csv(message=(self.__adc__+sorted(self.adc_range))) # append sorted adc list at the end of __adc__
         
-        count_sc_rel = 0 # driver version
+        self.trg_sc_rel = 0 # driver version
         dump_code = self.device + "_dump_registers "
-
+        
         with open(self.source_file, "rb") as dump: # binary mode
             for line_num, line in enumerate(dump, start=1):
                 
+                line_percentage = int(line_num / (self.txt_lines+1) * 100)
+                if line_percentage in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
+                    if self.line_flag:
+                        print(f"         ------------>> [passed {line_percentage}%]")
+                    self.line_flag = False
+                if line_percentage in [11, 21, 31, 41, 51, 61, 71, 81, 91]:
+                    self.line_flag = True
+
                 # -------------------------------------------------------------------------------------------------
                 decoded_line = re.sub(r"\n", "", line.decode("utf-8", errors="ignore")).rstrip() # remove line feed
                 # -------------------------------------------------------------------------------------------------
                 
                 if re.search(r"SC_REL", decoded_line, re.IGNORECASE):
                     driver_version = r"SC_REL\((.*?)\)"
-                    is_sc_rel = re.search(driver_version, decoded_line)
-
-                    if is_sc_rel:
+                    self.trg_sc_rel += 1
+                    
+                    try:
+                        is_sc_rel = re.search(driver_version, decoded_line)
                         sc_rel = is_sc_rel.group(1)
-                        count_sc_rel += 1
-                        
-                    if count_sc_rel == 1:
-                        self.print_comment(color.red+f"SC_REL : {sc_rel}"+color.end, 0)
 
-                        with open(self.parsing_file, "a") as parsing:
-                            self.file_write(handler=parsing, message=decoded_line)
-                            self.file_write(handler=parsing, message=f"        // SC_REL : {sc_rel}\n")
+                        if self.trg_sc_rel == 1:
+                            self.print_comment(color.red+f"SC_REL : {sc_rel}"+color.end, line_num)
+                            with open(self.parsing_file, "a") as parsing:
+                                self.file_write(handler=parsing, message=decoded_line)
+                                self.file_write(handler=parsing, message=f"        // SC_REL : {sc_rel}\n")
+                    except: pass
                 
                 # -----------------------------------------------------------------------------------------------
                 # print out prefix while proceed log parsing
@@ -173,14 +185,21 @@ class parsing:
                     self.print_comment(color.cyan+f"LAST KMSG : {decoded_line}"+color.end, line_num)
                     self.trg_kmsg = True
                 
-                kernel_version = [r"fsck.f2fs", r"Bootloader", r"Linux version", r"androidboot.bootloader"]
+                kernel_version = [r"kernel version", r"bootloader version"]
 
+                '''
                 for kernel_keyword in kernel_version:
                     if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
                         if "android" in decoded_line and " from " not in decoded_line and " to " not in decoded_line:
                             self.print_comment(f"bootloader version : {decoded_line}", line_num)
                         elif "bootloader" in decoded_line or "name" in decoded_line:
                             self.print_comment(f"kernel version : {decoded_line}", line_num)
+                '''
+
+                for kernel_keyword in kernel_version:
+                    if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
+                        if "android" in decoded_line or "bootloader" in decoded_line:
+                            self.print_comment(f"bootloader version : {decoded_line}", line_num)
                 
                 re_text = f"{self.device}-charger"
                 if re.search(re_text, decoded_line, re.IGNORECASE):
@@ -237,7 +256,7 @@ class parsing:
                         if reg_log != None:
                             with open(self.parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=reg_log)
-                                self.file_write(handler=parsing, message="\n")
+                                # self.file_write(handler=parsing, message="\n")
                     
                     elif "sc_charger_check_dcmode_status" in decoded_line:
                         adc_suffix = self.adc_matching(data=decoded_line)
@@ -263,7 +282,6 @@ class parsing:
                         to_dump_text = None
 
                         for scan_item, log_text in scan_list.items():
-
                             if scan_item.lower() in decoded_line.lower():
 
                                 if scan_item == "mfc_set_pps_vout":
@@ -344,14 +362,16 @@ class parsing:
                                     to_dump_text = f"        // retry keyword : {retry_result}"
                                     self.print_comment(f"retry keyword : {retry_result}", line_num)
                                 
-                                elif scan_item == "max77775_current_pdo" and any(x.lower() in decoded_line.lower() for x in ("FIXED", "APDO")):
-                                    to_dump_text = f"        // {log_text}"
+                                elif scan_item == "max77775_current_pdo" or scan_item == "usbpd-sm5714b" or scan_item == "usbpd-pdic_max77775":
+
+                                    if any(x.lower() in decoded_line.lower() for x in ("FIXED", "APDO", "Augmented min_volt")):
+                                        to_dump_text = f"        // FPDO {log_text}"
+                                    elif any(x.lower() in decoded_line.lower() for x in ("APDO", "Augmented min_volt")):
+                                        to_dump_text = f"        // APDO {log_text}"
                                 
-                                elif scan_item == "usbpd-sm5714b" and any(x.lower() in decoded_line.lower() for x in ("FIXED volt", "Augmented min_volt")):
-                                    to_dump_text = f"        // {log_text}"
-                                
-                                elif scan_item == "usbpd-pdic_max77775":
-                                    to_dump_text = f"        // {log_text}"
+                                # elif "vbus_handle_notification".lower() in scan_item:
+                                #     to_dump_text = f"        // vbus_handle_notification"
+                                #     self.print_comment(color.yellow+f"{decoded_line}"+color.end, line_num)
 
                                 else:
                                     to_dump_text = f"        // {log_text}"
@@ -509,9 +529,62 @@ class parsing:
                                 suffix = "        ***"
 
                         remark = ""
+                        mode_bit = None
                         if "8583" in self.device:
-                            if reg_name == "VEXT_OVP":
+                            if reg_name == "MODE":
+                                if masked_value in [0, 4]: mode_bit = 4
+                                elif masked_value in [1, 5]: mode_bit = 3
+                                elif masked_value in [2, 6]: mode_bit = 2
+                                elif masked_value in [3, 7]: mode_bit = 1
+                            if reg_name == "VIN_OVP":
+                                vin_ovp_offset = [3.75, 7.5, 11.25, 15]
+                                if mode_bit != None:
+                                    remark = f"     --->  {vin_ovp_offset[mode_bit-1]+0.2*mode_bit*masked_value:.02f}V"
+                            elif reg_name == "VEXT_OVP":
                                 remark = f"     --->  11V+{masked_value} = {11+masked_value:.01f}V"
+                            elif reg_name == "VBAT_REG":
+                                if masked_value <= 0b01010000:
+                                    masked_value = 0b01010000
+                                elif masked_value >= 0b11100110:
+                                    masked_value = 0b11100110
+                                remark = f"     --->  3.4V+{0.005*masked_value}V = {3.4+0.005*masked_value:.03f}V"
+                            elif reg_name == "VBAT_OVP":
+                                if masked_value <= 0b01111000:
+                                    masked_value = 0b01111000
+                                elif masked_value >= 0b11110000:
+                                    masked_value = 0b11110000
+                                remark = f"     --->  3.4V+{0.005*masked_value}V = {3.4+0.005*masked_value:.03f}V"
+                            elif reg_name == "VOUT_OVP":
+                                remark = f"     --->  4.7V+{masked_value*0.2}V = {4.7+masked_value*0.2:.01f}V"
+                            elif reg_name == "IIN_REG":
+                                if masked_value <= 0b00001010:
+                                    masked_value = 0b00001010
+                                elif masked_value >= 0b10100000:
+                                    masked_value = 0b10101010
+                                remark = f"     --->  {0.0375*masked_value:.04f}A"
+                            elif reg_name == "IIN_OCP":
+                                if masked_value <= 0b00001010:
+                                    masked_value = 0b00001010
+                                elif masked_value >= 0b10101010:
+                                    masked_value = 0b10101010
+                                remark = f"     --->  {0.0375*masked_value:.04f}A"
+                            else:
+                                remark = ""
+                        
+                        elif "8563" in self.device:
+                            ext_ovp = [6.5, 13, 13.5, 17, 17.5, 18, 18.5, 19]
+                            if reg_name == "MODE":
+                                if masked_value in [0, 4]: mode_bit = 3
+                                elif masked_value in [1, 5]: mode_bit = 2
+                                elif masked_value in [2, 3, 6, 7]: mode_bit = 1
+                            if reg_name == "VIN_OVP":
+                                vin_ovp_offset = [4.8, 9.6, 14.4]
+                                if mode_bit != None:
+                                    remark = f"     --->  {vin_ovp_offset[mode_bit-1]+0.1*mode_bit*masked_value:.01f}V"
+                            elif reg_name == "EXT1_OVP":
+                                remark = f"     --->  {ext_ovp[masked_value]:.01f}V"
+                            elif reg_name == "EXT2_OVP":
+                                remark = f"     --->  {ext_ovp[masked_value]:.01f}V"
                             elif reg_name == "VBAT_REG":
                                 if masked_value <= 0b01010000:
                                     masked_value = 0b01010000
@@ -667,6 +740,6 @@ class parsing:
 
         elif "health_status".lower() in data.lower():
             suffix = "health status found"
-            ret = f"        // {suffix} : {data}"
+            ret = f"        // {suffix} : {data}\n"
 
         return ret
