@@ -42,7 +42,8 @@ basic_keyword: [
   "usb_notifier",
   "vbus_handle_notification",
   "manager_handle_vbus_notification",
-  "sc_charger_set_bypass_ta_voltage_by_soc"
+  "sc_charger_set_bypass_ta_voltage_by_soc",
+  "sc_charger_timer_work"
   ]
 
 vendor_keyword: [
@@ -185,6 +186,8 @@ scan_list: {
   "manager_handle_vbus_notification"       : "misc. info",
   "PASS_THROUGH_VOL"                       : "pass through mode",
   "sc_charger_set_bypass"                  : "need to check delta_soc",
+  "reset flag when init device"            : "reset_flag called at every DCIC restart",
+  "dcic stop by ap, do not set iin max to DCIC" : "do not accept changing iin/vfloat during DCIC stop/restart",
   "POWER_SUPPLY_EXT_PROP_PASS_THROUGH_MODE_TA_VOL" : "pass through mode",
   "Check CC already satisfied current decrease condition" : "iin_cc_decrease_flag=1 condition to avoid duplicate"
 }
