@@ -4,12 +4,61 @@ from project.get_device_info import get_map, get_regpage
 from tqdm import tqdm # pip install tqdm
 
 import os, re, mmap, yaml, time
+import tkinter as tk
+import threading
+import queue
+
+
+
+log_queue = queue.Queue()
+log_color = {
+    "blue"   : "#00BFFF",
+    "green"  : "#00FF7F",
+    "orange" : "#FFA500",
+    "red"    : "#F5B1FC",
+    "black"  : "#000000"
+}
+
+def create_log_window(q):
+    
+    root = tk.Tk()
+    root.title("Log output")
+    root.geometry("1200x768")
+    root.configure(bg="#B9B9B9")
+
+    text = tk.Text(
+        root, wrap="word",
+        font=("Consolas", 12),
+        bg="#1e1e1e",
+        fg="#FFFFFF",
+        insertbackground="white"
+        )
+    
+    scrollbar = tk.Scrollbar(root, command=text.yview)
+    text.configure(yscrollcommand=scrollbar.set)
+
+    # register the color set
+    for level, color in log_color.items():
+        text.tag_configure(level, foreground=color)
+
+    scrollbar.pack(side="right", fill="y")
+    text.pack(expand=True, fill="both")
+
+    def polling_queue():
+        while not q.empty():
+            message, level = q.get_nowait()
+            text.insert("end", message + "\n", level)
+            text.see("end")
+        root.after(100, polling_queue)  # check the queue in every 100ms
+
+    polling_queue()
+    root.mainloop()
 
 
 
 class parsing:
 
-    def __init__(self, logging):
+    def __init__(self):
 
         self.__slots__ = ("txt_lines", "source_file", "device", "revision", "keyword",
                 "regmap", "regpage", "addr_range", "file_path", "file_name",
@@ -19,7 +68,8 @@ class parsing:
         # others : from adc
         self.__adc__   = ["time", "pps_v", "pps_i", "vbus", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc", "r_calc1", "r_calc2"]
 
-        self.logging = logging
+        self.t = threading.Thread(target=create_log_window, args=(log_queue,), daemon=True)
+        self.t.start()
     
 
     def count_lines(self, filename: str) -> int:
@@ -36,7 +86,6 @@ class parsing:
         self.revision    = revision
         self.trg_kmsg    = False
         self.trg_sc_rel  = 0
-        self.line_flag   = True
         self.store_ppsv  = None
         
         self.file_path, self.file_name = os.path.split(self.source_file)
@@ -105,16 +154,16 @@ class parsing:
         print(f'\r[{percentage:6.01f}%] ', end='', flush=True) # \r returns to the beginning of the line
     
 
-    def print_comment(self, text:str, current_line) -> None:
+    def print_comment(self, text:str, current_line:int, level="blue") -> None:
         
-        if self.logging:
-            try:
-                self.progress(line_num=current_line)
-                rstrip_text = text.rstrip()  # remove all trailing whitespace
-                print(rstrip_text)
-                
-            except:
-                pass
+        try:
+            # self.progress(line_num=current_line)
+            rstrip_text = text.rstrip()  # remove all trailing whitespace
+            log_queue.put((f"[{current_line/(self.txt_lines+1)*100:6.01f}%] {rstrip_text}", level))
+            # print(rstrip_text)
+            
+        except:
+            pass
     
 
     def file_write(self, handler, message):
@@ -144,8 +193,8 @@ class parsing:
 
         self.parsing_file  = os.path.join(self.file_path, f"{stamp} - {name}_parsing.txt")
         self.adc_file = os.path.join(self.file_path, f"{stamp} - {name}_parsing_adc.csv")
-        self.print_comment(f"start dump parsing    -> save to {self.parsing_file}", 0)
-        self.print_comment(f"start adc log         -> save to {self.adc_file}", 0)
+        self.print_comment(f"start dump parsing    -> save to {self.parsing_file}", 0, "blue")
+        self.print_comment(f"start adc log         -> save to {self.adc_file}", 0, "blue")
 
         log.output_set_filename(title=self.adc_file)
         log.output_csv(message=(self.__adc__+sorted(self.adc_range))) # append sorted adc list at the end of __adc__
@@ -160,17 +209,9 @@ class parsing:
                     
                     line_percentage = int(line_num / (self.txt_lines+1) * 100)
                     
-                    if self.logging != True:
-                        if line_percentage in list(i for i in range(5, 101, 5)):
-                            pbar.n = line_percentage
-                            pbar.refresh()
-                    else:
-                        if line_percentage in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
-                            if self.line_flag:
-                                print(f"         ------------>> [passed {line_percentage}%]")
-                            self.line_flag = False
-                        if line_percentage in [11, 21, 31, 41, 51, 61, 71, 81, 91]:
-                            self.line_flag = True
+                    if line_percentage in list(i for i in range(5, 101, 5)):
+                        pbar.n = line_percentage
+                        pbar.refresh()
                         
                     # -------------------------------------------------------------------------------------------------
                     decoded_line = re.sub(r"\n", "", line.decode("utf-8", errors="ignore")).rstrip() # remove line feed
@@ -185,7 +226,7 @@ class parsing:
                             sc_rel = is_sc_rel.group(1)
 
                             if self.trg_sc_rel == 1:
-                                self.print_comment(color.red+f"SC_REL : {sc_rel}"+color.end, line_num)
+                                self.print_comment(f"SC_REL : {sc_rel}", line_num, "blue")
                                 with open(self.parsing_file, "a") as parsing:
                                     self.file_write(handler=parsing, message=decoded_line)
                                     self.file_write(handler=parsing, message=f"        // SC_REL : {sc_rel}\n")
@@ -195,7 +236,7 @@ class parsing:
                     # print out prefix while proceed log parsing
                     # -----------------------------------------------------------------------------------------------
                     if re.search(r"LAST KMSG", decoded_line, re.IGNORECASE):
-                        self.print_comment(color.cyan+f"LAST KMSG : {decoded_line}"+color.end, line_num)
+                        self.print_comment(f"LAST KMSG : {decoded_line}", line_num, "orange")
                         self.trg_kmsg = True
                     
                     kernel_version = [r"kernel version", r"bootloader version"]
@@ -212,7 +253,7 @@ class parsing:
                     for kernel_keyword in kernel_version:
                         if re.search(kernel_keyword, decoded_line, re.IGNORECASE):
                             if "android" in decoded_line or "bootloader" in decoded_line:
-                                self.print_comment(f"bootloader version : {decoded_line}", line_num)
+                                self.print_comment(f"bootloader version : {decoded_line}", line_num, "blue")
                     
                     re_text = f"{self.device}-charger"
                     if re.search(re_text, decoded_line, re.IGNORECASE):
@@ -222,12 +263,12 @@ class parsing:
                             phrase not in decoded_line
                             for phrase in excluded_flag)
                         if flag_contain and flag_exclude:
-                            self.print_comment(color.red+f"warning flag -- {decoded_line}"+color.end, line_num)
+                            self.print_comment(f"warning flag -- {decoded_line}", line_num, "red")
                     
                     print_keyword = [r"sec_bat_show_attrs: batt_current_ua_now"]
                     for scan_keyword in print_keyword:
                         if re.search(scan_keyword, decoded_line, re.IGNORECASE):
-                            self.print_comment(color.green+f"IOUT read by AT Command : {decoded_line}"+color.end, line_num)
+                            self.print_comment(f"IOUT read by AT Command : {decoded_line}", line_num, "green")
                             with open(self.parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=decoded_line)
                                 self.file_write(handler=parsing, message=f"        // IOUT read by AT Command : {decoded_line}\n")
@@ -384,7 +425,7 @@ class parsing:
                                                         f"wpc {self.error_code.get(error_codes['wpc_err_code'], error_msg)}")
                                             
                                             to_dump_text = f"        // {err_comment}"
-                                            self.print_comment(color.red+f"{err_comment}"+color.end, line_num)
+                                            self.print_comment(f"{err_comment}", line_num, "red")
                                     
                                     elif scan_item.lower() in {"retry charging start", "maximum retries reached"}:
                                         retry_match = re.search(r'sc_charger_check_active_state:\s*(.*)', decoded_line)
@@ -392,7 +433,7 @@ class parsing:
                                             retry_result = retry_match.group(1)
 
                                         to_dump_text = f"        // retry keyword : {retry_result}"
-                                        self.print_comment(f"retry keyword : {retry_result}", line_num)
+                                        self.print_comment(f"retry keyword : {retry_result}", line_num, "red")
                                     
                                     elif scan_item == "max77775_current_pdo" or scan_item == "usbpd-sm5714b" or scan_item == "usbpd-pdic_max77775":
 
@@ -711,12 +752,12 @@ class parsing:
             if self.store_ppsv != None:
                 if vbus_value/self.store_ppsv*100 > 50:
                     calculated_r_vbus = (self.store_ppsv - vbus_value) / iin_value * 1000
-                    print(f"r1 = ({self.store_ppsv}-{vbus_value})/{iin_value}*1000 = {calculated_r_vbus}")
+                    # print(f"r1 = ({self.store_ppsv}-{vbus_value})/{iin_value}*1000 = {calculated_r_vbus}")
                 else:
                     calculated_r_vbus = 999999
                 if vwpc_value/self.store_ppsv*100 > 50:
                     calculated_r_vwpc = (self.store_ppsv - vwpc_value) / iin_value * 1000
-                    print(f"r2 = ({self.store_ppsv}-{vwpc_value})/{iin_value}*1000 = {calculated_r_vwpc}")
+                    # print(f"r2 = ({self.store_ppsv}-{vwpc_value})/{iin_value}*1000 = {calculated_r_vwpc}")
                 else:
                     calculated_r_vwpc = 999999
 
