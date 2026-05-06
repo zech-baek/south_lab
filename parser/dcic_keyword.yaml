@@ -43,7 +43,8 @@ basic_keyword: [
   "vbus_handle_notification",
   "manager_handle_vbus_notification",
   "sc_charger_set_bypass_ta_voltage_by_soc",
-  "sc_charger_timer_work"
+  "sc_charger_timer_work",
+  "sm5714b_usbpd_get_identity"
   ]
 
 vendor_keyword: [

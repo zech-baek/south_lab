@@ -39,7 +39,7 @@ def print_byte_status(reg, obj):
 
         for m in range(8):
             if parsing_list[m] == 1:
-                item_list.append(f"{color.blue}{color.bold}{sts_map[reg][m+1]}{color.end}")
+                item_list.append(f"{color.bggrn}{color.bold}{color.black}{sts_map[reg][m+1]}{color.end}")
             else:
                 item_list.append(f"{sts_map[reg][m+1]}")
         ret_map.append(item_list)

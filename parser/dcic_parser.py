@@ -66,8 +66,7 @@ class parsing:
         # pps_request : 3 items
         # sc_charger_check_dcmode_status : 14 items
         # others : from adc
-        self.__adc__   = ["time", "pps_v", "pps_i", "vbus", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc", "r_calc1", "r_calc2"]
-
+        self.__adc__ = ["time", "pps_v", "pps_i", "vbus", "pps_vbus_diff", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc", "r_calc1", "r_calc2"]
         self.t = threading.Thread(target=create_log_window, args=(log_queue,), daemon=True)
         self.t.start()
     
@@ -121,7 +120,7 @@ class parsing:
         print(f"`.  `-. | .-. ||  ||  |'-.  .-'|  .-.  || .--'|  .-.  |,--.| .-. |    '-----'    |  |   | .-. || .-. |    |  .-.  ||      \' ,-.  ||  | \  '  / `-.  / | .-. :|  .--'  ")
         print(f".-'    |' '-' ''  ''  '  |  |  |  | |  |\ `--.|  | |  ||  || '-' '               |  '--.' '-' '' '-' '    |  | |  ||  ||  |\ '-'  ||  |  \   '   /  `-.\   --.|  |     ")
         print(f"`-----'  `---'  `----'   `--'  `--' `--' `---'`--' `--'`--'|  |-'                `-----' `---' .`-  /     `--' `--'`--''--' `--`--'`--'.-'  /   `-----' `----'`--'     ")
-        print(f"                                                           `--'                                `---'                                   `---'                       JY™ ")
+        print(f"                                                           `--'                                `---'                                   `---'                       JY™ \n\n")
 
 
     def start_parsing(self, dump:str, keyword:str, device:str, revision:str, vendor_keyword:bool) -> None:
@@ -207,9 +206,8 @@ class parsing:
             with open(self.source_file, "rb") as dump: # binary mode
                 for line_num, line in enumerate(dump, start=1):
                     
-                    line_percentage = int(line_num / (self.txt_lines+1) * 100)
-                    
-                    if line_percentage in list(i for i in range(5, 101, 5)):
+                    line_percentage = int(line_num / (self.txt_lines+1) * 100) + 1
+                    if line_percentage in list(i for i in range(0, 101, 5)):
                         pbar.n = line_percentage
                         pbar.refresh()
                         
@@ -230,7 +228,8 @@ class parsing:
                                 with open(self.parsing_file, "a") as parsing:
                                     self.file_write(handler=parsing, message=decoded_line)
                                     self.file_write(handler=parsing, message=f"        // SC_REL : {sc_rel}\n")
-                        except: pass
+                        except:
+                            pass
                     
                     # -----------------------------------------------------------------------------------------------
                     # print out prefix while proceed log parsing
@@ -296,6 +295,7 @@ class parsing:
                                     
                                 with open(self.parsing_file, "a") as parsing:
                                     short_header = decoded_line.split("[0x00]")[0]
+                                    self.file_write(handler=parsing, message="\n")
                                     self.file_write(handler=parsing, message=short_header)
                                     self.file_write(handler=parsing, message=reg_log)
                         
@@ -305,12 +305,31 @@ class parsing:
                                     self.file_write(handler=parsing, message=f"        // reached to target power, sync rx vout to pps ta_vol\n")
                         
                         elif "sc_charger_timer_work" in decoded_line:
-                            reg_log = self.process_matching(data=decoded_line)
-                            
-                            if reg_log != None:
-                                with open(self.parsing_file, "a") as parsing:
-                                    self.file_write(handler=parsing, message=reg_log)
-                                    # self.file_write(handler=parsing, message="\n")
+
+                            if "timer id" in decoded_line.lower():
+                                reg_log = self.process_matching(data=decoded_line)
+                                
+                                if reg_log != None:
+                                    with open(self.parsing_file, "a") as parsing:
+                                        self.file_write(handler=parsing, message=reg_log)
+                                        # self.file_write(handler=parsing, message="\n")
+                            else:
+                                configured_iin = re.search(r'iin_cc=\s*(\d+)', decoded_line.lower())
+                                requested_iin  = re.search(r'iin_cfg=\s*(\d+)', decoded_line.lower())
+
+                                if configured_iin:
+                                    result_conf_iin = int(configured_iin.group(1))
+                                else:
+                                    result_conf_iin = None
+
+                                if requested_iin:
+                                    result_req_iin = int(requested_iin.group(1))
+                                else:
+                                    result_req_iin = None
+                                    
+                                if result_conf_iin != None and result_req_iin != None:
+                                    with open(self.parsing_file, "a") as parsing:
+                                        self.file_write(handler=parsing, message=f"        // requested iin={result_req_iin} --> configured iin={result_conf_iin}\n")
                         
                         elif "sc_charger_check_dcmode_status" in decoded_line:
                             adc_suffix = self.adc_matching(data=decoded_line)
@@ -330,24 +349,17 @@ class parsing:
                                 result_vbat = int(match_vbat.group(1))
                                 with open(self.parsing_file, "a") as parsing:
                                     self.file_write(handler=parsing, message=f"        // vbat regulation : {result_vbat/1e+6:.04f}V\n")
-
-                        elif "sc_charger_timer_work" in decoded_line.lower():
-                            configured_iin = re.search(r'iin_cc=\s*(\d+)', text.lower())
-                            requested_iin  = re.search(r'iin_cfg=\s*(\d+)', text.lower())
-
-                            if configured_iin:
-                                result_conf_iin = int(configured_iin.group(1))
-                            else:
-                                result_conf_iin = None
-
-                            if requested_iin:
-                                result_req_iin = int(requested_iin.group(1))
-                            else:
-                                result_req_iin = None
-
-                            if result_conf_iin != None and result_req_iin != None:
+                        
+                        elif "sm5714" in decoded_line.lower():
+                            # vbus_match = re.search(r'vbus_voltage=(\d+)', decoded_line) or re.search(r'vbus_voltage:(\d+)', decoded_line)
+                            vbus_match = re.search(r'vbus_voltage=(\d+)', decoded_line)
+                            if vbus_match:
+                                ifpmic_vbus = int(vbus_match.group(1))
                                 with open(self.parsing_file, "a") as parsing:
-                                    self.file_write(handler=parsing, message=f"        // requested iin={result_req_iin} --> configured iin={result_conf_iin}\n")
+                                    if "mv" in decoded_line.lower():
+                                        self.file_write(handler=parsing, message=f"        // found vbus voltage adc from ifpmic : {ifpmic_vbus/1000}V\n")
+                                    else:
+                                        self.file_write(handler=parsing, message=f"        // found vbus voltage adc from ifpmic : {ifpmic_vbus}V\n")
 
                         else:
                             scan_list = self.global_keyword["scan_list"]
@@ -537,7 +549,7 @@ class parsing:
             adc_info = list()
 
             for key_channel, value_adc in adc_ret.items():
-                for adc_name, adc_reg in self.adc_range.items():
+                for adc_name, adc_reg in sorted(self.adc_range.items()):
                     lsb = adc_reg[2]
                     decimal_point = adc_reg[3]
 
@@ -552,7 +564,8 @@ class parsing:
             adc_log = [time_stamp,
                 999999, 999999, 999999, 999999, 999999,
                 999999, 999999, 999999, 999999, 999999,
-                999999, 999999, 999999, 999999] + sorted_adc
+                999999, 999999, 999999, 999999, 999999,
+                999999, 999999] + sorted_adc
             log.output_csv(message=adc_log)
 
             for addr in self.addr_range:                
@@ -798,12 +811,12 @@ class parsing:
                 for item, value in value_dict.items():
                     ret = ret + f"        // {item} : {value[0]:.03f}{value[1]}\n"
                 
-                csv_list = [time_stamp, 999999, 999999, 999999,
+                csv_list = [time_stamp, 999999, 999999, 999999, 999999,
                             iin_target_value, iin_value      , iin_diff     , vbat_target_value, vbat_ifpm_value,
                             vbat_diff,        vbat_dcic_value, vbat_adc_diff, power_value      , vbus_value     ,
                             vwpc_value,       calculated_r_vbus,              calculated_r_vwpc]
                 log.output_csv(message=csv_list)
-
+                
                 return ret
             
             except:
