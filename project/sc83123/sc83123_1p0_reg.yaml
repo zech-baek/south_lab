@@ -190,3 +190,15 @@ VOUT_REG:
   reset: 144
   rw: RW
   singular: false
+VOUT_UVP_DIS:
+  address1: 99
+  bith1: 0
+  bitl1: 0
+  lsb1: 3
+  msb1: 3
+  name: VOUT_UVP_DIS
+  permission: User
+  register1: VOUT_UVP_DIS
+  reset: 0
+  rw: RW
+  singular: True

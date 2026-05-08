@@ -357,7 +357,7 @@ class asd_906b(serial.Serial):
                     return [0, 0]
                 
             ret_voltage = self.convert_packet(hex_list=ret[4:8], ret_int=True) / 1e+3
-            ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1e+6
+            ret_current = self.convert_packet(hex_list=ret[9:13], ret_int=True) / 1e+3
             return [ret_voltage, ret_current]
 
         except:

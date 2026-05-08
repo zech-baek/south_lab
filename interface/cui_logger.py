@@ -12,11 +12,13 @@ import csv
 import pyvisa as visa
 
 from interface.timer import precise_timer
+from decimal import Decimal
 
 
 # ! /usr/bin/env python
 # coding=utf-8
 
+import numpy as np
 import os
 import sys
 import pathlib
@@ -267,6 +269,22 @@ class logger:
         #     write_log(f"### device {n+1} : {ret[n]}")
             
         return ret
+
+
+    @classmethod
+    def float_list(cls, start:float, finish:float, step:float):
+        
+        if start > finish:
+            return "the start is larger than the end."
+        
+        else:
+            nums = Decimal(str(step))
+            decimal_count = -nums.as_tuple().exponent
+
+            np_range = np.arange(start=start, stop=finish*1.0001, step=step)
+            ret = [round(item, decimal_count) for item in np_range]
+
+            return ret
     
 
     @classmethod
