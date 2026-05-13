@@ -66,7 +66,7 @@ class parsing:
         # pps_request : 3 items
         # sc_charger_check_dcmode_status : 14 items
         # others : from adc
-        self.__adc__ = ["time", "pps_v", "pps_i", "vbus", "pps_vbus_diff", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc", "r_calc1", "r_calc2"]
+        self.__adc__ = ["time", "pps_v", "pps_i", "vbus", "pps_vbus_diff", "iin target", "iin", "iin diff", "vbat target", "vbat ifpm", "vbat diff", "vbat dcic", "vbat adc diff", "power", "vbus", "vwpc", "r_calc1", "r_calc2", "batt_current_ua_now"]
         self.t = threading.Thread(target=create_log_window, args=(log_queue,), daemon=True)
         self.t.start()
     
@@ -86,6 +86,7 @@ class parsing:
         self.trg_kmsg    = False
         self.trg_sc_rel  = 0
         self.store_ppsv  = None
+        self.batt_curr   = 999999
         
         self.file_path, self.file_name = os.path.split(self.source_file)
         self.keyword = self.merged_keyword if vendor_keyword else self.basic_keyword
@@ -112,6 +113,7 @@ class parsing:
         self.trg_sc_rel = 0
         self.line_flag  = True
         self.store_ppsv  = None
+        self.batt_curr = 999999
 
     def print_logo(self):
 
@@ -271,6 +273,13 @@ class parsing:
                             with open(self.parsing_file, "a") as parsing:
                                 self.file_write(handler=parsing, message=decoded_line)
                                 self.file_write(handler=parsing, message=f"        // IOUT read by AT Command : {decoded_line}\n")
+                            
+                            match = re.search(r'\((\d+)\)', decoded_line)
+                            if match:
+                                self.batt_curr = int(match.group(1))/1e+6
+                            else:
+                                self.batt_curr = 999999
+
                     # -----------------------------------------------------------------------------------------------
 
                     if any(keyword in decoded_line for keyword in self.keyword):
@@ -814,8 +823,10 @@ class parsing:
                 csv_list = [time_stamp, 999999, 999999, 999999, 999999,
                             iin_target_value, iin_value      , iin_diff     , vbat_target_value, vbat_ifpm_value,
                             vbat_diff,        vbat_dcic_value, vbat_adc_diff, power_value      , vbus_value     ,
-                            vwpc_value,       calculated_r_vbus,              calculated_r_vwpc]
+                            vwpc_value,       calculated_r_vbus,              calculated_r_vwpc, self.batt_curr]
                 log.output_csv(message=csv_list)
+                
+                self.batt_curr = 999999
                 
                 return ret
             
