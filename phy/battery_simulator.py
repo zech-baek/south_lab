@@ -64,7 +64,7 @@ class asd_906b(serial.Serial):
     def __init__(self, port:int, local_addr="01", logging=False, ignore=False):
         
         self.logging = logging
-        self.packet_port  = f"{port:02}"
+        self.packet_port  = f"{port}"
         self.packet_read  = f"{0x11:02x}"
         self.packet_write = f"{0x10:02x}"
         self.local_addr = [local_addr]

@@ -11,6 +11,6 @@ emulator :
     device : "raspberry pi"
     channel : 1
 i2c_address :
-  default : 0x6e # default address
+  default : 0x65 # default address
   alternative :
-    0 : 0x6f
+    0 : 0x66

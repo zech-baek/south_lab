@@ -12,7 +12,7 @@ power_analyzer :
   keysight_n6705 : "USB0::0x0957::0x0F07::MY47000200::INSTR"
 
 oscilloscope :
-  tektronix_mdo34 : "USB0::0x0699::0x052C::SGVJ0003244::INSTR"
+  tektronix_mdo34 : "USB0::0x0699::0x052C::C077255::INSTR"
 
 source_meter :
   keithley_2470: "USB0::0x05E6::0x2470::04574786::INSTR"

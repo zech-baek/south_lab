@@ -32,7 +32,8 @@ dm2 = keithley_dm6500(single=True, resource_name=dm2_id)
 
 ps = keysight_N6705()
 ds = tektronix_mdo34()
-bs = asd_906b(port=14)
+bs = asd_906b(port=5)
+
 ld = it8511a(resource=20)
 
 # relay = relay_box(i2c_h=ic)

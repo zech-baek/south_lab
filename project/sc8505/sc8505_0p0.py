@@ -29,7 +29,7 @@ from interface.cui_logger import logger as log
 from project.get_device_info import get_map, get_i2c_info
 
 # customizing module
-from project.sc8563.sc8563_function import function
+from project.sc8505.sc8505_function import function
 
 log.initLogger(log.error)
 
