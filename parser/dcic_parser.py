@@ -813,8 +813,8 @@ class parsing:
                     "power"         : [power_value, "W"],
                     "vbus"          : [vbus_value, "V"],
                     "vwpc"          : [vwpc_value, "V"],
-                    "calculated_r1" : [calculated_r_vbus, "mR"],
-                    "calculated_r2" : [calculated_r_vwpc, "mR"]
+                    # "calculated_r1" : [calculated_r_vbus, "mR"],
+                    # "calculated_r2" : [calculated_r_vwpc, "mR"]
                 }
 
                 for item, value in value_dict.items():

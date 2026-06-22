@@ -5,6 +5,11 @@ import usb.core
 import usb.util
 import contextlib
 
+try:
+    import libusb_package
+except ImportError:
+    libusb_package = None
+
 from usb.core import Device
 from collections import namedtuple
 from ctypes import c_int32
@@ -67,6 +72,8 @@ class km003c:
         self.pid = pid or self.Product_Id
         self.port = port
         self.timeout = timeout
+        self.interface = None
+        self.uart_handler = None
 
         self.reset_uart_port(self.port)
         ret_usb = self.connect_usb(self.vid, self.pid)
@@ -108,7 +115,8 @@ class km003c:
 
     def connect_usb(self, vid, pid):
 
-        self.interface = usb.core.find(idVendor=vid, idProduct=pid)
+        backend = libusb_package.get_libusb1_backend() if libusb_package else None
+        self.interface = usb.core.find(idVendor=vid, idProduct=pid, backend=backend)
 
         if self.interface is None:
             log.forcedLog(f"power-z km003c not found")

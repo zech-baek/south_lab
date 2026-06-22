@@ -57,11 +57,11 @@ class function:
         adc_table = {
             "iin"   : ["IIN_ADC"  , 0.001875],
             "vin"   : ["VIN_ADC"  , 0.005],
-            "vext1" : ["VEXT1_ADC", 0.005],
-            "vext2" : ["VEXT2_ADC", 0.005],
+            "vb_out": ["VB_OUT_ADC", 0.005],
+            "vusb"  : ["VUSB_ADC" , 0.005],
+            "vext"  : ["VEXT_ADC" , 0.005],
             "vout"  : ["VOUT_ADC" , 0.00125],
             "vbat"  : ["VBAT_ADC" , 0.00125],
-            "ibat"  : ["IBAT_ADC" , 0.003125],
             "c1p"   : ["C1P_ADC"  , 0.005],
             "ntc"   : ["NTC_ADC"  , 0.01465],
             "tdie"  : ["TDIE_ADC" , 0.5]
@@ -88,14 +88,14 @@ class function:
     @property
     def status(self):
         
-        status_register = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12]
+        status_register = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x14,0x15,0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D]
         print_byte_status(reg=status_register, obj=self.obj)
     
     
     @property
     def status_ctrl(self):
         
-        status_register = [0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A]
+        status_register = [0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36]
         print_byte_status(reg=status_register, obj=self.obj)
     
 
@@ -125,11 +125,11 @@ class function:
         sts_reg = {
             "IIN_ADC"    : 0.001875,
             "VIN_ADC"    : 0.005,
-            "VEXT1_ADC"   : 0.005,
-            "VEXT2_ADC"   : 0.005,
+            "VB_OUT_ADC" : 0.005,
+            "VUSB_ADC"   : 0.005,
+            "VEXT_ADC"   : 0.005,
             "VOUT_ADC"   : 0.00125,
             "VBAT_ADC"   : 0.00125,
-            "IBAT_ADC"   : 0.003125,
             "C1P_ADC"    : 0.005,
             "NTC_ADC"    : 0.01465,
             "TDIE_ADC"   : 0.5
@@ -157,34 +157,58 @@ class function:
     @property
     def enable_charging(self):
 
-        self.obj.write_byte(0x13, 0xd0)
+        self.obj.CP_EN = 1
         print(f"CP_EN = {self.obj.CP_EN}")
-        print(f"QB_EN = {self.obj.QB_EN}")
+        print(f"QB1_CTRL2 = {self.obj.QB1_CTRL2}")
+        print(f"QB2_CTRL1 = {self.obj.QB2_CTRL1}")
+        print(f"QB2_CTRL2 = {self.obj.QB2_CTRL2}")
+
+
+    @property
+    def qb1_enable_charging(self):
+
+        self.obj.STANDBY_MODE_SET = 1
+        self.obj.QB1_CTRL2 = 1
+        self.obj.CP_EN = 1
+
+        print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
+        print(f"QB1_CTRL2 = {self.obj.QB1_CTRL2}")
+        print(f"CP_EN = {self.obj.CP_EN}")
+
+
+    @property
+    def qb2_enable_charging(self):
+
+        self.obj.STANDBY_MODE_SET = 1
+        self.obj.QB2_CTRL1 = 1
+        self.obj.QB2_CTRL2 = 1
+        self.obj.CP_EN = 1
+
+        print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
+        print(f"QB2_CTRL1 = {self.obj.QB2_CTRL1}")
+        print(f"QB2_CTRL2 = {self.obj.QB2_CTRL2}")
+        print(f"CP_EN = {self.obj.CP_EN}")
     
 
     @property
     def preparing_charging(self):
 
         self.obj.IIN_REG_DIS = 1
-        self.obj.IBAT_REG_DIS = 1
         self.obj.VBAT_REG_DIS = 1
-        self.obj.IBAT_OCP_DIS = 1
         self.obj.IIN_UCP_DIS = 1
         self.obj.NTC_FLT_DIS = 1
         self.obj.VBAT_OVP_DIS = 1
         self.obj.STANDBY_MODE_SET = 1
-        self.obj.VEXT_SHUT_DOWN_SET = 0
+        self.obj.VUSB_SHUTDOWN_SET = 0
         self.obj.SS_TIMEOUT = 0
 
         print(f"IIN_REG_DIS = {self.obj.IIN_REG_DIS}")
-        print(f"IBAT_REG_DIS = {self.obj.IBAT_REG_DIS}")
         print(f"VBAT_REG_DIS = {self.obj.VBAT_REG_DIS}")
-        print(f"IBAT_OCP_DIS = {self.obj.IBAT_OCP_DIS}")
         print(f"IIN_UCP_DIS = {self.obj.IIN_UCP_DIS}")
         print(f"NTC_FLT_DIS = {self.obj.NTC_FLT_DIS}")
         print(f"VBAT_OVP_DIS = {self.obj.VBAT_OVP_DIS}")
         print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
-        print(f"VEXT_SHUT_DOWN_SET = {self.obj.VEXT_SHUT_DOWN_SET}")
+        print(f"VUSB_SHUTDOWN_SET = {self.obj.VUSB_SHUTDOWN_SET}")
         print(f"SS_TIMEOUT = {self.obj.SS_TIMEOUT}")
     
 
@@ -292,17 +316,54 @@ class function:
     def status_reg(self):
         
         control_reg = [
-            "MODE", "SS_TIMEOUT", "FREQ_SHIFT", "FSW_SET", "SYNC_EN", "SET_IBAT_SNS_HS", "SET_IBAT_SNS_RES", 
-            "VEXT_SHUT_DOWN_SET", "STANDBY_MODE_SET", "WD_VEXT_SHUTDOWN_EN", "WD_STANDBY_EN", "WD_TIMEOUT", 
-            "WD_TIMEOUT_DIS", "EXT1_OVP", "EXT1_SW_CTRL1", "EXT1_SW_CTRL2", "EXT2_SW_CTRL1", "EXT2_SW_CTRL2", 
-            "EXT2_GATE_CTRL", "EXT2_OVP", "IIN_REG", "VBAT_REG", "VBAT_OVP", "IBAT_REG", "VIN_OVP", "VOUT_OVP", 
-            "IIN_OCP", "C1P2OUT_OVP", "C1P2OUT_UVP", "NTC_FLT_DIS", "VBAT_REG_DIS", "IIN_REG_DIS", "IIN_UCP_DIS", 
-            "TDIE_REG_DIS", "TDIE_REG", "VBAT_OVP_DIS", "IIN_UCP_DIS", "IIN_OCP_DG_SET", "VBAT_OVP_DG_SET", 
-            "VIN_OVP_DG_SET", "VOUT_OVP_DG_SET", "VEXT1_OVP_DG_SET", "VEXT2_OVP_DG_SET", "IIN_UCP_FALL_DG_SET"
+            "MODE", "CP_EN", "QB1_CTRL2", "QB2_CTRL1", "QB2_CTRL2", "QB2_OTG_MODE",
+            "SS_TIMEOUT", "SS_FAIL_DIS", "FREQ_SHIFT", "FSW_SET", "SYNC_EN",
+            "STANDBY_MODE_SET", "VUSB_SHUTDOWN_SET", "WD_VUSB_SHUTDOWN_EN",
+            "WD_STANDBY_EN", "WD_TIMEOUT", "WD_TIMEOUT_DIS",
+            "VUSB_SW_CTRL1", "VUSB_SW_CTRL2", "VUSB_OFF_GATE_CTRL", "VUSB_OVP_SEL",
+            "VUSB_OVP", "VUSB_OVP_DIS", "VUSB_DISCHG_CTRL1", "VUSB_DISCHG_CTRL2",
+            "VEXT_SW_CTRL1", "VEXT_SW_CTRL2", "VEXT_OFF_GATE_CTRL", "VEXT_OVP_SEL",
+            "VEXT_OVP", "VEXT_OVP_DIS", "VEXT_DISCHG_CTRL1", "VEXT_DISCHG_CTRL2",
+            "VB_OUT_OVP", "VB_OUT_OVP_DIS", "VB_OUT_PD_EN", "VB_OUT_PRESENT_DIS",
+            "VIN_OVP", "VIN_OVP_DIS", "VIN_PRESENT_DIS", "VOUT_OVP", "VOUT_OVP_DIS",
+            "VBAT_REG", "VBAT_REG_DIS", "VBAT_OVP", "VBAT_OVP_DIS",
+            "IIN_REG", "IIN_REG_DIS", "IIN_OCP", "IIN_OCP_DIS", "IIN_UCP_CFG",
+            "IIN_UCP_DIS", "IIN_UCP_EN_METHOD_SEL", "IIN_UCP_FALL_BLANKING_SET",
+            "TDIE_REG", "TDIE_REG_DIS", "IIN_TDIE_REG_INTERVAL", "NTC_FLT_DIS",
+            "C1P2OUT_OVP", "C1P2OUT_OVP_DIS", "C1P2OUT_UVP", "C1P2OUT_UVP_DIS",
+            "ADC_EN", "ADC_RATE", "ADC_FREEZE", "IIN_ADC_DIS", "VIN_ADC_DIS",
+            "VB_OUT_ADC_DIS", "VUSB_ADC_DIS", "VEXT_ADC_DIS", "VOUT_ADC_DIS",
+            "VBAT_ADC_DIS", "C1P_ADC_DIS", "NTC_ADC_DIS", "TDIE_ADC_DIS",
+            "IIN_OCP_DG_SET", "VBAT_OVP_DG_SET", "VIN_OVP_DG_SET",
+            "VOUT_OVP_DG_SET", "VEXT_OVP_DG_SET", "VUSB_OVP_DG_SET",
+            "VB_OUT_OVP_DG_SET", "IIN_UCP_FALL_DG_SET"
             ]
         
         for reg in control_reg:
             
             ret = getattr(self.obj, reg)
             print(f"{reg} = {ret:#x} ({ret})")     
+
+
+    @property
+    def status_power_path(self):
+
+        status_list = [
+            "VIN_PRESENT_STAT", "VB_OUT_PRESENT_STAT", "VOUT_INSERT_STAT",
+            "VIN_TH_CHG_EN_STAT", "VB_OUT_TH_CHG_EN_STAT",
+            "VOUT_TH_CHG_EN_STAT", "VOUT_TH_REV_EN_STAT",
+            "VUSB_INSERT_STAT", "VEXT_INSERT_STAT",
+            "VUSB_DRV_ON_STAT", "VEXT_DRV_ON_STAT",
+            "VUSB_OVP_STAT", "VEXT_OVP_STAT",
+            "QB1_ON_STAT", "QB2_ON_STAT", "CP_SWITCHING_STAT"
+        ]
+
+        ret_map = [["Status", "Value"]]
+        for status in status_list:
+            value = getattr(self.obj, status)
+            if value == 1:
+                value = f"{color.bggrn}{color.bold}{color.black}{value}{color.end}"
+            ret_map.append([status, value])
+
+        print(tb(ret_map, headers="firstrow", numalign="right"))
 
