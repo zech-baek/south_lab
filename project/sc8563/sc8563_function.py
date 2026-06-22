@@ -39,7 +39,7 @@ def print_byte_status(reg, obj):
 
         for m in range(8):
             if parsing_list[m] == 1:
-                item_list.append(f"{color.bggrn}{color.bold}{color.black}{sts_map[reg][m+1]}{color.end}")
+                item_list.append(f"{color.bggㅈrn}{color.bold}{color.black}{sts_map[reg][m+1]}{color.end}")
             else:
                 item_list.append(f"{sts_map[reg][m+1]}")
         ret_map.append(item_list)
@@ -50,24 +50,24 @@ def print_byte_status(reg, obj):
 
 class function:
 
+    ADC_TABLE = {
+        "iin"   : ["IIN_ADC"   , 0.001875, "A"],
+        "vin"   : ["VIN_ADC"   , 0.005   , "V"],
+        "vext1" : ["VEXT1_ADC" , 0.005   , "V"],
+        "vext2" : ["VEXT2_ADC" , 0.005   , "V"],
+        "vout"  : ["VOUT_ADC"  , 0.00125 , "V"],
+        "vbat"  : ["VBAT_ADC"  , 0.00125 , "V"],
+        "ibat"  : ["IBAT_ADC"  , 0.003125, "A"],
+        "c1p"   : ["C1P_ADC"   , 0.005   , "V"],
+        "ntc"   : ["NTC_ADC"   , 0.01465 , "%"],
+        "tdie"  : ["TDIE_ADC"  , 0.5     , "C"]
+    }
+
     def __init__(self, obj):
 
         self.obj = obj
 
-        adc_table = {
-            "iin"   : ["IIN_ADC"  , 0.001875],
-            "vin"   : ["VIN_ADC"  , 0.005],
-            "vext1" : ["VEXT1_ADC", 0.005],
-            "vext2" : ["VEXT2_ADC", 0.005],
-            "vout"  : ["VOUT_ADC" , 0.00125],
-            "vbat"  : ["VBAT_ADC" , 0.00125],
-            "ibat"  : ["IBAT_ADC" , 0.003125],
-            "c1p"   : ["C1P_ADC"  , 0.005],
-            "ntc"   : ["NTC_ADC"  , 0.01465],
-            "tdie"  : ["TDIE_ADC" , 0.5]
-        }
-
-        self.create_property("adc", adc_table)
+        self.create_property("adc", self.ADC_TABLE)
     
 
     def create_property(self, suffix, config_list):
@@ -104,54 +104,30 @@ class function:
 
         initial_set = self.obj.ADC_EN
         self.obj.ADC_EN = 1
+        try:
+            # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
+            # print_byte_status(reg=status_register, obj=self.obj)
+
+            header = ["ADC", "Hex", "LSB", "Value"]
         
-        # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
-        # print_byte_status(reg=status_register, obj=self.obj)
+            ret_map = []
+            ret_map.append(header)
 
-        lsb_iin   = 0.001875
-        lsb_vin   = 0.005
-        lsb_vext1 = 0.005
-        lsb_vext2 = 0.005
-        lsb_vout  = 0.00125
-        lsb_vbat  = 0.00125
-        lsb_tdie  = 0.5
-        lsb_c1p   = 0.005
-        lsb_ibat  = 0.003125
-        lsb_ntc   = 0.01465
+            for reg, lsb, unit in self.ADC_TABLE.values():
 
-        sts_map = dict()
-        header = ["ADC", "Hex", "Value"]
+                ret = getattr(self.obj, reg)
+                
+                item_list = []
+                item_list.append(f"{reg}")
+                item_list.append(f"{ret:#05x}")
+                item_list.append(f"{lsb:g} {unit}")
+                item_list.append(f"{ret*lsb:g} {unit}")
+                
+                ret_map.append(item_list)
 
-        sts_reg = {
-            "IIN_ADC"    : 0.001875,
-            "VIN_ADC"    : 0.005,
-            "VEXT1_ADC"   : 0.005,
-            "VEXT2_ADC"   : 0.005,
-            "VOUT_ADC"   : 0.00125,
-            "VBAT_ADC"   : 0.00125,
-            "IBAT_ADC"   : 0.003125,
-            "C1P_ADC"    : 0.005,
-            "NTC_ADC"    : 0.01465,
-            "TDIE_ADC"   : 0.5
-        }
-    
-        ret_map = []
-        ret_map.append(header)
-
-        for reg, lsb in sts_reg.items():
-
-            ret = getattr(self.obj, reg)
-            
-            item_list = []
-            item_list.append(f"{reg}")
-            item_list.append(f"{ret:#05x}")
-            item_list.append(f"{ret*lsb}")
-            
-            ret_map.append(item_list)
-
-        print(tb(ret_map, headers="firstrow", numalign="right"))
-        
-        self.obj.ADC_EN = initial_set
+            print(tb(ret_map, headers="firstrow", numalign="right"))
+        finally:
+            self.obj.ADC_EN = initial_set
     
 
     @property

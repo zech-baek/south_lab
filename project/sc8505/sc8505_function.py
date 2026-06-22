@@ -50,142 +50,22 @@ def print_byte_status(reg, obj):
 
 class function:
 
+    STATUS_REGISTERS = [  0x06, 0x0A, 0x0F, 0x10, 0x12,
+                          0x13, 0x14, 0x16, 0x17,
+                          0x18, 0x19, 0x1B,
+                          0x1D, 0x1E, 0x20, 0x22,
+                          0x40, 0x41, 0x42, 0x43,
+                          0x50, 0x51, 0x52, 0x53, 0x54, 0x55]
+
     def __init__(self, obj):
 
         self.obj = obj
-
-        adc_table = {
-            "iin"   : ["IIN_ADC"  , 0.001875],
-            "vin"   : ["VIN_ADC"  , 0.005],
-            "vext1" : ["VEXT1_ADC", 0.005],
-            "vext2" : ["VEXT2_ADC", 0.005],
-            "vout"  : ["VOUT_ADC" , 0.00125],
-            "vbat"  : ["VBAT_ADC" , 0.00125],
-            "ibat"  : ["IBAT_ADC" , 0.003125],
-            "c1p"   : ["C1P_ADC"  , 0.005],
-            "ntc"   : ["NTC_ADC"  , 0.01465],
-            "tdie"  : ["TDIE_ADC" , 0.5]
-        }
-
-        self.create_property("adc", adc_table)
-    
-
-    def create_property(self, suffix, config_list):
-
-        for prefix, cfg in config_list.items():
-            setattr(self.__class__, f"{prefix}_{suffix}", property(lambda self, cfg=cfg: getattr(self, suffix)(cfg)))
-    
-
-    def adc(self, cfg):
-
-        reg = cfg[0]
-        lsb = cfg[1]
-
-        raw = getattr(self.obj, reg)
-        return raw * lsb
     
 
     @property
     def status(self):
         
-        status_register = [0x13,0x14,0x16,0x17,0x18,0x19,0x1B,0x22,0x51,0x52]
-        print_byte_status(reg=status_register, obj=self.obj)
-    
-    
-    @property
-    def status_ctrl(self):
-        
-        status_register = [0x06,0x0A,0x0F,0x10,0x12,0x1D,0x1E,0x20,0x40,0x41,0x42,0x43,0x50,0x53,0x54,0x55]
-        print_byte_status(reg=status_register, obj=self.obj)
-    
-
-    @property
-    def status_adc(self):
-
-        initial_set = self.obj.ADC_EN
-        self.obj.ADC_EN = 1
-        
-        # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
-        # print_byte_status(reg=status_register, obj=self.obj)
-
-        lsb_iin   = 0.001875
-        lsb_vin   = 0.005
-        lsb_vext1 = 0.005
-        lsb_vext2 = 0.005
-        lsb_vout  = 0.00125
-        lsb_vbat  = 0.00125
-        lsb_tdie  = 0.5
-        lsb_c1p   = 0.005
-        lsb_ibat  = 0.003125
-        lsb_ntc   = 0.01465
-
-        sts_map = dict()
-        header = ["ADC", "Hex", "Value"]
-
-        sts_reg = {
-            "IIN_ADC"    : 0.001875,
-            "VIN_ADC"    : 0.005,
-            "VEXT1_ADC"   : 0.005,
-            "VEXT2_ADC"   : 0.005,
-            "VOUT_ADC"   : 0.00125,
-            "VBAT_ADC"   : 0.00125,
-            "IBAT_ADC"   : 0.003125,
-            "C1P_ADC"    : 0.005,
-            "NTC_ADC"    : 0.01465,
-            "TDIE_ADC"   : 0.5
-        }
-    
-        ret_map = []
-        ret_map.append(header)
-
-        for reg, lsb in sts_reg.items():
-
-            ret = getattr(self.obj, reg)
-            
-            item_list = []
-            item_list.append(f"{reg}")
-            item_list.append(f"{ret:#05x}")
-            item_list.append(f"{ret*lsb}")
-            
-            ret_map.append(item_list)
-
-        print(tb(ret_map, headers="firstrow", numalign="right"))
-        
-        self.obj.ADC_EN = initial_set
-    
-
-    @property
-    def enable_charging(self):
-
-        self.obj.write_byte(0x13, 0xd0)
-        print(f"CP_EN = {self.obj.CP_EN}")
-        print(f"QB_EN = {self.obj.QB_EN}")
-    
-
-    @property
-    def preparing_charging(self):
-
-        self.obj.IIN_REG_DIS = 1
-        self.obj.IBAT_REG_DIS = 1
-        self.obj.VBAT_REG_DIS = 1
-        self.obj.IBAT_OCP_DIS = 1
-        self.obj.IIN_UCP_DIS = 1
-        self.obj.NTC_FLT_DIS = 1
-        self.obj.VBAT_OVP_DIS = 1
-        self.obj.STANDBY_MODE_SET = 1
-        self.obj.VEXT_SHUT_DOWN_SET = 0
-        self.obj.SS_TIMEOUT = 0
-
-        print(f"IIN_REG_DIS = {self.obj.IIN_REG_DIS}")
-        print(f"IBAT_REG_DIS = {self.obj.IBAT_REG_DIS}")
-        print(f"VBAT_REG_DIS = {self.obj.VBAT_REG_DIS}")
-        print(f"IBAT_OCP_DIS = {self.obj.IBAT_OCP_DIS}")
-        print(f"IIN_UCP_DIS = {self.obj.IIN_UCP_DIS}")
-        print(f"NTC_FLT_DIS = {self.obj.NTC_FLT_DIS}")
-        print(f"VBAT_OVP_DIS = {self.obj.VBAT_OVP_DIS}")
-        print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
-        print(f"VEXT_SHUT_DOWN_SET = {self.obj.VEXT_SHUT_DOWN_SET}")
-        print(f"SS_TIMEOUT = {self.obj.SS_TIMEOUT}")
+        print_byte_status(reg=self.STATUS_REGISTERS, obj=self.obj)
     
 
     def log_analyzer(self, log_value):
@@ -286,23 +166,3 @@ class function:
             log.output_csv(temp)
         
         xl.close
-    
-
-    @property
-    def status_reg(self):
-        
-        control_reg = [
-            "MODE", "SS_TIMEOUT", "FREQ_SHIFT", "FSW_SET", "SYNC_EN", "SET_IBAT_SNS_HS", "SET_IBAT_SNS_RES", 
-            "VEXT_SHUT_DOWN_SET", "STANDBY_MODE_SET", "WD_VEXT_SHUTDOWN_EN", "WD_STANDBY_EN", "WD_TIMEOUT", 
-            "WD_TIMEOUT_DIS", "EXT1_OVP", "EXT1_SW_CTRL1", "EXT1_SW_CTRL2", "EXT2_SW_CTRL1", "EXT2_SW_CTRL2", 
-            "EXT2_GATE_CTRL", "EXT2_OVP", "IIN_REG", "VBAT_REG", "VBAT_OVP", "IBAT_REG", "VIN_OVP", "VOUT_OVP", 
-            "IIN_OCP", "C1P2OUT_OVP", "C1P2OUT_UVP", "NTC_FLT_DIS", "VBAT_REG_DIS", "IIN_REG_DIS", "IIN_UCP_DIS", 
-            "TDIE_REG_DIS", "TDIE_REG", "VBAT_OVP_DIS", "IIN_UCP_DIS", "IIN_OCP_DG_SET", "VBAT_OVP_DG_SET", 
-            "VIN_OVP_DG_SET", "VOUT_OVP_DG_SET", "VEXT1_OVP_DG_SET", "VEXT2_OVP_DG_SET", "IIN_UCP_FALL_DG_SET"
-            ]
-        
-        for reg in control_reg:
-            
-            ret = getattr(self.obj, reg)
-            print(f"{reg} = {ret:#x} ({ret})")     
-
