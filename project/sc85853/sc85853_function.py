@@ -103,6 +103,7 @@ class function:
     def status_adc(self):
 
         initial_set = self.obj.ADC_EN
+        self.obj.ADC_RATE = 0
         self.obj.ADC_EN = 1
         try:
             # status_register = [0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F]
@@ -135,32 +136,29 @@ class function:
 
         self.obj.CP_EN = 1
         print(f"CP_EN = {self.obj.CP_EN}")
-        print(f"QB1_CTRL2 = {self.obj.QB1_CTRL2}")
-        print(f"QB2_CTRL1 = {self.obj.QB2_CTRL1}")
-        print(f"QB2_CTRL2 = {self.obj.QB2_CTRL2}")
 
 
     @property
     def qb1_enable_charging(self):
-
+        
+        self.obj.VUSB_SW_CTRL1 = 1
         self.obj.STANDBY_MODE_SET = 1
         self.obj.CP_EN = 1
 
         print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
-        print(f"QB1_CTRL2 = {self.obj.QB1_CTRL2}")
+        print(f"QB1_CTRL2 = {self.obj.VUSB_SW_CTRL1}")
         print(f"CP_EN = {self.obj.CP_EN}")
 
 
     @property
     def qb2_enable_charging(self):
 
+        self.obj.VEXT_SW_CTRL1 = 1
         self.obj.STANDBY_MODE_SET = 1
-        self.obj.QB2_CTRL1 = 1
         self.obj.CP_EN = 1
 
         print(f"STANDBY_MODE_SET = {self.obj.STANDBY_MODE_SET}")
-        print(f"QB2_CTRL1 = {self.obj.QB2_CTRL1}")
-        print(f"QB2_CTRL2 = {self.obj.QB2_CTRL2}")
+        print(f"QB1_CTRL2 = {self.obj.VEXT_SW_CTRL1}")
         print(f"CP_EN = {self.obj.CP_EN}")
     
 

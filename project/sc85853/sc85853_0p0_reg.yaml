@@ -2,8 +2,8 @@ ADC_DONE_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: ADC_DONE_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -74,8 +74,8 @@ BST1A_OPEN_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: BST1A_OPEN_FLAG
   permission: User
   register1: INT_FAULT3
@@ -86,8 +86,8 @@ BST1A_OPEN_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: BST1A_OPEN_STAT
   permission: User
   register1: STAT_FAULT3
@@ -98,8 +98,8 @@ BST1A_SHORT_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: BST1A_SHORT_FLAG
   permission: User
   register1: INT_FAULT3
@@ -110,8 +110,8 @@ BST1A_SHORT_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: BST1A_SHORT_STAT
   permission: User
   register1: STAT_FAULT3
@@ -122,8 +122,8 @@ BST1B_OPEN_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: BST1B_OPEN_FLAG
   permission: User
   register1: INT_FAULT3
@@ -134,8 +134,8 @@ BST1B_OPEN_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: BST1B_OPEN_STAT
   permission: User
   register1: STAT_FAULT3
@@ -146,8 +146,8 @@ BST1B_SHORT_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: BST1B_SHORT_FLAG
   permission: User
   register1: INT_FAULT3
@@ -158,8 +158,8 @@ BST1B_SHORT_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: BST1B_SHORT_STAT
   permission: User
   register1: STAT_FAULT3
@@ -170,8 +170,8 @@ BST2_OPEN_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: BST2_OPEN_FLAG
   permission: User
   register1: INT_FAULT3
@@ -182,8 +182,8 @@ BST2_OPEN_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: BST2_OPEN_STAT
   permission: User
   register1: STAT_FAULT3
@@ -194,8 +194,8 @@ BST2_SHORT_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: BST2_SHORT_FLAG
   permission: User
   register1: INT_FAULT3
@@ -206,8 +206,8 @@ BST2_SHORT_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: BST2_SHORT_STAT
   permission: User
   register1: STAT_FAULT3
@@ -218,8 +218,8 @@ BST3A_OPEN_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: BST3A_OPEN_FLAG
   permission: User
   register1: INT_FAULT4
@@ -230,8 +230,8 @@ BST3A_OPEN_STAT:
   address1: 27
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 7
+  msb1: 7
   name: BST3A_OPEN_STAT
   permission: User
   register1: STAT_FAULT4
@@ -242,8 +242,8 @@ BST3A_SHORT_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: BST3A_SHORT_FLAG
   permission: User
   register1: INT_FAULT3
@@ -254,8 +254,8 @@ BST3A_SHORT_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: BST3A_SHORT_STAT
   permission: User
   register1: STAT_FAULT3
@@ -266,8 +266,8 @@ BST3B_OPEN_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: BST3B_OPEN_FLAG
   permission: User
   register1: INT_FAULT4
@@ -278,8 +278,8 @@ BST3B_OPEN_STAT:
   address1: 27
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 6
+  msb1: 6
   name: BST3B_OPEN_STAT
   permission: User
   register1: STAT_FAULT4
@@ -290,8 +290,8 @@ BST3B_SHORT_FLAG:
   address1: 8
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: BST3B_SHORT_FLAG
   permission: User
   register1: INT_FAULT3
@@ -302,8 +302,8 @@ BST3B_SHORT_STAT:
   address1: 26
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: BST3B_SHORT_STAT
   permission: User
   register1: STAT_FAULT3
@@ -338,8 +338,8 @@ C1A_OPEN_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: C1A_OPEN_FLAG
   permission: User
   register1: INT_FAULT1
@@ -350,8 +350,8 @@ C1A_OPEN_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: C1A_OPEN_STAT
   permission: User
   register1: STAT_FAULT1
@@ -362,8 +362,8 @@ C1A_SHORT_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: C1A_SHORT_FLAG
   permission: User
   register1: INT_FAULT1
@@ -374,8 +374,8 @@ C1A_SHORT_PH3_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: C1A_SHORT_PH3_FLAG
   permission: User
   register1: INT_FAULT5
@@ -386,8 +386,8 @@ C1A_SHORT_PH3_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: C1A_SHORT_PH3_STAT
   permission: User
   register1: STAT_FAULT5
@@ -398,8 +398,8 @@ C1A_SHORT_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: C1A_SHORT_STAT
   permission: User
   register1: STAT_FAULT1
@@ -410,8 +410,8 @@ C1B_OPEN_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: C1B_OPEN_FLAG
   permission: User
   register1: INT_FAULT1
@@ -422,8 +422,8 @@ C1B_OPEN_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: C1B_OPEN_STAT
   permission: User
   register1: STAT_FAULT1
@@ -434,8 +434,8 @@ C1B_SHORT_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: C1B_SHORT_FLAG
   permission: User
   register1: INT_FAULT1
@@ -446,8 +446,8 @@ C1B_SHORT_PH3_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: C1B_SHORT_PH3_FLAG
   permission: User
   register1: INT_FAULT5
@@ -458,8 +458,8 @@ C1B_SHORT_PH3_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: C1B_SHORT_PH3_STAT
   permission: User
   register1: STAT_FAULT5
@@ -470,8 +470,8 @@ C1B_SHORT_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: C1B_SHORT_STAT
   permission: User
   register1: STAT_FAULT1
@@ -530,8 +530,8 @@ C1P2OUT_OVP_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C1P2OUT_OVP_FLAG
   permission: User
   register1: INT_FAULT6
@@ -554,8 +554,8 @@ C1P2OUT_OVP_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C1P2OUT_OVP_STAT
   permission: User
   register1: STAT_FAULT6
@@ -614,8 +614,8 @@ C1P2OUT_UVP_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C1P2OUT_UVP_FLAG
   permission: User
   register1: INT_FAULT6
@@ -638,8 +638,8 @@ C1P2OUT_UVP_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C1P2OUT_UVP_STAT
   permission: User
   register1: STAT_FAULT6
@@ -650,8 +650,8 @@ C1PA_C1PB_SHORT_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: C1PA_C1PB_SHORT_FLAG
   permission: User
   register1: INT_FAULT5
@@ -662,8 +662,8 @@ C1PA_C1PB_SHORT_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: C1PA_C1PB_SHORT_STAT
   permission: User
   register1: STAT_FAULT5
@@ -696,7 +696,7 @@ C1P_ADC_DIS:
   msb1: 1
   name: C1P_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -704,8 +704,8 @@ C2A_OPEN_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: C2A_OPEN_FLAG
   permission: User
   register1: INT_FAULT1
@@ -716,8 +716,8 @@ C2A_OPEN_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: C2A_OPEN_STAT
   permission: User
   register1: STAT_FAULT1
@@ -728,8 +728,8 @@ C2A_SHORT_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C2A_SHORT_FLAG
   permission: User
   register1: INT_FAULT1
@@ -740,8 +740,8 @@ C2A_SHORT_PH3_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C2A_SHORT_PH3_FLAG
   permission: User
   register1: INT_FAULT5
@@ -752,8 +752,8 @@ C2A_SHORT_PH3_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C2A_SHORT_PH3_STAT
   permission: User
   register1: STAT_FAULT5
@@ -764,8 +764,8 @@ C2A_SHORT_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: C2A_SHORT_STAT
   permission: User
   register1: STAT_FAULT1
@@ -776,8 +776,8 @@ C2B_OPEN_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: C2B_OPEN_FLAG
   permission: User
   register1: INT_FAULT1
@@ -788,8 +788,8 @@ C2B_OPEN_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: C2B_OPEN_STAT
   permission: User
   register1: STAT_FAULT1
@@ -800,8 +800,8 @@ C2B_SHORT_FLAG:
   address1: 6
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C2B_SHORT_FLAG
   permission: User
   register1: INT_FAULT1
@@ -812,8 +812,8 @@ C2B_SHORT_PH3_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C2B_SHORT_PH3_FLAG
   permission: User
   register1: INT_FAULT5
@@ -824,8 +824,8 @@ C2B_SHORT_PH3_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C2B_SHORT_PH3_STAT
   permission: User
   register1: STAT_FAULT5
@@ -836,8 +836,8 @@ C2B_SHORT_STAT:
   address1: 24
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: C2B_SHORT_STAT
   permission: User
   register1: STAT_FAULT1
@@ -908,8 +908,8 @@ CONV_OCP_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: CONV_OCP_FLAG
   permission: User
   register1: INT_FAULT6
@@ -932,8 +932,8 @@ CONV_OCP_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: CONV_OCP_STAT
   permission: User
   register1: STAT_FAULT6
@@ -1040,8 +1040,8 @@ EXT1_DRV_SHORT_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: EXT1_DRV_SHORT_FLAG
   permission: User
   register1: INT_FAULT4
@@ -1064,8 +1064,8 @@ EXT1_FET_OPEN_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: EXT1_FET_OPEN_FLAG
   permission: User
   register1: INT_FAULT4
@@ -1088,8 +1088,8 @@ EXT2_DRV_SHORT_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: EXT2_DRV_SHORT_FLAG
   permission: User
   register1: INT_FAULT4
@@ -1112,8 +1112,8 @@ EXT2_FET_OPEN_FLAG:
   address1: 9
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: EXT2_FET_OPEN_FLAG
   permission: User
   register1: INT_FAULT4
@@ -1310,8 +1310,8 @@ IIN_OCP_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: IIN_OCP_FLAG
   permission: User
   register1: INT_FAULT0
@@ -1322,8 +1322,8 @@ IIN_OCP_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: IIN_OCP_MASK
   permission: User
   register1: MASK_FAULT0
@@ -1334,8 +1334,8 @@ IIN_OCP_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: IIN_OCP_STAT
   permission: User
   register1: STAT_FAULT0
@@ -1358,8 +1358,8 @@ IIN_REG_ACTIVE_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: IIN_REG_ACTIVE_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -1478,8 +1478,8 @@ IIN_UCP_FALL_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: IIN_UCP_FALL_FLAG
   permission: User
   register1: INT_FAULT0
@@ -1490,8 +1490,8 @@ IIN_UCP_FALL_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: IIN_UCP_FALL_MASK
   permission: User
   register1: MASK_FAULT0
@@ -1502,8 +1502,8 @@ IIN_UCP_FALL_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: IIN_UCP_FALL_STAT
   permission: User
   register1: STAT_FAULT0
@@ -1514,8 +1514,8 @@ IIN_UCP_RISE_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: IIN_UCP_RISE_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -1584,7 +1584,7 @@ NTC_ADC_DIS:
   msb1: 0
   name: NTC_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -1616,8 +1616,8 @@ NTC_FLT_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: NTC_FLT_FLAG
   permission: User
   register1: INT_FAULT6
@@ -1640,8 +1640,8 @@ NTC_FLT_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: NTC_FLT_STAT
   permission: User
   register1: STAT_FAULT6
@@ -1664,8 +1664,8 @@ PIN_DIAG_FAIL_FLAG:
   address1: 7
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: PIN_DIAG_FAIL_FLAG
   permission: User
   register1: INT_FAULT2
@@ -1684,12 +1684,24 @@ PIN_DIAG_FAIL_MASK:
   reset: 0
   rw: RW
   singular: true
+PIN_DIAG_FAIL_STAT:
+  address1: 25
+  bith1: 0
+  bitl1: 0
+  lsb1: 7
+  msb1: 7
+  name: PIN_DIAG_FAIL_STAT
+  permission: User
+  register1: STAT_FAULT2
+  reset: 0
+  rw: R
+  singular: true
 PMID_ERRORHI_FLAG:
   address1: 7
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: PMID_ERRORHI_FLAG
   permission: User
   register1: INT_FAULT2
@@ -1712,8 +1724,8 @@ PMID_ERRORHI_STAT:
   address1: 25
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: PMID_ERRORHI_STAT
   permission: User
   register1: STAT_FAULT2
@@ -1724,8 +1736,8 @@ PMID_ERRORLO_FLAG:
   address1: 7
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: PMID_ERRORLO_FLAG
   permission: User
   register1: INT_FAULT2
@@ -1748,8 +1760,8 @@ PMID_ERRORLO_STAT:
   address1: 25
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: PMID_ERRORLO_STAT
   permission: User
   register1: STAT_FAULT2
@@ -1808,8 +1820,8 @@ Q3A_SHORT_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: Q3A_SHORT_FLAG
   permission: User
   register1: INT_FAULT5
@@ -1820,8 +1832,8 @@ Q3A_SHORT_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: Q3A_SHORT_STAT
   permission: User
   register1: STAT_FAULT5
@@ -1832,8 +1844,8 @@ Q3B_SHORT_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: Q3B_SHORT_FLAG
   permission: User
   register1: INT_FAULT5
@@ -1844,8 +1856,8 @@ Q3B_SHORT_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: Q3B_SHORT_STAT
   permission: User
   register1: STAT_FAULT5
@@ -1856,8 +1868,8 @@ Q5_SHORT_FLAG:
   address1: 10
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: Q5_SHORT_FLAG
   permission: User
   register1: INT_FAULT5
@@ -1868,8 +1880,8 @@ Q5_SHORT_STAT:
   address1: 28
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: Q5_SHORT_STAT
   permission: User
   register1: STAT_FAULT5
@@ -1892,8 +1904,8 @@ QB1_ON_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: QB1_ON_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -1952,8 +1964,8 @@ QB2_ON_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: QB2_ON_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -2024,8 +2036,8 @@ SS_FAIL_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: SS_FAIL_FLAG
   permission: User
   register1: INT_FAULT6
@@ -2048,8 +2060,8 @@ SS_FAIL_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: SS_FAIL_STAT
   permission: User
   register1: STAT_FAULT6
@@ -2072,8 +2084,8 @@ SS_TIMEOUT_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: SS_TIMEOUT_FLAG
   permission: User
   register1: INT_FAULT6
@@ -2096,8 +2108,8 @@ SS_TIMEOUT_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: SS_TIMEOUT_STAT
   permission: User
   register1: STAT_FAULT6
@@ -2178,7 +2190,7 @@ TDIE_ADC_DIS:
   msb1: 2
   name: TDIE_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -2198,8 +2210,8 @@ TDIE_REG_ACTIVE_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: TDIE_REG_ACTIVE_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -2246,8 +2258,8 @@ TDIE_REG_EXIT_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: TDIE_REG_EXIT_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -2282,8 +2294,8 @@ TSHUT_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: TSHUT_FLAG
   permission: User
   register1: INT_FAULT6
@@ -2306,8 +2318,8 @@ TSHUT_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: TSHUT_STAT
   permission: User
   register1: STAT_FAULT6
@@ -2340,7 +2352,7 @@ VBAT_ADC_DIS:
   msb1: 3
   name: VBAT_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -2396,8 +2408,8 @@ VBAT_OVP_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: VBAT_OVP_FLAG
   permission: User
   register1: INT_FAULT0
@@ -2408,8 +2420,8 @@ VBAT_OVP_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: VBAT_OVP_MASK
   permission: User
   register1: MASK_FAULT0
@@ -2420,8 +2432,8 @@ VBAT_OVP_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 7
-  msb1: 7
+  lsb1: 0
+  msb1: 0
   name: VBAT_OVP_STAT
   permission: User
   register1: STAT_FAULT0
@@ -2444,8 +2456,8 @@ VBAT_REG_ACTIVE_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: VBAT_REG_ACTIVE_FLAG
   permission: User
   register1: INT_DEVICE3
@@ -2526,7 +2538,7 @@ VB_OUT_ADC_DIS:
   msb1: 7
   name: VB_OUT_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -2582,8 +2594,8 @@ VB_OUT_OVP_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: VB_OUT_OVP_FLAG
   permission: User
   register1: INT_FAULT0
@@ -2594,8 +2606,8 @@ VB_OUT_OVP_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: VB_OUT_OVP_MASK
   permission: User
   register1: MASK_FAULT0
@@ -2606,8 +2618,8 @@ VB_OUT_OVP_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 2
+  msb1: 2
   name: VB_OUT_OVP_STAT
   permission: User
   register1: STAT_FAULT0
@@ -2772,7 +2784,7 @@ VEXT_ADC_DIS:
   msb1: 5
   name: VEXT_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -2804,8 +2816,8 @@ VEXT_DRV_ON_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: VEXT_DRV_ON_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -2840,8 +2852,8 @@ VEXT_INSERT_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: VEXT_INSERT_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -2924,8 +2936,8 @@ VEXT_OVP_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: VEXT_OVP_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -2972,8 +2984,8 @@ VEXT_REMOVE_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 4
-  msb1: 4
+  lsb1: 3
+  msb1: 3
   name: VEXT_REMOVE_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3134,8 +3146,8 @@ VIN_OVP_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: VIN_OVP_FLAG
   permission: User
   register1: INT_FAULT0
@@ -3146,8 +3158,8 @@ VIN_OVP_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: VIN_OVP_MASK
   permission: User
   register1: MASK_FAULT0
@@ -3158,8 +3170,8 @@ VIN_OVP_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 3
+  msb1: 3
   name: VIN_OVP_STAT
   permission: User
   register1: STAT_FAULT0
@@ -3218,8 +3230,8 @@ VO12OUT_UVP_FLAG:
   address1: 11
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: VO12OUT_UVP_FLAG
   permission: User
   register1: INT_FAULT6
@@ -3242,8 +3254,8 @@ VO12OUT_UVP_STAT:
   address1: 29
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: VO12OUT_UVP_STAT
   permission: User
   register1: STAT_FAULT6
@@ -3276,7 +3288,7 @@ VOUT_ADC_DIS:
   msb1: 4
   name: VOUT_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -3284,8 +3296,8 @@ VOUT_INSERT_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: VOUT_INSERT_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3368,8 +3380,8 @@ VOUT_OVP_FLAG:
   address1: 5
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: VOUT_OVP_FLAG
   permission: User
   register1: INT_FAULT0
@@ -3380,8 +3392,8 @@ VOUT_OVP_MASK:
   address1: 16
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: VOUT_OVP_MASK
   permission: User
   register1: MASK_FAULT0
@@ -3392,8 +3404,8 @@ VOUT_OVP_STAT:
   address1: 23
   bith1: 0
   bitl1: 0
-  lsb1: 6
-  msb1: 6
+  lsb1: 1
+  msb1: 1
   name: VOUT_OVP_STAT
   permission: User
   register1: STAT_FAULT0
@@ -3404,8 +3416,8 @@ VOUT_TH_CHG_EN_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 2
-  msb1: 2
+  lsb1: 5
+  msb1: 5
   name: VOUT_TH_CHG_EN_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3440,8 +3452,8 @@ VOUT_TH_REV_EN_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: VOUT_TH_REV_EN_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3498,7 +3510,7 @@ VUSB_ADC_DIS:
   msb1: 6
   name: VUSB_ADC_DIS
   permission: User
-  register1: ADC_CTRL2
+  register1: ADC_EN_DIS
   reset: 0
   rw: RW
   singular: true
@@ -3530,8 +3542,8 @@ VUSB_DRV_ON_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: VUSB_DRV_ON_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -3566,8 +3578,8 @@ VUSB_INSERT_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 5
-  msb1: 5
+  lsb1: 2
+  msb1: 2
   name: VUSB_INSERT_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3650,8 +3662,8 @@ VUSB_OVP_FLAG:
   address1: 3
   bith1: 0
   bitl1: 0
-  lsb1: 0
-  msb1: 0
+  lsb1: 7
+  msb1: 7
   name: VUSB_OVP_FLAG
   permission: User
   register1: INT_DEVICE2
@@ -3698,8 +3710,8 @@ VUSB_REMOVE_FLAG:
   address1: 2
   bith1: 0
   bitl1: 0
-  lsb1: 3
-  msb1: 3
+  lsb1: 4
+  msb1: 4
   name: VUSB_REMOVE_FLAG
   permission: User
   register1: INT_DEVICE1
@@ -3794,8 +3806,8 @@ WD_TIMEOUT_FLAG:
   address1: 4
   bith1: 0
   bitl1: 0
-  lsb1: 1
-  msb1: 1
+  lsb1: 6
+  msb1: 6
   name: WD_TIMEOUT_FLAG
   permission: User
   register1: INT_DEVICE3
