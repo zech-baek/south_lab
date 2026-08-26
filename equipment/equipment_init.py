@@ -21,11 +21,13 @@ from time import sleep as delay
 
 chart = plot()
 
-dm1_id = 'USB0::0x05E6::0x6500::04550627::INSTR'
-dm2_id = 'USB0::0x05E6::0x6500::04651237::INSTR'
+dm1_id = 'USB0::0x05E6::0x6500::04681071::INSTR'
+# dm2_id = 'USB0::0x05E6::0x6500::04651237::INSTR'
 
 dm1 = keithley_dm6500(single=True, resource_name=dm1_id)
-dm2 = keithley_dm6500(single=True, resource_name=dm2_id)
+# dm2 = keithley_dm6500(single=True, resource_name=dm2_id)
+
+
 
 # ps811 = rigol_dp811a()
 # ps821 = rigol_dp821a()
